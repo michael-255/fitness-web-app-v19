@@ -35,6 +35,7 @@ export default function useDefaults() {
               desc: 'Standing barbell squat with the bar resting near your neck.',
               favorited: false,
               enabled: true,
+              multipleSets: true,
               exerciseInputs: [exerciseInputs.Values.Reps, exerciseInputs.Values['Weight (lbs)']],
             },
             {
@@ -45,6 +46,7 @@ export default function useDefaults() {
               desc: 'Lying barbell bench press chest exercise.',
               favorited: false,
               enabled: true,
+              multipleSets: true,
               exerciseInputs: [exerciseInputs.Values.Reps, exerciseInputs.Values['Weight (lbs)']],
             },
             {
@@ -55,6 +57,7 @@ export default function useDefaults() {
               desc: 'Standing barbell rows where you hinge at the waist and pull the bar up into your stomach.',
               favorited: false,
               enabled: true,
+              multipleSets: true,
               exerciseInputs: [exerciseInputs.Values.Reps, exerciseInputs.Values['Weight (lbs)']],
             },
             {
@@ -65,6 +68,7 @@ export default function useDefaults() {
               desc: 'Standing barbell overhead press. Flex your glutes and abs to keep your back straight while pushing the bar above your head.',
               favorited: false,
               enabled: true,
+              multipleSets: true,
               exerciseInputs: [exerciseInputs.Values.Reps, exerciseInputs.Values['Weight (lbs)']],
             },
             {
@@ -75,6 +79,7 @@ export default function useDefaults() {
               desc: 'Standing barbell deadlift. Keep your back straight and flexed while lifting with your legs and lower back.',
               favorited: false,
               enabled: true,
+              multipleSets: true,
               exerciseInputs: [exerciseInputs.Values.Reps, exerciseInputs.Values['Weight (lbs)']],
             },
           ]
@@ -148,6 +153,7 @@ export default function useDefaults() {
               desc: 'Lying on your back, bring your knee to your chest and then across your body. Hold for 30 seconds and then repeat on the other side.',
               favorited: false,
               enabled: true,
+              multipleSets: true,
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
@@ -158,6 +164,7 @@ export default function useDefaults() {
               desc: 'Bring one leg in front of you at an angle with the other behind you. Hold for 30 seconds and then repeat on the other side.',
               favorited: false,
               enabled: true,
+              multipleSets: true,
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
@@ -168,6 +175,7 @@ export default function useDefaults() {
               desc: 'Get on all fours and spread your knees apart. Hold for 30 seconds.',
               favorited: false,
               enabled: true,
+              multipleSets: true,
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
@@ -178,6 +186,7 @@ export default function useDefaults() {
               desc: 'Standing on one leg, bring your other leg up behind you. Hold for 30 seconds and then repeat on the other side.',
               favorited: false,
               enabled: true,
+              multipleSets: true,
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
@@ -188,6 +197,7 @@ export default function useDefaults() {
               desc: 'Standing with your legs straight, bend over and try to touch your toes. Hold for 30 seconds.',
               favorited: false,
               enabled: true,
+              multipleSets: true,
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
@@ -198,6 +208,7 @@ export default function useDefaults() {
               desc: 'Lean against a wall with one leg in front of the other. Hold for 30 seconds and then repeat on the other side.',
               favorited: false,
               enabled: true,
+              multipleSets: true,
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
@@ -208,6 +219,7 @@ export default function useDefaults() {
               desc: 'Lean against a wall with your elbows behind you. Hold for 30 seconds.',
               favorited: false,
               enabled: true,
+              multipleSets: true,
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
@@ -218,6 +230,7 @@ export default function useDefaults() {
               desc: 'Foam roll your back going up and down your spine for 90 seconds.',
               favorited: false,
               enabled: true,
+              multipleSets: true,
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
@@ -228,6 +241,7 @@ export default function useDefaults() {
               desc: 'Lay on a foam roller with it aligned with your spine. Rest with your arms out to the side for 90 seconds.',
               favorited: false,
               enabled: true,
+              multipleSets: true,
               exerciseInputs: [], // No inputs (records nothing)
             },
           ]
@@ -293,6 +307,7 @@ export default function useDefaults() {
               desc: 'Bring you hand in front of your face, then fully extend your arm to the side while stretching your hand back and forth. Repeat 15 times on each hand.',
               favorited: false,
               enabled: true,
+              multipleSets: true,
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
@@ -303,6 +318,7 @@ export default function useDefaults() {
               desc: 'Start with your hands in a fist, then role out to your knuckles, and then extend your fingers. Repeat 15 times.',
               favorited: false,
               enabled: true,
+              multipleSets: true,
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
@@ -313,6 +329,7 @@ export default function useDefaults() {
               desc: 'Flex each of your finger (including your thumbs) without bending your knuckles if possible one at a time. Repeat 15 times per finger.',
               favorited: false,
               enabled: true,
+              multipleSets: true,
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
@@ -323,6 +340,7 @@ export default function useDefaults() {
               desc: 'Flex each of your finger knuckles one at a time. Repeat 15 times per finger (minus the thumbs).',
               favorited: false,
               enabled: true,
+              multipleSets: true,
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
@@ -333,6 +351,7 @@ export default function useDefaults() {
               desc: 'Touch your thumbs as close to the base of your pinky as possible, then open your hands and spread them far apart. Repeat 15 times.',
               favorited: false,
               enabled: true,
+              multipleSets: true,
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
@@ -343,6 +362,7 @@ export default function useDefaults() {
               desc: 'Relax your arms in a T-Rex position, then bring them back while opening your hands for a brief stretch. Repeat 15 times.',
               favorited: false,
               enabled: true,
+              multipleSets: true,
               exerciseInputs: [], // No inputs (records nothing)
             },
           ]
@@ -405,6 +425,7 @@ export default function useDefaults() {
               desc: 'Inhale through your nose for 2 seconds, then exhale slowly through pursed lips for 4 seconds. Repeat 10 times.',
               favorited: false,
               enabled: true,
+              multipleSets: false,
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
@@ -415,6 +436,7 @@ export default function useDefaults() {
               desc: 'Place one hand on your chest. Inhale through your nose for 2 seconds, then contract your abdominal muscles and exhale slowly through pursed lips for 4 seconds. The hand on your chest should have minimal movement during this process. Repeat 10 times.',
               favorited: false,
               enabled: true,
+              multipleSets: false,
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
@@ -425,6 +447,7 @@ export default function useDefaults() {
               desc: 'Inhale through your nose for 4 seconds, hold your breath for 4 seconds, exhale through your mouth for 4 seconds, then hold your breath for 4 seconds. Repeat 10 times.',
               favorited: false,
               enabled: true,
+              multipleSets: false,
               exerciseInputs: [], // No inputs (records nothing)
             },
           ]
@@ -484,7 +507,7 @@ export default function useDefaults() {
               desc: 'Body fat percentage (%).',
               favorited: false,
               enabled: true,
-              measurementInputs: measurementInputs.Values.Percentage,
+              measurementInput: measurementInputs.Values.Percentage,
             },
             {
               type: recordTypes.Values.measurement,
@@ -494,7 +517,7 @@ export default function useDefaults() {
               desc: 'Body weight in pounds (lbs).',
               favorited: false,
               enabled: true,
-              measurementInputs: measurementInputs.Values.Lbs,
+              measurementInput: measurementInputs.Values.Lbs,
             },
             {
               type: recordTypes.Values.measurement,
@@ -504,7 +527,7 @@ export default function useDefaults() {
               desc: 'Chest circumference in inches.',
               favorited: false,
               enabled: true,
-              measurementInputs: measurementInputs.Values.Inches,
+              measurementInput: measurementInputs.Values.Inches,
             },
             {
               type: recordTypes.Values.measurement,
@@ -514,7 +537,7 @@ export default function useDefaults() {
               desc: 'Left bicep circumference in inches.',
               favorited: false,
               enabled: true,
-              measurementInputs: measurementInputs.Values.Inches,
+              measurementInput: measurementInputs.Values.Inches,
             },
             {
               type: recordTypes.Values.measurement,
@@ -524,7 +547,7 @@ export default function useDefaults() {
               desc: 'Left calf circumference in inches.',
               favorited: false,
               enabled: true,
-              measurementInputs: measurementInputs.Values.Inches,
+              measurementInput: measurementInputs.Values.Inches,
             },
             {
               type: recordTypes.Values.measurement,
@@ -534,7 +557,7 @@ export default function useDefaults() {
               desc: 'Left forearm circumference in inches.',
               favorited: false,
               enabled: true,
-              measurementInputs: measurementInputs.Values.Inches,
+              measurementInput: measurementInputs.Values.Inches,
             },
             {
               type: recordTypes.Values.measurement,
@@ -544,7 +567,7 @@ export default function useDefaults() {
               desc: 'Left thigh circumference in inches.',
               favorited: false,
               enabled: true,
-              measurementInputs: measurementInputs.Values.Inches,
+              measurementInput: measurementInputs.Values.Inches,
             },
             {
               type: recordTypes.Values.measurement,
@@ -554,7 +577,7 @@ export default function useDefaults() {
               desc: 'Neck circumference in inches.',
               favorited: false,
               enabled: true,
-              measurementInputs: measurementInputs.Values.Inches,
+              measurementInput: measurementInputs.Values.Inches,
             },
             {
               type: recordTypes.Values.measurement,
@@ -564,7 +587,7 @@ export default function useDefaults() {
               desc: 'Right bicep circumference in inches.',
               favorited: false,
               enabled: true,
-              measurementInputs: measurementInputs.Values.Inches,
+              measurementInput: measurementInputs.Values.Inches,
             },
             {
               type: recordTypes.Values.measurement,
@@ -574,7 +597,7 @@ export default function useDefaults() {
               desc: 'Right calf circumference in inches.',
               favorited: false,
               enabled: true,
-              measurementInputs: measurementInputs.Values.Inches,
+              measurementInput: measurementInputs.Values.Inches,
             },
             {
               type: recordTypes.Values.measurement,
@@ -584,7 +607,7 @@ export default function useDefaults() {
               desc: 'Right forearm circumference in inches.',
               favorited: false,
               enabled: true,
-              measurementInputs: measurementInputs.Values.Inches,
+              measurementInput: measurementInputs.Values.Inches,
             },
             {
               type: recordTypes.Values.measurement,
@@ -594,7 +617,7 @@ export default function useDefaults() {
               desc: 'Right thigh circumference in inches.',
               favorited: false,
               enabled: true,
-              measurementInputs: measurementInputs.Values.Inches,
+              measurementInput: measurementInputs.Values.Inches,
             },
             {
               type: recordTypes.Values.measurement,
@@ -604,7 +627,7 @@ export default function useDefaults() {
               desc: 'Shoulder circumference in inches.',
               favorited: false,
               enabled: true,
-              measurementInputs: measurementInputs.Values.Inches,
+              measurementInput: measurementInputs.Values.Inches,
             },
             {
               type: recordTypes.Values.measurement,
@@ -614,7 +637,7 @@ export default function useDefaults() {
               desc: 'Waist circumference in inches at the belly button.',
               favorited: false,
               enabled: true,
-              measurementInputs: measurementInputs.Values.Inches,
+              measurementInput: measurementInputs.Values.Inches,
             },
           ]
 

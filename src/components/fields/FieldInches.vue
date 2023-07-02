@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { allFields, percentSchema } from '@/types/core'
+import { allFields, numberSchema } from '@/types/core'
 import useActionStore from '@/stores/action'
 
 defineProps<{
@@ -9,19 +9,19 @@ defineProps<{
 
 const actionStore = useActionStore()
 
-const field = allFields.Values.percent
+const field = allFields.Values.inches
 
 onMounted(() => {
   actionStore.record[field] = actionStore.record[field] ?? 0
 })
 
 function inspectFormat(val: number) {
-  return val ? `${val}%` : '-'
+  return val ? `${val} in` : '-'
 }
 </script>
 
 <template>
-  <div class="text-weight-bold text-body1">Percentage</div>
+  <div class="text-weight-bold text-body1">Inches</div>
 
   <div v-if="inspecting">
     {{ inspectFormat(actionStore.record[field]) }}
@@ -30,7 +30,7 @@ function inspectFormat(val: number) {
   <QInput
     v-else
     v-model.number="actionStore.record[field]"
-    :rules="[(val: number) => percentSchema.safeParse(val).success || 'Percent must be between 0 and 100']"
+    :rules="[(val: number) => numberSchema.safeParse(val).success || 'Must be 0 or greater']"
     type="number"
     lazy-rules
     dense

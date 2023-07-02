@@ -5,6 +5,7 @@ import { type Ref, ref, onUnmounted } from 'vue'
 import { AppDatabaseVersion, AppName } from '@/constants/global'
 import { useMeta } from 'quasar'
 import {
+  type Height,
   type Setting,
   type BackupData,
   type SettingKey,
@@ -12,6 +13,7 @@ import {
   type RecordType,
   settingkeys,
   recordGroups,
+  heightSchema,
 } from '@/types/core'
 import DataSchema from '@/services/DataSchema'
 import useLogger from '@/composables/useLogger'
@@ -38,6 +40,8 @@ const { goToRecordsData, goToLogsData } = useRoutables()
 
 const allOptions = DataSchema.getAllOptions()
 const settings: Ref<Setting[]> = ref([])
+const heightInputRef: Ref<any> = ref(null)
+const heightInches: Ref<Height> = ref(undefined)
 const logDurationIndex: Ref<number> = ref(0)
 const importFile: Ref<any> = ref(null)
 const accessOptions = ref(allOptions)
@@ -275,10 +279,44 @@ async function onDeleteDatabase() {
 function getSettingValue(key: SettingKey) {
   return settings.value.find((s) => s.key === key)?.value
 }
+
+async function updateHeight() {
+  if (!heightInches.value) {
+    heightInches.value = undefined
+  }
+
+  if (heightInputRef?.value?.validate()) {
+    await DB.setSetting(settingkeys.Values['user-height-inches'], heightInches.value)
+  }
+}
 </script>
 
 <template>
   <ResponsivePage :bannerIcon="Icon.SETTINGS" bannerTitle="Settings">
+    <section class="q-mb-xl">
+      <div class="text-h6 q-mb-md">User Information</div>
+
+      <p>
+        Your height is used for the BMI calculation when updating your body weight fi you provide
+        it. For reference, a height of 5'10" is equal to 70 inches.
+      </p>
+
+      <p class="text-h6">Height</p>
+
+      <QInput
+        v-model.number="heightInches"
+        ref="heightInputRef"
+        :rules="[(val: number) => heightSchema.safeParse(val).success || 'Must be 1-120 or blank']"
+        hint="Auto Saved"
+        type="number"
+        placeholder="Total Inches"
+        dense
+        outlined
+        color="primary"
+        @update:model-value="updateHeight()"
+      />
+    </section>
+
     <section class="q-mb-xl">
       <p class="text-h6">Options</p>
 

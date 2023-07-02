@@ -1,13 +1,13 @@
-<!-- <script setup lang="ts">
+<script setup lang="ts">
 import { onMounted, ref, type Ref } from 'vue'
-import { truncateString } from '@/utils/common'
 import {
-  type AnyCoreRecord,
+  type ExerciseRecord,
+  allFields,
   recordGroups,
   recordTypes,
-  allFields,
-  testIdsSchema,
+  exerciseIdsSchema,
 } from '@/types/core'
+import { truncateString } from '@/utils/common'
 import useLogger from '@/composables/useLogger'
 import useActionStore from '@/stores/action'
 import DB from '@/services/Database'
@@ -19,7 +19,7 @@ defineProps<{
 const { log } = useLogger()
 const actionStore = useActionStore()
 
-const field = allFields.Values.testIds
+const field = allFields.Values.exerciseIds
 const options: Ref<{ value: string; label: string }[]> = ref([])
 
 onMounted(async () => {
@@ -28,39 +28,40 @@ onMounted(async () => {
 
     const records = (await DB.getRecords(
       recordGroups.Values.core,
-      recordTypes.Values.test
-    )) as AnyCoreRecord[]
+      recordTypes.Values.exercise
+    )) as ExerciseRecord[]
 
-    options.value = records.map((r: AnyCoreRecord) => ({
+    options.value = records.map((r: ExerciseRecord) => ({
       value: r.id,
       label: `${r.name} (${truncateString(r.id, 8, '*')})`,
     }))
   } catch (error) {
-    log.error('Error with test ids input', error)
+    log.error('Error with exercise ids field', error)
   }
 })
 
-function inspectFormat(val: string[]) {
+function inspectFormat(val: ExerciseRecord[]) {
   return val?.join(', ') || '-'
 }
 </script>
 
 <template>
-  <div class="text-weight-bold text-body1">Tests</div>
+  <div class="text-weight-bold text-body1">Exercises</div>
 
   <div v-if="inspecting">
     {{ inspectFormat(actionStore.record[field]) }}
   </div>
 
   <div v-else>
-    <p>Tests that are stored by the Example record.</p>
+    <p>Exercises associated with this workout.</p>
 
     <QSelect
       v-model="actionStore.record[field]"
-      :rules="[(val: string[]) => testIdsSchema.safeParse(val).success || 'Required']"
+      :rules="[(val: ExerciseRecord[]) => exerciseIdsSchema.safeParse(val).success || 'Required']"
       :options="options"
-      counter
+      lazy-rules
       multiple
+      counter
       emit-value
       map-options
       options-dense
@@ -69,4 +70,4 @@ function inspectFormat(val: string[]) {
       color="primary"
     />
   </div>
-</template> -->
+</template>
