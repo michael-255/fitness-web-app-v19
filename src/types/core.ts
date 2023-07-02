@@ -62,10 +62,10 @@ export const exerciseIdsSchema = z.array(idSchema).min(1) // Workout must have a
 export const exerciseResultIdsSchema = z.array(idSchema) // May not have any exercise results
 export const exerciseInputsSchema = z.array(exerciseInputs) // Can be empty for instructional exercises
 export const measurementInputSchema = measurementInputs
-export const bodyWeightSchema = z.number().positive().min(1).max(1000)
-export const numberSchema = z.number().positive().max(Number.MAX_SAFE_INTEGER)
-export const numbersSchema = z.array(z.number().positive().max(Number.MAX_SAFE_INTEGER))
-export const percentSchema = z.number().min(0).max(100)
+export const bodyWeightSchema = z.number().positive().min(1).max(1000).optional()
+export const numberSchema = z.number().positive().max(Number.MAX_SAFE_INTEGER).optional()
+export const numbersSchema = z.array(z.number().positive().max(Number.MAX_SAFE_INTEGER)).optional()
+export const percentSchema = z.number().min(0).max(100).optional()
 
 // Non-exported schemas
 const settingSchema = z.object({
@@ -149,6 +149,25 @@ export const exerciseSchema = coreSchema.merge(
 )
 
 // Measurement
+// export const measurementResultSchema = subSchema.merge(
+//   z.object({
+//     type: z.literal(recordTypes.Values.measurement),
+//     data: z.union([
+//       z.object({
+//         bodyWeight: bodyWeightSchema, // Includes extra BMI chart
+//       }),
+//       z.object({
+//         percent: percentSchema,
+//       }),
+//       z.object({
+//         inches: numberSchema,
+//       }),
+//       z.object({
+//         lbs: numberSchema,
+//       }),
+//     ]),
+//   })
+// )
 export const measurementResultSchema = subSchema.merge(
   z.object({
     type: z.literal(recordTypes.Values.measurement),

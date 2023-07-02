@@ -36,5 +36,8 @@ function inspectFormat(val: number) {
     dense
     outlined
     color="primary"
+    @update:model-value="
+      actionStore.record[field] === '' ? (actionStore.record[field] = undefined) : $event
+    "
   />
 </template>

@@ -29,11 +29,14 @@ function inspectFormat(val: number) {
 
   <QInput
     v-model.number="actionStore.record[field]"
-    :rules="[(val: number) => numberSchema.safeParse(val).success || 'Must be 0 or greater']"
+    :rules="[(val: number) => numberSchema.safeParse(val).success || 'Must greater then 0']"
     type="number"
     lazy-rules
     dense
     outlined
     color="primary"
+    @update:model-value="
+      actionStore.record[field] === '' ? (actionStore.record[field] = undefined) : $event
+    "
   />
 </template>

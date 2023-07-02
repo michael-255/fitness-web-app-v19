@@ -4,8 +4,9 @@ Fitness Tracker is for tracking workouts, exercises, and measurements as well as
 
 ## TODO
 
-- [ ] Port over finished content from `v18`
-- [ ] Update `Field` component error messages (on Web App Template too)
+- [ ] Work on getting measurements to work
+- Build `coreIdWatcher` composable
+- Have the watcher manage the extra measurement fields in action store
 
 ## Table of Contents
 
