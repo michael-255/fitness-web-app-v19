@@ -113,6 +113,7 @@ class Database extends Dexie {
     const defaultSettings: Readonly<{
       [key in SettingKey]: any
     }> = {
+      [settingkeys.Values['user-height-inches']]: null,
       [settingkeys.Values['welcome-overlay']]: true,
       [settingkeys.Values['dashboard-descriptions']]: true,
       [settingkeys.Values['dark-mode']]: true,

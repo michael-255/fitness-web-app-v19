@@ -140,12 +140,6 @@ const noteColumn: Readonly<QTableColumn> = {
 // RECORD SPECIFIC
 //
 
-const testIdsColumn: Readonly<QTableColumn> = {
-  ...makeStandardColumn(allFields.Values.testIds),
-  label: 'Tests',
-  format: (val: string[]) => truncateString(JSON.stringify(val), 30, '...'),
-}
-
 const percentColumn: Readonly<QTableColumn> = {
   ...makeStandardColumn(allFields.Values.percent),
   label: 'Percentage',
@@ -181,8 +175,11 @@ export const logColumns: QTableColumn[] = [
   stackColumn,
 ]
 
-export const exampleCoreColumns: QTableColumn[] = [hiddenIdColumn, ...coreColumns, testIdsColumn]
-export const testCoreColumns: QTableColumn[] = [hiddenIdColumn, ...coreColumns]
+export const workoutColumns: QTableColumn[] = [hiddenIdColumn, ...coreColumns]
+export const workoutResultColumns: QTableColumn[] = [hiddenIdColumn, ...subColumns]
 
-export const exampleSubColumns: QTableColumn[] = [hiddenIdColumn, ...subColumns]
-export const testSubColumns: QTableColumn[] = [hiddenIdColumn, ...subColumns, percentColumn]
+export const exerciseColumns: QTableColumn[] = [hiddenIdColumn, ...coreColumns]
+export const exerciseResultColumns: QTableColumn[] = [hiddenIdColumn, ...subColumns]
+
+export const measurementColumns: QTableColumn[] = [hiddenIdColumn, ...coreColumns]
+export const measurementResultColumns: QTableColumn[] = [hiddenIdColumn, ...subColumns]

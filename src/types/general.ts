@@ -63,9 +63,9 @@ export enum Icon {
   LOGS = 'plagiarism',
   CHARTS = 'bar_chart',
   RECORDS = 'storage',
-  EXAMPLES = 'smart_toy',
-  TESTS = 'cruelty_free',
-  PERF = 'speed',
+  WORKOUTS = 'assignment',
+  EXERCISES = 'fitness_center',
+  MEASUREMENTS = 'straighten',
   // Misc
   NOT_FOUND = 'question_mark',
   LOCK = 'lock',

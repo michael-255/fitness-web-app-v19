@@ -27,7 +27,13 @@ useMeta({ title: `${AppName} - Settings` })
 const { log } = useLogger()
 const { notify } = useNotifications()
 const { confirmDialog } = useDialogs()
-const { onDefaultExamples, onDefaultTests } = useDefaults()
+const {
+  onAddBarbellStrengthWorkouts,
+  onAddStretchRoutine,
+  onAddCarpalTunnelRoutine,
+  onAddDeepBreathingRoutine,
+  onAddStandardMeasurements,
+} = useDefaults()
 const { goToRecordsData, goToLogsData } = useRoutables()
 
 const allOptions = DataSchema.getAllOptions()
@@ -318,11 +324,35 @@ function getSettingValue(key: SettingKey) {
         <p>Load default demostration records into the database. This action can be repeated.</p>
 
         <div class="q-mb-md">
-          <QBtn label="Load Examples" color="primary" @click="onDefaultExamples()" />
+          <QBtn
+            label="Barbell Strength Workouts"
+            color="primary"
+            @click="onAddBarbellStrengthWorkouts()"
+          />
+        </div>
+
+        <div class="q-mb-md">
+          <QBtn label="Stretch Routine" color="primary" @click="onAddStretchRoutine()" />
+        </div>
+
+        <div class="q-mb-md">
+          <QBtn label="Carpel Tunnel Routine" color="primary" @click="onAddCarpalTunnelRoutine()" />
+        </div>
+
+        <div class="q-mb-md">
+          <QBtn
+            label="Deep Breathing Routine"
+            color="primary"
+            @click="onAddDeepBreathingRoutine()"
+          />
         </div>
 
         <div>
-          <QBtn label="Load Tests" color="primary" @click="onDefaultTests()" />
+          <QBtn
+            label="Standard Measurements"
+            color="primary"
+            @click="onAddStandardMeasurements()"
+          />
         </div>
       </div>
     </section>

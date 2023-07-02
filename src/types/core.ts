@@ -7,7 +7,7 @@ import { z } from 'zod'
 // DATABASE TYPES
 //
 
-export const recordTypes = z.enum(['example', 'test']) // URL friendly slug
+export const recordTypes = z.enum(['workout', 'exercise', 'measurement']) // URL friendly slug
 export type RecordType = z.infer<typeof recordTypes>
 
 export const recordGroups = z.enum(['core', 'sub']) // URL friendly slug
@@ -17,6 +17,7 @@ export const logLevels = z.enum(['DEBUG', 'INFO', 'WARN', 'ERROR'])
 export type LogLevel = z.infer<typeof logLevels>
 
 export const settingkeys = z.enum([
+  'user-height-inches',
   'welcome-overlay',
   'dashboard-descriptions',
   'dark-mode',
@@ -25,6 +26,20 @@ export const settingkeys = z.enum([
   'log-retention-duration',
 ])
 export type SettingKey = z.infer<typeof settingkeys>
+
+export const measurementInputs = z.enum(['Body Weight (lbs)', 'Percentage', 'Inches', 'Lbs'])
+
+export const exerciseInputs = z.enum([
+  'No Sets',
+  'Reps',
+  'Weight (lbs)',
+  'Distance (miles)',
+  'Duration (minutes)',
+  'Avg. Watts',
+  'Avg. Speed (mph)',
+  'Calories Burned',
+  'Resistence',
+])
 
 export const settingValueSchema = z.boolean().or(z.string()).or(z.number()).optional()
 export const autoIdSchema = z.number().int().positive().optional() // Handled by Dexie
@@ -38,8 +53,14 @@ export const idSchema = z.string().uuid()
 export const nameSchema = z.string().min(Limit.MIN_NAME).max(Limit.MAX_NAME).trim()
 export const textAreaSchema = z.string().max(Limit.MAX_TEXT_AREA).trim()
 export const booleanSchema = z.boolean()
+export const finishedTimestampSchema = z.number().int().optional()
+export const idsSchema = z.array(idSchema)
+export const exerciseInputsSchema = z.array(exerciseInputs)
+export const measurementInputsSchema = measurementInputs
+export const heightWeightSchema = z.tuple([z.number(), z.number()])
+export const numberSchema = z.number().positive().max(Number.MAX_SAFE_INTEGER)
+export const numbersSchema = z.array(z.number().positive().max(Number.MAX_SAFE_INTEGER))
 export const percentSchema = z.number().min(0).max(100)
-export const testIdsSchema = z.array(idSchema)
 
 // Non-exported schemas
 const settingSchema = z.object({
@@ -67,6 +88,7 @@ const subSchema = baseSchema.merge(
   z.object({
     coreId: idSchema,
     note: textAreaSchema,
+    active: booleanSchema,
   })
 )
 
@@ -80,33 +102,62 @@ const coreSchema = baseSchema.merge(
   })
 )
 
-// Example
-export const exampleSubSchema = subSchema.merge(
+// Workout
+export const workoutResultSchema = subSchema.merge(
   z.object({
-    type: z.literal(recordTypes.Values.example),
+    type: z.literal(recordTypes.Values.workout),
+    finishedTimestamp: finishedTimestampSchema,
+    exerciseResultIds: idsSchema,
+  })
+)
+
+export const workoutSchema = coreSchema.merge(
+  z.object({
+    type: z.literal(recordTypes.Values.workout),
+    lastSub: workoutResultSchema.optional(),
+    exerciseIds: idsSchema,
+  })
+)
+
+// Exercise
+export const exerciseResultSchema = subSchema.merge(
+  z.object({
+    type: z.literal(recordTypes.Values.exercise),
+    reps: numbersSchema,
+    weightLbs: numbersSchema,
+    distanceMiles: numbersSchema,
+    durationMinutes: numbersSchema,
+    watts: numbersSchema,
+    speedMph: numbersSchema,
+    calories: numbersSchema,
+    resistance: numbersSchema,
+  })
+)
+
+export const exerciseSchema = coreSchema.merge(
+  z.object({
+    type: z.literal(recordTypes.Values.exercise),
+    lastSub: exerciseResultSchema.optional(),
+    exerciseInputs: exerciseInputsSchema,
+  })
+)
+
+// Measurement
+export const measurementResultSchema = subSchema.merge(
+  z.object({
+    type: z.literal(recordTypes.Values.measurement),
+    heightWeight: heightWeightSchema,
     percent: percentSchema,
+    inches: numberSchema,
+    lbs: numberSchema,
   })
 )
 
-export const exampleCoreSchema = coreSchema.merge(
+export const measurementSchema = coreSchema.merge(
   z.object({
-    type: z.literal(recordTypes.Values.example),
-    lastSub: exampleSubSchema.optional(),
-    testIds: testIdsSchema,
-  })
-)
-
-// Test
-export const testSubSchema = subSchema.merge(
-  z.object({
-    type: z.literal(recordTypes.Values.test),
-  })
-)
-
-export const testCoreSchema = coreSchema.merge(
-  z.object({
-    type: z.literal(recordTypes.Values.test),
-    lastSub: testSubSchema.optional(),
+    type: z.literal(recordTypes.Values.measurement),
+    lastSub: measurementResultSchema.optional(),
+    measurementInputs: measurementInputsSchema,
   })
 )
 
@@ -115,10 +166,12 @@ export const testCoreSchema = coreSchema.merge(
  */
 const allSchema = settingSchema
   .merge(logSchema)
-  .merge(exampleCoreSchema)
-  .merge(exampleSubSchema)
-  .merge(testCoreSchema)
-  .merge(testSubSchema)
+  .merge(workoutSchema)
+  .merge(workoutResultSchema)
+  .merge(exerciseSchema)
+  .merge(exerciseResultSchema)
+  .merge(measurementSchema)
+  .merge(measurementResultSchema)
 
 export const allFields = allSchema.keyof()
 export type AnyField = z.infer<typeof allFields>
@@ -138,11 +191,14 @@ export type AnyRecord = z.infer<typeof baseSchema> & AnyDatabaseRecord
 export type AnySubRecord = z.infer<typeof subSchema> & AnyDatabaseRecord
 export type AnyCoreRecord = z.infer<typeof coreSchema> & AnyDatabaseRecord
 
-export type ExampleCoreRecord = z.infer<typeof exampleCoreSchema>
-export type ExampleSubRecord = z.infer<typeof exampleSubSchema>
+export type WorkoutRecord = z.infer<typeof workoutSchema>
+export type WorkoutResultRecord = z.infer<typeof workoutResultSchema>
 
-export type TestCoreRecord = z.infer<typeof testCoreSchema>
-export type TestSubRecord = z.infer<typeof testSubSchema>
+export type ExerciseRecord = z.infer<typeof exerciseSchema>
+export type ExerciseResultRecord = z.infer<typeof exerciseResultSchema>
+
+export type MeasurementRecord = z.infer<typeof measurementSchema>
+export type MeasurementResultRecord = z.infer<typeof measurementResultSchema>
 
 //
 // MISCELLANEOUS TYPES

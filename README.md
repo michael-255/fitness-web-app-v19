@@ -2,36 +2,9 @@
 
 Fitness Tracker is for tracking workouts, exercises, and measurements as well as charting results.
 
-## Post Cloning Steps
+## TODO
 
-- [ ] Update specific files
-
-  - [x] `base` in `~/vite.config.ts` to your repository name for deployments to work
-  - [x] `AppName` and `AppDescription` in `~/src/constants/global.ts`
-  - [x] `name` and `short_name` in `~/public/manifest.json`
-  - [x] `start_url` in `~/public/manifest.json` to deployed website address
-  - [ ] `menu-avatar` in `~/src/assets/menu-avatar.png` to new 96x96 png (+50% canvas for cropping)
-  - [ ] App welcome in `~/src/components/WelcomeOverlay.vue` to reflect your app
-
-- [ ] Update `GitHub` repository settings
-
-  - [ ] Description
-  - [ ] Website
-  - [ ] Topic keywords
-  - [ ] Update the `Include in the home page` section
-
-    - [ ] Uncheck `Releases`
-    - [ ] Uncheck `Packages`
-    - [ ] Uncheck `Environments` (or keep checked to show gh-pages deployment)
-
-- [ ] Generate a new Favicon here: <https://favicon.io/> (credit original artists)
-
-- [ ] Update `README.md`
-
-  - [ ] Change README main heading to your project name
-  - [ ] Add detailed project description
-  - [ ] Update the `Credits` section as needed
-  - [ ] Remove unneeded sections (including this one)
+- [ ] Port over finished content from `v18`
 
 ## Table of Contents
 
@@ -376,6 +349,11 @@ See [Vite Configuration Reference](https://vitejs.dev/config/).
 
 ## Credits
 
-Recognize the work of anyone whose material you used in the project here.
+App favicon was generated using the following graphics from Twemoji:
 
-Original `Web App Template` created by Michael Joy (michael-255 on GitHub)
+- Graphics Title: 1f3cb-fe0f-200d-2642-fe0f.svg
+- Graphics Author: Copyright 2020 Twitter, Inc and other contributors
+  (<https://github.com/twitter/twemoji>)
+- Graphics Source:
+  <https://github.com/twitter/twemoji/blob/master/assets/svg/1f3cb-fe0f-200d-2642-fe0f.svg>
+- Graphics License: CC-BY 4.0 (<https://creativecommons.org/licenses/by/4.0/>)
