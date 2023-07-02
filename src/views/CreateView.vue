@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { Icon } from '@/types/general'
-import { allFields, type AnyRecord, type RecordGroup, type RecordType } from '@/types/core'
+import {
+  allFields,
+  recordGroups,
+  type AnyRecord,
+  type RecordGroup,
+  type RecordType,
+  recordTypes,
+} from '@/types/core'
 import { onMounted, onUnmounted, ref } from 'vue'
 import { extend, uid, useMeta } from 'quasar'
 import { AppName } from '@/constants/global'
@@ -32,6 +39,11 @@ onMounted(async () => {
     if (routeCoreId) {
       // Only including optional coreId if valid
       actionStore.record[allFields.Values.coreId] = routeCoreId
+    }
+
+    if (routeGroup === recordGroups.Values.sub && routeType !== recordTypes.Values.measurement) {
+      // Active is only used by workouts and exercises
+      actionStore.record[allFields.Values.active] = false
     }
   } catch (error) {
     log.error('Error loading create view', error)

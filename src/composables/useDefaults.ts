@@ -517,7 +517,7 @@ export default function useDefaults() {
               desc: 'Body weight in pounds (lbs).',
               favorited: false,
               enabled: true,
-              measurementInput: measurementInputs.Values.Lbs,
+              measurementInput: measurementInputs.Values['Body Weight (lbs)'],
             },
             {
               type: recordTypes.Values.measurement,

@@ -97,6 +97,7 @@ async function onInspect(type: RecordType, id: string) {
   const title = DataSchema.getLabel(routeGroup as RecordGroup, type, 'singular') as string
   const record = (await DB.getRecord(routeGroup as RecordGroup, id)) as AnyRecord
   const fields = DataSchema.getFields(routeGroup as RecordGroup, type)
+  console.log('record: ', record)
   inspectDialog(title, record, fields)
 }
 

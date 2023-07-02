@@ -134,7 +134,6 @@ export default class DataSchema {
         defineAsyncComponent(() => import('@/components/fields/FieldLbs.vue')),
         defineAsyncComponent(() => import('@/components/fields/FieldTimestamp.vue')),
         defineAsyncComponent(() => import('@/components/fields/FieldNote.vue')),
-        defineAsyncComponent(() => import('@/components/fields/FieldActive.vue')),
       ],
       tableColumns: measurementResultColumns,
       schema: measurementResultSchema,
