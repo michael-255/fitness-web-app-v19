@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<!-- <script setup lang="ts">
 import { onMounted, ref, type Ref } from 'vue'
 import { truncateString } from '@/utils/common'
 import {
@@ -69,4 +69,4 @@ function inspectFormat(val: string[]) {
       color="primary"
     />
   </div>
-</template>
+</template> -->
