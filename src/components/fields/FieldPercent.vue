@@ -9,21 +9,18 @@ defineProps<{
 }>()
 
 const actionStore = useActionStore()
-useMeasurementInputWatcher(coreIdUpdate)
+useMeasurementInputWatcher(updateActionRecord)
 
 const field = allFields.Values.percent
-const objectField = allFields.Values.measured
 const isVisible: Ref<boolean> = ref(false)
 
-function coreIdUpdate(measurementInput: MeasurementInput) {
+function updateActionRecord(measurementInput: MeasurementInput) {
   if (measurementInput === measurementInputs.Values.Percentage) {
-    // Default the field if needed
-    if (actionStore.record?.[field]?.[objectField] === undefined) {
-      actionStore.record[field] = {
-        [objectField]: 0,
-      }
-    }
-
+    actionStore.record[field] = actionStore.record?.[field] ?? 0 // Defaulting
+    // Nulling out other fields
+    actionStore.record.bodyWeight = null
+    actionStore.record.inches = null
+    actionStore.record.lbs = null
     isVisible.value = true
   } else {
     isVisible.value = false
@@ -40,12 +37,12 @@ function inspectFormat(val: number) {
     <div class="text-weight-bold text-body1">Percentage</div>
 
     <div v-if="inspecting">
-      {{ inspectFormat(actionStore.record[field][objectField]) }}
+      {{ inspectFormat(actionStore.record[field]) }}
     </div>
 
     <QInput
       v-else
-      v-model.number="actionStore.record[field][objectField]"
+      v-model.number="actionStore.record[field]"
       :rules="[(val: number) => percentSchema.safeParse(val).success || 'Percent must be between 0 and 100']"
       type="number"
       lazy-rules

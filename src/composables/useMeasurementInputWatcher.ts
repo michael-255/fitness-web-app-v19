@@ -11,11 +11,11 @@ export default function useMeasurementInputWatcher(
   const { log } = useLogger()
 
   /**
-   * Watching actionStore measurementInput.
+   * Watching actionStore coreId.
    * The provided function is called when the property changes.
    */
   watch(
-    () => actionStore.record.coreId as MeasurementInput,
+    () => actionStore.record.coreId as string,
     async () => {
       try {
         if (actionStore.record.coreId) {

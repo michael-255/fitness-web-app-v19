@@ -1,12 +1,10 @@
 import { watch } from 'vue'
-import { recordGroups, type ExerciseInput } from '@/types/core'
+import { recordGroups } from '@/types/core'
 import useLogger from '@/composables/useLogger'
 import useActionStore from '@/stores/action'
 import DB from '@/services/Database'
 
-export default function useExerciseInputsWatcher(
-  updateFunc: (exerciseInputs: ExerciseInput[]) => void
-) {
+export default function useMultipleSetsWatcher(updateFunc: (hasMultipleSets: boolean) => void) {
   const actionStore = useActionStore()
   const { log } = useLogger()
 
@@ -20,13 +18,13 @@ export default function useExerciseInputsWatcher(
       try {
         if (actionStore.record.coreId) {
           const record = await DB.getRecord(recordGroups.Values.core, actionStore.record.coreId)
-          const exerciseInputs = record?.exerciseInputs
-          if (exerciseInputs) {
-            updateFunc(exerciseInputs)
+          const hasMultipleSets = record?.multipleSets
+          if (hasMultipleSets !== undefined) {
+            updateFunc(hasMultipleSets)
           }
         }
       } catch (error) {
-        log.error('Error with exercise inputs watcher', error)
+        log.error('Error with multiple sets watcher', error)
       }
     },
     { immediate: true }

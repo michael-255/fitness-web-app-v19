@@ -4,8 +4,7 @@ Fitness Tracker is for tracking workouts, exercises, and measurements as well as
 
 ## TODO
 
-- [ ] Add new `table-columns` for new fields
-- [ ] Exercise fields with `sets` - Whats the plan???
+- [ ] Exercise fields with `sets`
 
 ## Table of Contents
 

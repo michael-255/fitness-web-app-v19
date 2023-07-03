@@ -9,21 +9,18 @@ defineProps<{
 }>()
 
 const actionStore = useActionStore()
-useMeasurementInputWatcher(coreIdUpdate)
+useMeasurementInputWatcher(updateActionRecord)
 
 const field = allFields.Values.bodyWeight
-const objectField = allFields.Values.measured
 const isVisible: Ref<boolean> = ref(false)
 
-function coreIdUpdate(measurementInput: MeasurementInput) {
+function updateActionRecord(measurementInput: MeasurementInput) {
   if (measurementInput === measurementInputs.Values['Body Weight (lbs)']) {
-    // Default the field if needed
-    if (actionStore.record?.[field]?.[objectField] === undefined) {
-      actionStore.record[field] = {
-        [objectField]: 0,
-      }
-    }
-
+    actionStore.record[field] = actionStore.record?.[field] ?? 0 // Defaulting
+    // Nulling out other fields
+    actionStore.record.percent = null
+    actionStore.record.inches = null
+    actionStore.record.lbs = null
     isVisible.value = true
   } else {
     isVisible.value = false
@@ -40,12 +37,12 @@ function inspectFormat(val: number) {
     <div class="text-weight-bold text-body1">Body Weight (lbs)</div>
 
     <div v-if="inspecting">
-      {{ inspectFormat(actionStore.record[field][objectField]) }}
+      {{ inspectFormat(actionStore.record[field]) }}
     </div>
 
     <QInput
       v-else
-      v-model.number="actionStore.record[field][objectField]"
+      v-model.number="actionStore.record[field]"
       :rules="[(val: number) => bodyWeightSchema.safeParse(val).success || 'Must greater then 0']"
       type="number"
       lazy-rules

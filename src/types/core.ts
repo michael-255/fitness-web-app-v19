@@ -35,8 +35,8 @@ export const exerciseInputs = z.enum([
   'Weight (lbs)',
   'Distance (miles)',
   'Duration (minutes)',
-  'Avg. Watts',
-  'Avg. Speed (mph)',
+  'Watts',
+  'Speed (mph)',
   'Calories Burned',
   'Resistence',
 ])
@@ -62,10 +62,11 @@ export const exerciseIdsSchema = z.array(idSchema).min(1) // Workout must have a
 export const exerciseResultIdsSchema = z.array(idSchema) // May not have any exercise results
 export const exerciseInputsSchema = z.array(exerciseInputs) // Can be empty for instructional exercises
 export const measurementInputSchema = measurementInputs
-export const bodyWeightSchema = z.number().min(1).max(1000)
 export const numberSchema = z.number().min(0).max(Number.MAX_SAFE_INTEGER)
-export const numbersSchema = z.array(z.number().min(0).max(Number.MAX_SAFE_INTEGER))
-export const percentSchema = z.number().min(0).max(100)
+export const bodyWeightSchema = z.number().min(1).max(1000).nullable()
+export const percentSchema = z.number().min(0).max(100).nullable()
+export const measureNumberSchema = numberSchema.nullable()
+export const setsSchema = z.array(z.number().min(0).max(Number.MAX_SAFE_INTEGER)).nullable()
 
 // Non-exported schemas
 const settingSchema = z.object({
@@ -124,24 +125,19 @@ export const workoutSchema = coreSchema.merge(
   })
 )
 
-export const setsObject = z.object({ sets: numbersSchema })
-
 // Exercise
-/**
- * This schema will allow an exercise result to have no data.
- */
 export const exerciseResultSchema = subSchema.merge(
   z.object({
     type: z.literal(recordTypes.Values.exercise),
     active: booleanSchema,
-    reps: setsObject.optional(),
-    weightLbs: setsObject.optional(),
-    distanceMiles: setsObject.optional(),
-    durationMinutes: setsObject.optional(),
-    watts: setsObject.optional(),
-    speedMph: setsObject.optional(),
-    calories: setsObject.optional(),
-    resistance: setsObject.optional(),
+    reps: setsSchema,
+    weightLbs: setsSchema,
+    distanceMiles: setsSchema,
+    durationMinutes: setsSchema,
+    watts: setsSchema,
+    speedMph: setsSchema,
+    calories: setsSchema,
+    resistence: setsSchema,
   })
 )
 
@@ -160,16 +156,13 @@ export const inchesObject = z.object({ measured: numberSchema })
 export const lbsObject = z.object({ measured: numberSchema })
 
 // Measurement
-/**
- * This schema will allow a measurement result to have no data.
- */
 export const measurementResultSchema = subSchema.merge(
   z.object({
     type: z.literal(recordTypes.Values.measurement),
-    bodyWeight: bodyWeightObject.optional(),
-    percent: percentObject.optional(),
-    inches: inchesObject.optional(),
-    lbs: lbsObject.optional(),
+    bodyWeight: bodyWeightSchema,
+    percent: percentSchema,
+    inches: measureNumberSchema,
+    lbs: measureNumberSchema,
   })
 )
 
@@ -192,7 +185,6 @@ const allSchema = settingSchema
   .merge(exerciseResultSchema)
   .merge(measurementSchema)
   .merge(measurementResultSchema)
-  .merge(setsObject)
   .merge(bodyWeightObject)
 
 export const allFields = allSchema.keyof()

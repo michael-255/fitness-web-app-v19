@@ -12,6 +12,7 @@ import {
   settingkeys,
   recordGroups,
   recordTypes,
+  type ExerciseResultRecord,
 } from '@/types/core'
 import DataSchema from '@/services/DataSchema'
 import ResponsivePage from '@/components/ResponsivePage.vue'
@@ -38,6 +39,23 @@ const dashboardRecords: Ref<{ [key in RecordType]: AnyCoreRecord[] }> = ref(
     return acc
   }, {} as { [key in RecordType]: AnyCoreRecord[] })
 )
+
+// TODO - REMOVE
+// const testRecord: ExerciseResultRecord = {
+//   type: recordTypes.Values.exercise,
+//   id: 'e126e959-1675-4b3b-866c-261e453d8aaa',
+//   timestamp: Date.now(),
+//   coreId: '50c1fc75-0975-45f8-8177-ff4988b00de2',
+//   note: 'This is a test record!',
+//   active: false,
+//   reps: {
+//     sets: [5, 5, 5],
+//   },
+//   weightLbs: {
+//     sets: [100, 100, 100],
+//   },
+// }
+// DB.addRecord(recordGroups.Values.sub, recordTypes.Values.exercise, testRecord)
 
 const settingsSubscription = DB.liveSettings().subscribe({
   next: (liveSettings) => {

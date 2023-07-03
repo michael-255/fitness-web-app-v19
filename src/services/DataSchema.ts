@@ -53,8 +53,8 @@ export default class DataSchema {
       fields: [
         defineAsyncComponent(() => import('@/components/fields/FieldId.vue')),
         defineAsyncComponent(() => import('@/components/fields/FieldCoreId.vue')),
-        defineAsyncComponent(() => import('@/components/fields/FieldTimestamp.vue')),
         defineAsyncComponent(() => import('@/components/fields/FieldExerciseResultIds.vue')),
+        defineAsyncComponent(() => import('@/components/fields/FieldTimestamp.vue')),
         defineAsyncComponent(() => import('@/components/fields/FieldFinishedTimestamp.vue')),
         defineAsyncComponent(() => import('@/components/fields/FieldNote.vue')),
         defineAsyncComponent(() => import('@/components/fields/FieldActive.vue')),
@@ -92,6 +92,7 @@ export default class DataSchema {
       fields: [
         defineAsyncComponent(() => import('@/components/fields/FieldId.vue')),
         defineAsyncComponent(() => import('@/components/fields/FieldCoreId.vue')),
+        defineAsyncComponent(() => import('@/components/fields/FieldSets.vue')),
         defineAsyncComponent(() => import('@/components/fields/FieldTimestamp.vue')),
         defineAsyncComponent(() => import('@/components/fields/FieldNote.vue')),
         defineAsyncComponent(() => import('@/components/fields/FieldActive.vue')),

@@ -41,9 +41,30 @@ onMounted(async () => {
       actionStore.record[allFields.Values.coreId] = routeCoreId
     }
 
-    if (routeGroup === recordGroups.Values.sub && routeType !== recordTypes.Values.measurement) {
-      // Active is only used by workouts and exercises
+    // Workout results
+    if (routeGroup === recordGroups.Values.sub && routeType === recordTypes.Values.workout) {
       actionStore.record[allFields.Values.active] = false
+    }
+
+    // Exercise results
+    if (routeGroup === recordGroups.Values.sub && routeType === recordTypes.Values.exercise) {
+      actionStore.record[allFields.Values.active] = false
+      actionStore.record[allFields.Values.reps] = null
+      actionStore.record[allFields.Values.weightLbs] = null
+      actionStore.record[allFields.Values.distanceMiles] = null
+      actionStore.record[allFields.Values.durationMinutes] = null
+      actionStore.record[allFields.Values.watts] = null
+      actionStore.record[allFields.Values.speedMph] = null
+      actionStore.record[allFields.Values.calories] = null
+      actionStore.record[allFields.Values.resistence] = null
+    }
+
+    // Measurement results
+    if (routeGroup === recordGroups.Values.sub && routeType === recordTypes.Values.measurement) {
+      actionStore.record[allFields.Values.bodyWeight] = null
+      actionStore.record[allFields.Values.percent] = null
+      actionStore.record[allFields.Values.inches] = null
+      actionStore.record[allFields.Values.lbs] = null
     }
   } catch (error) {
     log.error('Error loading create view', error)

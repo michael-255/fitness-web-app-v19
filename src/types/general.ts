@@ -18,6 +18,7 @@ export enum Limit {
   MAX_TEXT_AREA = 250,
   MAX_NAME = 50,
   MIN_NAME = 1,
+  MAX_SETS = 20,
 }
 
 export enum Duration {

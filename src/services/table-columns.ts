@@ -1,6 +1,12 @@
 import type { QTableColumn } from 'quasar'
 import { truncateString, getDisplayDate } from '@/utils/common'
-import { type LogLevel, type AnyField, allFields } from '@/types/core'
+import {
+  type LogLevel,
+  type AnyField,
+  allFields,
+  type MeasurementInput,
+  type ExerciseInput,
+} from '@/types/core'
 
 function makeStandardColumn(field: AnyField, required: boolean = false) {
   return {
@@ -31,41 +37,41 @@ function makeHiddenColumn(field: AnyField, name: string) {
 //
 
 // Access in QTable via props.cols[0]
-const hiddenAutoIdColumn: Readonly<QTableColumn> = {
+const hiddenAutoIdColumn: QTableColumn = {
   ...makeHiddenColumn(allFields.Values.autoId, 'hiddenAutoId'),
 }
 
-const autoIdColumn: Readonly<QTableColumn> = {
+const autoIdColumn: QTableColumn = {
   ...makeStandardColumn(allFields.Values.autoId),
   label: 'Auto Id',
   format: (val: number) => `${val}`,
 }
 
-const logLevelColumn: Readonly<QTableColumn> = {
+const logLevelColumn: QTableColumn = {
   ...makeStandardColumn(allFields.Values.logLevel),
   label: 'Log Level',
   format: (val: LogLevel) => `${val}`,
 }
 
-const labelColumn: Readonly<QTableColumn> = {
+const labelColumn: QTableColumn = {
   ...makeStandardColumn(allFields.Values.logLabel),
   label: 'Log Label',
   format: (val: string) => truncateString(val, 30, '...'),
 }
 
-const detailsColumn: Readonly<QTableColumn> = {
+const detailsColumn: QTableColumn = {
   ...makeStandardColumn(allFields.Values.details),
   label: 'Details',
   format: (val: any) => truncateString(JSON.stringify(val), 30, '...'),
 }
 
-const messageColumn: Readonly<QTableColumn> = {
+const messageColumn: QTableColumn = {
   ...makeStandardColumn(allFields.Values.errorMessage),
   label: 'Message',
   format: (val: string) => truncateString(val, 30, '...'),
 }
 
-const stackColumn: Readonly<QTableColumn> = {
+const stackColumn: QTableColumn = {
   ...makeStandardColumn(allFields.Values.stackTrace),
   label: 'Stack',
   format: (val: string) => truncateString(val, 30, '...'),
@@ -76,17 +82,17 @@ const stackColumn: Readonly<QTableColumn> = {
 //
 
 // Access in QTable via props.cols[0]
-const hiddenIdColumn: Readonly<QTableColumn> = {
+const hiddenIdColumn: QTableColumn = {
   ...makeHiddenColumn(allFields.Values.id, 'hiddenId'),
 }
 
-const idColumn: Readonly<QTableColumn> = {
+const idColumn: QTableColumn = {
   ...makeStandardColumn(allFields.Values.id),
   label: 'Id*',
   format: (val: string) => truncateString(val, 8, '*'),
 }
 
-const timestampColumn: Readonly<QTableColumn> = {
+const timestampColumn: QTableColumn = {
   ...makeStandardColumn(allFields.Values.timestamp),
   label: 'Created Date',
   format: (val: number) => getDisplayDate(val),
@@ -96,25 +102,25 @@ const timestampColumn: Readonly<QTableColumn> = {
 // CORE RECORDS
 //
 
-const nameColumn: Readonly<QTableColumn> = {
+const nameColumn: QTableColumn = {
   ...makeStandardColumn(allFields.Values.name),
   label: 'Name',
   format: (val: string) => truncateString(val, 30, '...'),
 }
 
-const descColumn: Readonly<QTableColumn> = {
+const descColumn: QTableColumn = {
   ...makeStandardColumn(allFields.Values.desc),
   label: 'Description',
   format: (val: string) => truncateString(val, 30, '...'),
 }
 
-const enabledColumn: Readonly<QTableColumn> = {
+const enabledColumn: QTableColumn = {
   ...makeStandardColumn(allFields.Values.enabled),
   label: 'Enabled',
   format: (val: boolean) => (val ? 'Yes' : 'No'),
 }
 
-const favoritedColumn: Readonly<QTableColumn> = {
+const favoritedColumn: QTableColumn = {
   ...makeStandardColumn(allFields.Values.favorited),
   label: 'Favorited',
   format: (val: boolean) => (val ? 'Yes' : 'No'),
@@ -124,13 +130,13 @@ const favoritedColumn: Readonly<QTableColumn> = {
 // SUB RECORDS
 //
 
-const coreIdColumn: Readonly<QTableColumn> = {
+const coreIdColumn: QTableColumn = {
   ...makeStandardColumn(allFields.Values.coreId),
   label: 'Core Id*',
   format: (val: string) => truncateString(val, 8, '*'),
 }
 
-const noteColumn: Readonly<QTableColumn> = {
+const noteColumn: QTableColumn = {
   ...makeStandardColumn(allFields.Values.note),
   label: 'Note',
   format: (val: string) => truncateString(val, 30, '...'),
@@ -140,10 +146,118 @@ const noteColumn: Readonly<QTableColumn> = {
 // RECORD SPECIFIC
 //
 
-const percentColumn: Readonly<QTableColumn> = {
+const exerciseIdsColumn: QTableColumn = {
+  ...makeStandardColumn(allFields.Values.exerciseIds),
+  label: 'Exercise Ids',
+  format: (val: string[]) => truncateString(JSON.stringify(val), 30, '...'),
+}
+
+const exerciseResultIdsColumn: QTableColumn = {
+  ...makeStandardColumn(allFields.Values.exerciseResultIds),
+  label: 'Exercise Result Ids',
+  format: (val: string[]) => truncateString(JSON.stringify(val), 30, '...'),
+}
+
+const finishedTimestampColumn: QTableColumn = {
+  ...makeStandardColumn(allFields.Values.finishedTimestamp),
+  label: 'Finished Date',
+  format: (val: number | undefined) => (val ? getDisplayDate(val) : ''),
+}
+
+const measurementInputColumn: QTableColumn = {
+  ...makeStandardColumn(allFields.Values.measurementInput),
+  label: 'Measurement Input',
+  format: (val: MeasurementInput) => `${val}`,
+}
+
+const exerciseInputsColumn: QTableColumn = {
+  ...makeStandardColumn(allFields.Values.exerciseInputs),
+  label: 'Exercise Inputs',
+  format: (val: ExerciseInput[]) => truncateString(JSON.stringify(val), 30, '...'),
+}
+
+const activeColumn: QTableColumn = {
+  ...makeStandardColumn(allFields.Values.active),
+  label: 'Active',
+  format: (val: boolean) => (val ? 'Yes' : 'No'),
+}
+
+const multipleSetsColumn: QTableColumn = {
+  ...makeStandardColumn(allFields.Values.multipleSets),
+  label: 'Multiple Sets',
+  format: (val: boolean) => (val ? 'Yes' : 'No'),
+}
+
+const bodyWeightColumn: QTableColumn = {
+  ...makeStandardColumn(allFields.Values.bodyWeight),
+  label: 'Body Weight',
+  format: (val: number | null) => (val ? `${val} lbs` : ''),
+}
+
+const percentColumn: QTableColumn = {
   ...makeStandardColumn(allFields.Values.percent),
   label: 'Percentage',
-  format: (val: number) => `${val}%`,
+  format: (val: number | null) => (val ? `${val}%` : ''),
+}
+
+const inchesColumn: QTableColumn = {
+  ...makeStandardColumn(allFields.Values.inches),
+  label: 'Inches',
+  format: (val: number | null) => (val ? `${val} in` : ''),
+}
+
+const lbsColumn: QTableColumn = {
+  ...makeStandardColumn(allFields.Values.lbs),
+  label: 'Lbs',
+  format: (val: number | null) => (val ? `${val} lbs` : ''),
+}
+
+const repsColumn: QTableColumn = {
+  ...makeStandardColumn(allFields.Values.reps),
+  label: 'Reps',
+  format: (val: number[] | null) => truncateString(JSON.stringify(val), 30, '...'),
+}
+
+const weightLbsColumn: QTableColumn = {
+  ...makeStandardColumn(allFields.Values.weightLbs),
+  label: 'Weight (lbs)',
+  format: (val: number[] | null) => truncateString(JSON.stringify(val), 30, '...'),
+}
+
+const distanceMilesColumn: QTableColumn = {
+  ...makeStandardColumn(allFields.Values.distanceMiles),
+  label: 'Distance (miles)',
+  format: (val: number[] | null) => truncateString(JSON.stringify(val), 30, '...'),
+}
+
+const durationMinutesColumn: QTableColumn = {
+  ...makeStandardColumn(allFields.Values.durationMinutes),
+  label: 'Duration (minutes)',
+  format: (val: number[] | null) => truncateString(JSON.stringify(val), 30, '...'),
+}
+
+const wattsColumn: QTableColumn = {
+  ...makeStandardColumn(allFields.Values.watts),
+  label: 'Watts',
+  format: (val: number[] | null) => truncateString(JSON.stringify(val), 30, '...'),
+}
+
+const speedMphColumn: QTableColumn = {
+  ...makeStandardColumn(allFields.Values.speedMph),
+  label: 'Speed (mph)',
+  format: (val: number[] | null) => truncateString(JSON.stringify(val), 30, '...'),
+}
+
+const caloriesColumn: QTableColumn = {
+  ...makeStandardColumn(allFields.Values.calories),
+  label: 'Calories Burned',
+  format: (val: number[] | null) => truncateString(JSON.stringify(val), 30, '...'),
+}
+
+const resistenceColumn: QTableColumn = {
+  ...makeStandardColumn(allFields.Values.resistence),
+  label: 'Resistence',
+  format: (val: number[] | null) => truncateString(JSON.stringify(val), 30, '...'),
 }
 
 //
@@ -175,11 +289,45 @@ export const logColumns: QTableColumn[] = [
   stackColumn,
 ]
 
-export const workoutColumns: QTableColumn[] = [hiddenIdColumn, ...coreColumns]
-export const workoutResultColumns: QTableColumn[] = [hiddenIdColumn, ...subColumns]
+export const workoutColumns: QTableColumn[] = [hiddenIdColumn, ...coreColumns, exerciseIdsColumn]
+export const workoutResultColumns: QTableColumn[] = [
+  hiddenIdColumn,
+  ...subColumns,
+  activeColumn,
+  exerciseResultIdsColumn,
+  finishedTimestampColumn,
+]
 
-export const exerciseColumns: QTableColumn[] = [hiddenIdColumn, ...coreColumns]
-export const exerciseResultColumns: QTableColumn[] = [hiddenIdColumn, ...subColumns]
+export const exerciseColumns: QTableColumn[] = [
+  hiddenIdColumn,
+  ...coreColumns,
+  multipleSetsColumn,
+  exerciseInputsColumn,
+]
+export const exerciseResultColumns: QTableColumn[] = [
+  hiddenIdColumn,
+  ...subColumns,
+  activeColumn,
+  repsColumn,
+  weightLbsColumn,
+  distanceMilesColumn,
+  durationMinutesColumn,
+  wattsColumn,
+  speedMphColumn,
+  caloriesColumn,
+  resistenceColumn,
+]
 
-export const measurementColumns: QTableColumn[] = [hiddenIdColumn, ...coreColumns]
-export const measurementResultColumns: QTableColumn[] = [hiddenIdColumn, ...subColumns]
+export const measurementColumns: QTableColumn[] = [
+  hiddenIdColumn,
+  ...coreColumns,
+  measurementInputColumn,
+]
+export const measurementResultColumns: QTableColumn[] = [
+  hiddenIdColumn,
+  ...subColumns,
+  bodyWeightColumn,
+  percentColumn,
+  inchesColumn,
+  lbsColumn,
+]
