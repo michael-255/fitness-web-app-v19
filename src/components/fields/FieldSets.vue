@@ -40,7 +40,7 @@ function updateData(inputs: ExerciseInput[]) {
 
 function initSets(selectedInput: ExerciseInput, field: AnyField) {
   if (currentExerciseInputs.value.includes(selectedInput)) {
-    actionStore.record[field] = actionStore.record?.[field] ?? [0] // Empty sets array
+    actionStore.record[field] = [undefined] // Empty sets array - actionStore.record?.[field] ??
     setIndexes.value = Array(actionStore.record[field].length).fill(null)
   } else {
     actionStore.record[field] = null // Nulling out other fields
@@ -72,7 +72,7 @@ function removeSet() {
 function addInputSets(selectedInput: ExerciseInput, field: AnyField) {
   if (currentExerciseInputs.value.includes(selectedInput) && hasMultipleSets.value) {
     if (actionStore.record?.[field] && actionStore.record?.[field].length < Limit.MAX_SETS) {
-      actionStore.record[field].push(0) // Add default value
+      actionStore.record[field].push(undefined) // Add default value
       setIndexes.value = Array(actionStore.record[field].length).fill(null)
     }
   }

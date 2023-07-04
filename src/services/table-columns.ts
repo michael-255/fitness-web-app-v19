@@ -149,13 +149,13 @@ const noteColumn: QTableColumn = {
 const exerciseIdsColumn: QTableColumn = {
   ...makeStandardColumn(allFields.Values.exerciseIds),
   label: 'Exercise Ids',
-  format: (val: string[]) => truncateString(JSON.stringify(val), 30, '...'),
+  format: (val: string[]) => truncateString(val ? val?.join(', ') : '', 30, '...'),
 }
 
 const exerciseResultIdsColumn: QTableColumn = {
   ...makeStandardColumn(allFields.Values.exerciseResultIds),
   label: 'Exercise Result Ids',
-  format: (val: string[]) => truncateString(JSON.stringify(val), 30, '...'),
+  format: (val: string[]) => truncateString(val ? val?.join(', ') : '', 30, '...'),
 }
 
 const finishedTimestampColumn: QTableColumn = {
@@ -173,7 +173,7 @@ const measurementInputColumn: QTableColumn = {
 const exerciseInputsColumn: QTableColumn = {
   ...makeStandardColumn(allFields.Values.exerciseInputs),
   label: 'Exercise Inputs',
-  format: (val: ExerciseInput[]) => truncateString(JSON.stringify(val), 30, '...'),
+  format: (val: ExerciseInput[]) => truncateString(val ? val?.join(', ') : '', 30, '...'),
 }
 
 const activeColumn: QTableColumn = {
@@ -215,49 +215,49 @@ const lbsColumn: QTableColumn = {
 const repsColumn: QTableColumn = {
   ...makeStandardColumn(allFields.Values.reps),
   label: 'Reps',
-  format: (val: number[] | null) => truncateString(JSON.stringify(val), 30, '...'),
+  format: (val: number[] | null) => truncateString(val ? val?.join(', ') : '', 30, '...'),
 }
 
 const weightLbsColumn: QTableColumn = {
   ...makeStandardColumn(allFields.Values.weightLbs),
   label: 'Weight (lbs)',
-  format: (val: number[] | null) => truncateString(JSON.stringify(val), 30, '...'),
+  format: (val: number[] | null) => truncateString(val ? val?.join(', ') : '', 30, '...'),
 }
 
 const distanceMilesColumn: QTableColumn = {
   ...makeStandardColumn(allFields.Values.distanceMiles),
   label: 'Distance (miles)',
-  format: (val: number[] | null) => truncateString(JSON.stringify(val), 30, '...'),
+  format: (val: number[] | null) => truncateString(val ? val?.join(', ') : '', 30, '...'),
 }
 
 const durationMinutesColumn: QTableColumn = {
   ...makeStandardColumn(allFields.Values.durationMinutes),
   label: 'Duration (minutes)',
-  format: (val: number[] | null) => truncateString(JSON.stringify(val), 30, '...'),
+  format: (val: number[] | null) => truncateString(val ? val?.join(', ') : '', 30, '...'),
 }
 
 const wattsColumn: QTableColumn = {
   ...makeStandardColumn(allFields.Values.watts),
   label: 'Watts',
-  format: (val: number[] | null) => truncateString(JSON.stringify(val), 30, '...'),
+  format: (val: number[] | null) => truncateString(val ? val?.join(', ') : '', 30, '...'),
 }
 
 const speedMphColumn: QTableColumn = {
   ...makeStandardColumn(allFields.Values.speedMph),
   label: 'Speed (mph)',
-  format: (val: number[] | null) => truncateString(JSON.stringify(val), 30, '...'),
+  format: (val: number[] | null) => truncateString(val ? val?.join(', ') : '', 30, '...'),
 }
 
 const caloriesColumn: QTableColumn = {
   ...makeStandardColumn(allFields.Values.calories),
   label: 'Calories Burned',
-  format: (val: number[] | null) => truncateString(JSON.stringify(val), 30, '...'),
+  format: (val: number[] | null) => truncateString(val ? val?.join(', ') : '', 30, '...'),
 }
 
 const resistenceColumn: QTableColumn = {
   ...makeStandardColumn(allFields.Values.resistence),
   label: 'Resistence',
-  format: (val: number[] | null) => truncateString(JSON.stringify(val), 30, '...'),
+  format: (val: number[] | null) => truncateString(val ? val?.join(', ') : '', 30, '...'),
 }
 
 //

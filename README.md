@@ -4,7 +4,25 @@ Fitness Tracker is for tracking workouts, exercises, and measurements as well as
 
 ## TODO
 
-- [ ] Exercise fields with `sets`
+_EXERCISE SETS:_
+
+- Try using the `useEventBus` from `VueUse`
+- Components like `FieldCoreId` can trigger listeners to check on:
+  - `All exercise set fields` on new `coreId`
+  - `multipleSets` on new `coreId`
+  - `exerciseInputs` on new `coreId`
+  - `measurementInput` on new `coreId`
+- If it works well, consider replacing `useChartTimeWatcher` with it
+
+_ACTIVE WORKOUT:_
+
+- New route for active workout
+- Footer timer
+- Begin button on workouts
+
+_DESIGN:_
+
+- Get the cards to look better on larger displays
 
 ## Table of Contents
 
