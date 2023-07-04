@@ -6,12 +6,11 @@ Fitness Tracker is for tracking workouts, exercises, and measurements as well as
 
 _ACTIVE WORKOUT:_
 
-- New route for active workout
 - Footer timer
-- Begin button on workouts
 
 _MISC:_
 
+- Clearable button uses `null` instead of `undefined` for value
 - Validate that checking for value change on chart time watcher didn't break it
 
 _DESIGN:_

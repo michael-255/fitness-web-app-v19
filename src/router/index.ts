@@ -14,7 +14,7 @@ const router = createRouter({
     {
       path: '/active-workout/:id',
       name: routeNames.Values.ActiveWorkout,
-      meta: { layout: 'MenuLayout' },
+      meta: { layout: 'ActiveWorkoutLayout' },
       component: () => import('../views/ActiveWorkoutView.vue'),
       beforeEnter: (to, _, next) => {
         if (idSchema.safeParse(to.params.id).success) {

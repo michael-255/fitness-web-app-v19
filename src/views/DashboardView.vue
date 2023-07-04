@@ -124,9 +124,7 @@ async function onCharts(type: RecordType, id: string) {
     <WelcomeOverlay />
 
     <section class="q-mb-md">
-      <p class="text-h6 q-mb-sm text-center">What would you like to work on?</p>
-
-      <p class="text-center">
+      <p class="text-center text-body1">
         {{ dashboardOptions.find((o) => o.value === uiStore.dashboardSelection)?.label }}
       </p>
 
@@ -149,7 +147,7 @@ async function onCharts(type: RecordType, id: string) {
       <div
         v-for="(record, i) in dashboardRecords[uiStore.dashboardSelection]"
         :key="i"
-        class="col-md-12 col-lg-5"
+        class="col-xs-12 col-sm-12 col-md-12 col-lg-5"
       >
         <QCard class="column full-height">
           <QCardSection class="col">
