@@ -14,6 +14,7 @@ export default function useRoutables(): {
   routeCoreId?: string
   routeType?: RecordType
   routeGroup?: RecordGroup
+  goToActiveWorkout: (id: string) => void
   goToLogsData: () => void
   goToRecordsData: (group: RecordGroup, type: RecordType) => void
   goToCreate: (group: RecordGroup, type: RecordType, coreId?: string) => void
@@ -35,6 +36,17 @@ export default function useRoutables(): {
   const routeCoreId = idSchema.safeParse(coreId).success ? coreId : undefined
   const routeType = recordTypes.safeParse(type).success ? (type as RecordType) : undefined
   const routeGroup = recordGroups.safeParse(group).success ? (group as RecordGroup) : undefined
+
+  function goToActiveWorkout(id: string) {
+    try {
+      router.push({
+        name: routeNames.Values.ActiveWorkout,
+        params: { id },
+      })
+    } catch (error) {
+      log.error('Error accessing active workout route', error)
+    }
+  }
 
   function goToLogsData() {
     try {
@@ -99,6 +111,7 @@ export default function useRoutables(): {
     routeCoreId,
     routeType,
     routeGroup,
+    goToActiveWorkout,
     goToLogsData,
     goToRecordsData,
     goToCreate,

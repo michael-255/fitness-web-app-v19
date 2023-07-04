@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 export const routeNames = z.enum([
   'Dashboard',
+  'ActiveWorkout',
   'DataLogs',
   'DataRecords',
   'Create',
@@ -66,6 +67,7 @@ export enum Icon {
   CHARTS = 'bar_chart',
   RECORDS = 'storage',
   WORKOUTS = 'assignment',
+  ACTIVE_WORKOUT = 'directions_run',
   EXERCISES = 'fitness_center',
   MEASUREMENTS = 'straighten',
   // Misc

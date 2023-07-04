@@ -26,7 +26,7 @@ useMeta({ title: `${AppName} - Dashboard` })
 
 const uiStore = useUIStore()
 const { log } = useLogger()
-const { goToCreate, goToEdit } = useRoutables()
+const { goToActiveWorkout, goToCreate, goToEdit } = useRoutables()
 const { confirmDialog, dismissDialog, inspectDialog, chartsDialog } = useDialogs()
 
 const showDescription: Ref<boolean> = ref(false)
@@ -145,109 +145,128 @@ async function onCharts(type: RecordType, id: string) {
     </section>
 
     <!-- Dashboard Cards -->
-    <div v-for="(record, i) in dashboardRecords[uiStore.dashboardSelection]" :key="i">
-      <QCard class="q-mb-md">
-        <QCardSection>
-          <p class="text-h6">{{ record.name }}</p>
-          <p v-if="showDescription">{{ record.desc }}</p>
+    <div class="row justify-center q-gutter-md">
+      <div
+        v-for="(record, i) in dashboardRecords[uiStore.dashboardSelection]"
+        :key="i"
+        class="col-md-12 col-lg-5"
+      >
+        <QCard class="column full-height">
+          <QCardSection class="col">
+            <p class="text-h6">{{ record.name }}</p>
+            <p v-if="showDescription">{{ record.desc }}</p>
 
-          <!-- Top right corner buttons on card -->
-          <div class="absolute-top-right q-ma-xs">
-            <!-- Note Icon -->
-            <QIcon
-              v-show="record?.lastSub?.note"
-              :name="Icon.NOTE"
-              color="primary"
-              size="md"
-              class="cursor-pointer q-mr-xs"
-              @click="viewLastNote(record?.lastSub?.note || '')"
-            />
+            <!-- Top right corner buttons on card -->
+            <div class="absolute-top-right q-ma-xs">
+              <!-- Note Icon -->
+              <QIcon
+                v-show="record?.lastSub?.note"
+                :name="Icon.NOTE"
+                color="primary"
+                size="md"
+                class="cursor-pointer q-mr-xs"
+                @click="viewLastNote(record?.lastSub?.note || '')"
+              />
 
-            <!-- Favorite Star Icon -->
-            <QIcon
-              v-show="record.favorited"
-              :name="Icon.FAVORITE_ON"
-              color="warning"
-              size="md"
-              class="cursor-pointer"
-              @click="onUnfavorite(record.id, record.name)"
-            />
-            <QIcon
-              v-show="!record.favorited"
-              :name="Icon.FAVORITE_OFF"
-              color="grey"
-              size="md"
-              class="cursor-pointer"
-              @click="onFavorite(record.id, record.name)"
-            />
+              <!-- Favorite Star Icon -->
+              <QIcon
+                v-show="record.favorited"
+                :name="Icon.FAVORITE_ON"
+                color="warning"
+                size="md"
+                class="cursor-pointer"
+                @click="onUnfavorite(record.id, record.name)"
+              />
+              <QIcon
+                v-show="!record.favorited"
+                :name="Icon.FAVORITE_OFF"
+                color="grey"
+                size="md"
+                class="cursor-pointer"
+                @click="onFavorite(record.id, record.name)"
+              />
 
-            <!-- Vertical Actions Menu -->
-            <QBtn round flat :icon="Icon.MENU_VERTICAL">
-              <QMenu
-                auto-close
-                anchor="top right"
-                transition-show="flip-right"
-                transition-hide="flip-left"
-              >
-                <QList>
-                  <QItem clickable @click="onCharts(record.type, record.id)">
-                    <QItemSection avatar>
-                      <QIcon color="accent" :name="Icon.CHARTS" />
-                    </QItemSection>
-                    <QItemSection>Charts</QItemSection>
-                  </QItem>
+              <!-- Vertical Actions Menu -->
+              <QBtn round flat :icon="Icon.MENU_VERTICAL">
+                <QMenu
+                  auto-close
+                  anchor="top right"
+                  transition-show="flip-right"
+                  transition-hide="flip-left"
+                >
+                  <QList>
+                    <QItem clickable @click="onCharts(record.type, record.id)">
+                      <QItemSection avatar>
+                        <QIcon color="accent" :name="Icon.CHARTS" />
+                      </QItemSection>
+                      <QItemSection>Charts</QItemSection>
+                    </QItem>
 
-                  <QItem clickable @click="onInspect(record.type, record.id)">
-                    <QItemSection avatar>
-                      <QIcon color="primary" :name="Icon.INSPECT" />
-                    </QItemSection>
-                    <QItemSection>Inspect</QItemSection>
-                  </QItem>
+                    <QItem clickable @click="onInspect(record.type, record.id)">
+                      <QItemSection avatar>
+                        <QIcon color="primary" :name="Icon.INSPECT" />
+                      </QItemSection>
+                      <QItemSection>Inspect</QItemSection>
+                    </QItem>
 
-                  <QItem
-                    clickable
-                    @click="goToEdit(recordGroups.Values.core, record?.type, record?.id)"
-                  >
-                    <QItemSection avatar>
-                      <QIcon color="warning" :name="Icon.EDIT" />
-                    </QItemSection>
-                    <QItemSection>Edit</QItemSection>
-                  </QItem>
-                </QList>
-              </QMenu>
-            </QBtn>
-          </div>
-
-          <div class="q-mb-md">
-            <!-- Time Ago Display -->
-            <QBadge rounded color="secondary" class="q-py-none">
-              <QIcon :name="Icon.PREVIOUS" />
-              <span class="text-caption q-ml-xs">
-                {{ useTimeAgo(record?.lastSub?.timestamp || '').value || 'No previous records' }}
-              </span>
-            </QBadge>
-
-            <!-- Previous Record Created Date -->
-            <div v-if="record?.lastSub?.timestamp">
-              <QIcon :name="Icon.CALENDAR_CHECK" />
-              <span class="text-caption q-ml-xs">
-                {{ getDisplayDate(record?.lastSub?.timestamp) }}
-              </span>
+                    <QItem
+                      clickable
+                      @click="goToEdit(recordGroups.Values.core, record?.type, record?.id)"
+                    >
+                      <QItemSection avatar>
+                        <QIcon color="warning" :name="Icon.EDIT" />
+                      </QItemSection>
+                      <QItemSection>Edit</QItemSection>
+                    </QItem>
+                  </QList>
+                </QMenu>
+              </QBtn>
             </div>
-          </div>
 
-          <QBtn
-            label="Add Sub Record"
-            color="primary"
-            :icon="Icon.ADD_NOTE"
-            @click="goToCreate(recordGroups.Values.sub, record?.type, record?.id)"
-          />
-        </QCardSection>
-      </QCard>
+            <div class="q-mb-md">
+              <!-- Time Ago Display -->
+              <QBadge rounded color="secondary" class="q-py-none">
+                <QIcon :name="Icon.PREVIOUS" />
+                <span class="text-caption q-ml-xs">
+                  {{ useTimeAgo(record?.lastSub?.timestamp || '').value || 'No previous records' }}
+                </span>
+              </QBadge>
+
+              <!-- Previous Record Created Date -->
+              <div v-if="record?.lastSub?.timestamp">
+                <QIcon :name="Icon.CALENDAR_CHECK" />
+                <span class="text-caption q-ml-xs">
+                  {{ getDisplayDate(record?.lastSub?.timestamp) }}
+                </span>
+              </div>
+            </div>
+          </QCardSection>
+
+          <QCardActions clas="col-auto">
+            <QBtn
+              v-if="record?.type === recordTypes.Values.workout"
+              label="Begin Workout"
+              color="primary"
+              :icon="Icon.ACTIVE_WORKOUT"
+              class="full-width"
+              @click="goToActiveWorkout(record?.id)"
+            />
+
+            <QBtn
+              v-else
+              label="Add Sub Record"
+              color="primary"
+              class="full-width"
+              :icon="Icon.ADD_NOTE"
+              @click="goToCreate(recordGroups.Values.sub, record?.type, record?.id)"
+            />
+          </QCardActions>
+        </QCard>
+      </div>
     </div>
 
     <!-- Record Count & Create -->
-    <div class="row justify-center">
+    <div class="row justify-center q-mt-md">
       <QIcon class="col-12 text-center" name="menu_open" size="80px" color="grey" />
 
       <p class="col-12 text-grey text-center">

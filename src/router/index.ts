@@ -12,6 +12,19 @@ const router = createRouter({
       component: () => import('../views/DashboardView.vue'),
     },
     {
+      path: '/active-workout/:id',
+      name: routeNames.Values.ActiveWorkout,
+      meta: { layout: 'MenuLayout' },
+      component: () => import('../views/ActiveWorkoutView.vue'),
+      beforeEnter: (to, _, next) => {
+        if (idSchema.safeParse(to.params.id).success) {
+          next()
+        } else {
+          next({ name: routeNames.Values.NotFound })
+        }
+      },
+    },
+    {
       path: '/logs-data',
       name: routeNames.Values.DataLogs,
       meta: { layout: 'MenuLayout' },
@@ -66,7 +79,6 @@ const router = createRouter({
         }
       },
     },
-
     {
       path: '/settings',
       name: routeNames.Values.Settings,
