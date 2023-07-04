@@ -1,23 +1,30 @@
 <script setup lang="ts">
 import { type Ref, ref } from 'vue'
-import { allFields, bodyWeightSchema, measurementInputs, type MeasurementInput } from '@/types/core'
+import {
+  type MeasurementInput,
+  type AnyCoreRecord,
+  allFields,
+  bodyWeightSchema,
+  measurementInputs,
+} from '@/types/core'
 import useActionStore from '@/stores/action'
-import useMeasurementInputWatcher from '@/composables/useMeasurementInputWatcher'
+import useCoreIdWatcher from '@/composables/useCoreIdWatcher'
 
 defineProps<{
   inspecting: boolean
 }>()
 
 const actionStore = useActionStore()
-useMeasurementInputWatcher(updateActionRecord)
 
 const field = allFields.Values.bodyWeight
 const isVisible: Ref<boolean> = ref(false)
 
-function updateActionRecord(measurementInput: MeasurementInput) {
+useCoreIdWatcher((coreRecord: AnyCoreRecord) => {
+  const measurementInput = coreRecord?.measurementInput as MeasurementInput | undefined
+
   if (measurementInput === measurementInputs.Values['Body Weight (lbs)']) {
     actionStore.record[field] = actionStore.record?.[field] ?? 0 // Defaulting
-    // Nulling out other fields
+    // Nulling out other measurement data fields
     actionStore.record.percent = null
     actionStore.record.inches = null
     actionStore.record.lbs = null
@@ -25,7 +32,7 @@ function updateActionRecord(measurementInput: MeasurementInput) {
   } else {
     isVisible.value = false
   }
-}
+})
 
 function inspectFormat(val: number) {
   return val ? `${val} lbs` : '-'

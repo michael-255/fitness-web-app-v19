@@ -8,14 +8,15 @@ export default function useChartTimeWatcher(updateFunc: () => Promise<void>) {
   const { log } = useLogger()
 
   /**
-   * Watching uiStore chart time.
-   * The provided function is called when the property changes.
+   * Watching ui store chart time for changes.
    */
   watch(
     () => uiStore.chartTime as keyof typeof Duration,
-    async () => {
+    async (newValue, oldValue) => {
       try {
-        await updateFunc()
+        if (newValue !== oldValue) {
+          await updateFunc()
+        }
       } catch (error) {
         log.error('Error with chart time watcher', error)
       }

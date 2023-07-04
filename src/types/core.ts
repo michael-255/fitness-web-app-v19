@@ -1,7 +1,14 @@
 import { Limit, Icon } from '@/types//general'
 import type { QTableColumn } from 'quasar'
 import type { defineAsyncComponent } from 'vue'
+import type { EventBusKey } from '@vueuse/core'
 import { z } from 'zod'
+
+//
+// EVENT BUS KEYS
+//
+
+export const coreIdBusKey: EventBusKey<string> = Symbol('core-id-changed-event')
 
 //
 // DATABASE TYPES

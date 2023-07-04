@@ -57,6 +57,7 @@ export enum Icon {
   CREATE = 'add_circle',
   NEW = 'add_box',
   CLEAR = 'delete_sweep',
+  REMOVE_LAST = 'backspace',
   // Pages
   DONATE = 'redeem',
   DASHBOARD = 'dashboard',
