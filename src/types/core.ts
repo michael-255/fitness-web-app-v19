@@ -129,6 +129,7 @@ export const workoutSchema = coreSchema.merge(
     type: z.literal(recordTypes.Values.workout),
     lastSub: workoutResultSchema.optional(),
     exerciseIds: exerciseIdsSchema,
+    active: booleanSchema,
   })
 )
 
@@ -154,6 +155,7 @@ export const exerciseSchema = coreSchema.merge(
     lastSub: exerciseResultSchema.optional(),
     multipleSets: booleanSchema,
     exerciseInputs: exerciseInputsSchema,
+    active: booleanSchema,
   })
 )
 

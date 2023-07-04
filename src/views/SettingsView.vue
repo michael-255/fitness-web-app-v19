@@ -9,8 +9,6 @@ import {
   type Setting,
   type BackupData,
   type SettingKey,
-  type RecordGroup,
-  type RecordType,
   settingkeys,
   recordGroups,
   heightSchema,
@@ -46,10 +44,8 @@ const logDurationIndex: Ref<number> = ref(0)
 const importFile: Ref<any> = ref(null)
 const accessOptions = ref(allOptions)
 const accessModel = ref(accessOptions.value[0])
-const deleteOptions = ref(allOptions)
-const deleteModel = ref(deleteOptions.value[0])
 const logDurationKeys = [
-  // Duration[Duration.Now], // For testing log purges
+  // Duration[Duration.Now], // Uncomment to test log purges
   Duration[Duration['One Week']],
   Duration[Duration['One Month']],
   Duration[Duration['Three Months']],
@@ -220,23 +216,6 @@ async function onDeleteLogs() {
         log.info('Successfully deleted logs data')
       } catch (error) {
         log.error(`Error deleting Logs`, error)
-      }
-    }
-  )
-}
-
-async function onDeleteBy(label: string, optionValue: { group: RecordGroup; type: RecordType }) {
-  confirmDialog(
-    `Delete ${label}`,
-    `Permanetly delete all ${label} from the database?`,
-    Icon.CLEAR,
-    'negative',
-    async () => {
-      try {
-        await DB.clearRecordsByType(optionValue.group, optionValue.type)
-        log.info('Successfully deleted selected data')
-      } catch (error) {
-        log.error(`Error deleting ${label}`, error)
       }
     }
   )
@@ -520,21 +499,7 @@ async function updateHeight() {
       </div>
 
       <div class="q-mb-md">
-        <p>Select a data type and permanently delete all of its records.</p>
-        <QSelect v-model="deleteModel" outlined dense label="Record Type" :options="deleteOptions">
-          <template v-slot:before>
-            <QBtn
-              :disable="!deleteModel"
-              label="Delete Data"
-              color="negative"
-              @click="onDeleteBy(deleteModel.label, deleteModel.value)"
-            />
-          </template>
-        </QSelect>
-      </div>
-
-      <div class="q-mb-md">
-        <p>Permanently delete all data records from the database.</p>
+        <p>Permanently delete all data from the database.</p>
         <QBtn label="Delete All Data" color="negative" @click="onDeleteAll()" />
       </div>
 

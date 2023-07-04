@@ -2,7 +2,7 @@
 import { useTimeAgo } from '@vueuse/core'
 import { getDisplayDate } from '@/utils/common'
 import { Icon } from '@/types/general'
-import { useMeta } from 'quasar'
+import { uid, useMeta } from 'quasar'
 import { ref, type Ref, onUnmounted } from 'vue'
 import { AppName } from '@/constants/global'
 import { getRecordsCountDisplay } from '@/utils/common'
@@ -12,6 +12,9 @@ import {
   settingkeys,
   recordGroups,
   recordTypes,
+  type WorkoutResultRecord,
+  type WorkoutRecord,
+  type ExerciseResultRecord,
 } from '@/types/core'
 import DataSchema from '@/services/DataSchema'
 import ResponsivePage from '@/components/ResponsivePage.vue'
@@ -106,6 +109,7 @@ async function onInspect(type: RecordType, id: string) {
   const title = DataSchema.getLabel(recordGroups.Values.core, type, 'singular') as string
   const record = (await DB.getRecord(recordGroups.Values.core, id)) as AnyCoreRecord
   const fields = DataSchema.getFields(recordGroups.Values.core, type)
+  console.log('record', record)
   inspectDialog(title, record, fields)
 }
 
@@ -116,6 +120,111 @@ async function onCharts(type: RecordType, id: string) {
     'singular'
   ) as string
   chartsDialog(title, type, id)
+}
+
+async function onDiscardActiveWorkout(name: string) {
+  confirmDialog(
+    'Discard Active Workout',
+    `Are you sure you want to discard the active workout ${name}?`,
+    Icon.DELETE,
+    'negative',
+    async () => {
+      try {
+        await DB.discardActiveRecords()
+        log.info('Active workout discarded', { name })
+      } catch (error) {
+        log.error('Failed to discard active workout', error)
+      }
+    }
+  )
+}
+
+async function onBeginWorkout(record: WorkoutRecord) {
+  // Need to see if an active workout already exists
+  const activeCount = (await DB.getActiveRecords()).count
+
+  if (activeCount > 0) {
+    confirmDialog(
+      'Replace Active Workout',
+      `You already have an active workout. Do you want to replace it with ${record.name}?`,
+      Icon.WARN,
+      'warning',
+      async () => {
+        try {
+          await DB.discardActiveRecords()
+          await beginActiveWorkout(record)
+          log.info('Replaced active workout', { replacedBy: record.name })
+        } catch (error) {
+          log.error('Failed to replace active workout', error)
+        }
+      }
+    )
+  } else {
+    await beginActiveWorkout(record)
+  }
+}
+
+async function beginActiveWorkout(record: WorkoutRecord) {
+  // TODO - Create Exercise Result Records
+
+  console.log('record', record.exerciseIds)
+
+  const newExerciseResults: ExerciseResultRecord[] = record.exerciseIds.map((exerciseId) => {
+    return {
+      active: true,
+      id: uid(),
+      type: recordTypes.Values.exercise,
+      timestamp: Date.now(),
+      coreId: exerciseId,
+      note: '',
+      reps: null,
+      weightLbs: null,
+      distanceMiles: null,
+      durationMinutes: null,
+      watts: null,
+      speedMph: null,
+      calories: null,
+      resistence: null,
+    }
+  })
+
+  const newWorkoutResult: WorkoutResultRecord = {
+    active: true,
+    id: uid(),
+    type: recordTypes.Values.workout,
+    timestamp: Date.now(),
+    coreId: record.id,
+    note: '',
+    exerciseResultIds: newExerciseResults.map((r) => r.id),
+  }
+
+  // Setting core workout to active
+  record.active = true
+  await DB.updateRecord(recordGroups.Values.core, recordTypes.Values.workout, record.id, record)
+
+  // Setting core exercises to active
+  await Promise.all(
+    newExerciseResults.map(async (r) => {
+      const exercise = (await DB.getRecord(recordGroups.Values.core, r.coreId)) as AnyCoreRecord
+      exercise.active = true
+      return await DB.updateRecord(
+        recordGroups.Values.core,
+        recordTypes.Values.exercise,
+        exercise.id,
+        exercise
+      )
+    })
+  )
+
+  // Add new result records to database
+  await DB.addRecord(recordGroups.Values.sub, recordTypes.Values.workout, newWorkoutResult)
+  await Promise.all(
+    newExerciseResults.map((r) =>
+      DB.addRecord(recordGroups.Values.sub, recordTypes.Values.exercise, r)
+    )
+  )
+
+  goToActiveWorkout(record.id)
 }
 </script>
 
@@ -156,7 +265,7 @@ async function onCharts(type: RecordType, id: string) {
 
             <!-- Top right corner buttons on card -->
             <div class="absolute-top-right q-ma-xs">
-              <!-- Note Icon -->
+              <!-- Note -->
               <QIcon
                 v-show="record?.lastSub?.note"
                 :name="Icon.NOTE"
@@ -166,23 +275,35 @@ async function onCharts(type: RecordType, id: string) {
                 @click="viewLastNote(record?.lastSub?.note || '')"
               />
 
-              <!-- Favorite Star Icon -->
-              <QIcon
-                v-show="record.favorited"
-                :name="Icon.FAVORITE_ON"
-                color="warning"
-                size="md"
-                class="cursor-pointer"
-                @click="onUnfavorite(record.id, record.name)"
+              <!-- Discard Active Workout-->
+              <QBtn
+                v-if="record?.type === recordTypes.Values.workout && record?.active"
+                round
+                flat
+                color="negative"
+                :icon="Icon.DELETE"
+                @click="onDiscardActiveWorkout(record?.name)"
               />
-              <QIcon
-                v-show="!record.favorited"
-                :name="Icon.FAVORITE_OFF"
-                color="grey"
-                size="md"
-                class="cursor-pointer"
-                @click="onFavorite(record.id, record.name)"
-              />
+
+              <!-- Favorite Star -->
+              <span v-else>
+                <QIcon
+                  v-show="record.favorited"
+                  :name="Icon.FAVORITE_ON"
+                  color="warning"
+                  size="md"
+                  class="cursor-pointer"
+                  @click="onUnfavorite(record.id, record.name)"
+                />
+                <QIcon
+                  v-show="!record.favorited"
+                  :name="Icon.FAVORITE_OFF"
+                  color="grey"
+                  size="md"
+                  class="cursor-pointer"
+                  @click="onFavorite(record.id, record.name)"
+                />
+              </span>
 
               <!-- Vertical Actions Menu -->
               <QBtn round flat :icon="Icon.MENU_VERTICAL">
@@ -242,12 +363,21 @@ async function onCharts(type: RecordType, id: string) {
 
           <QCardActions clas="col-auto">
             <QBtn
-              v-if="record?.type === recordTypes.Values.workout"
+              v-if="record?.type === recordTypes.Values.workout && record?.active"
+              label="Resume Workout"
+              color="positive"
+              class="full-width"
+              :icon="Icon.WORKOUT_RESUME"
+              @click="goToActiveWorkout(record?.id)"
+            />
+
+            <QBtn
+              v-else-if="record?.type === recordTypes.Values.workout && !record?.active"
               label="Begin Workout"
               color="primary"
-              :icon="Icon.ACTIVE_WORKOUT"
+              :icon="Icon.WORKOUT_BEGIN"
               class="full-width"
-              @click="goToActiveWorkout(record?.id)"
+              @click="onBeginWorkout(record as WorkoutRecord)"
             />
 
             <QBtn

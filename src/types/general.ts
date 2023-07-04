@@ -67,10 +67,11 @@ export enum Icon {
   CHARTS = 'bar_chart',
   RECORDS = 'storage',
   WORKOUTS = 'assignment',
-  ACTIVE_WORKOUT = 'directions_run',
+  WORKOUT_BEGIN = 'directions_run',
   EXERCISES = 'fitness_center',
   MEASUREMENTS = 'straighten',
   // Misc
+  WORKOUT_RESUME = 'replay',
   NOT_FOUND = 'question_mark',
   LOCK = 'lock',
   NOTE = 'sticky_note_2',

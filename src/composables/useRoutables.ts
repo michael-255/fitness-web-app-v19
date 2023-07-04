@@ -37,11 +37,10 @@ export default function useRoutables(): {
   const routeType = recordTypes.safeParse(type).success ? (type as RecordType) : undefined
   const routeGroup = recordGroups.safeParse(group).success ? (group as RecordGroup) : undefined
 
-  function goToActiveWorkout(id: string) {
+  function goToActiveWorkout() {
     try {
       router.push({
         name: routeNames.Values.ActiveWorkout,
-        params: { id },
       })
     } catch (error) {
       log.error('Error accessing active workout route', error)

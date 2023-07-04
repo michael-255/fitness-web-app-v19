@@ -169,7 +169,10 @@ class Database extends Dexie {
 
   liveCoreRecords(type: RecordType) {
     return liveQuery(() =>
-      this.CoreRecords.where(allFields.Values.type).equals(type).sortBy(allFields.Values.name)
+      this.CoreRecords.where(allFields.Values.type)
+        .equals(type)
+        .and((r) => r.active !== true)
+        .sortBy(allFields.Values.name)
     )
   }
 
@@ -178,6 +181,7 @@ class Database extends Dexie {
       (
         await this.SubRecords.where(allFields.Values.type)
           .equals(type)
+          .and((r) => r.active !== true)
           .sortBy(allFields.Values.timestamp)
       ).reverse()
     )
@@ -189,11 +193,14 @@ class Database extends Dexie {
         allFields.Values.name
       )
 
+      const active: AnyCoreRecord[] = []
       const favorites: AnyCoreRecord[] = []
       const nonFavorites: AnyCoreRecord[] = []
 
       parents.forEach((p) => {
-        if (p.favorited === true) {
+        if (p.active) {
+          active.push(p)
+        } else if (p.favorited === true) {
           favorites.push(p)
         } else {
           nonFavorites.push(p)
@@ -202,6 +209,7 @@ class Database extends Dexie {
 
       return recordTypes.options.reduce((acc, type) => {
         acc[type] = [
+          ...active.filter((p) => p.type === type),
           ...favorites.filter((p) => p.type === type),
           ...nonFavorites.filter((p) => p.type === type),
         ]
@@ -213,6 +221,16 @@ class Database extends Dexie {
   //
   // RECORD GETS
   //
+
+  async getActiveRecords() {
+    const activeCoreRecords = await this.CoreRecords.filter((p) => p.active === true).toArray()
+    const activeSubRecords = await this.SubRecords.filter((p) => p.active === true).toArray()
+    return {
+      core: activeCoreRecords,
+      sub: activeSubRecords,
+      count: activeCoreRecords.length + activeSubRecords.length,
+    }
+  }
 
   async getAllCoreRecords() {
     return await this.CoreRecords.toArray()
@@ -248,6 +266,14 @@ class Database extends Dexie {
     return await this.SubRecords.where(allFields.Values.coreId)
       .equals(coreId)
       .sortBy(allFields.Values.timestamp)
+  }
+
+  async getLastSubRecord(coreId: string) {
+    return (
+      await this.SubRecords.where(allFields.Values.coreId)
+        .equals(coreId)
+        .sortBy(allFields.Values.timestamp)
+    ).reverse()[0]
   }
 
   //
@@ -311,6 +337,21 @@ class Database extends Dexie {
   //
   // RECORD UPDATES
   //
+
+  async discardActiveRecords() {
+    const activeRecords = await this.getActiveRecords()
+    const activeCoreIds = activeRecords.core.map((cr) => {
+      return {
+        ...cr,
+        active: false,
+      }
+    })
+
+    // Core records are retained with active as false
+    await this.CoreRecords.bulkPut(activeCoreIds)
+    // Sub records are deleted
+    await this.SubRecords.bulkDelete(activeRecords.sub.map((sr) => sr.id))
+  }
 
   async updateRecord(group: RecordGroup, type: RecordType, id: string, updatedRecord: AnyRecord) {
     const schema = DataSchema.getSchema(group, type)

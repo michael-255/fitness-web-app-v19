@@ -8,7 +8,7 @@ import {
   type RecordType,
 } from '@/types/core'
 import { onMounted, onUnmounted, ref } from 'vue'
-import { extend, uid, useMeta } from 'quasar'
+import { extend, useMeta } from 'quasar'
 import { AppName } from '@/constants/global'
 import DataSchema from '@/services/DataSchema'
 import ErrorStates from '@/components/ErrorStates.vue'
@@ -32,9 +32,6 @@ const isFormValid = ref(true)
 
 onMounted(async () => {
   try {
-    actionStore.record[allFields.Values.id] = uid()
-    actionStore.record[allFields.Values.type] = routeType
-
     const editRecord = (await DB.getRecord(
       routeGroup as RecordGroup,
       routeId as string
@@ -45,6 +42,8 @@ onMounted(async () => {
       Object.keys(editRecord).map((key) => {
         actionStore.record[key as AnyField] = editRecord[key as AnyField]
       })
+    } else {
+      throw new Error('Record not found')
     }
   } catch (error) {
     log.error('Error loading edit view', error)

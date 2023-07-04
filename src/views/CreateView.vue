@@ -41,14 +41,12 @@ onMounted(async () => {
       actionStore.record[allFields.Values.coreId] = routeCoreId
     }
 
-    // Workout results
-    if (routeGroup === recordGroups.Values.sub && routeType === recordTypes.Values.workout) {
+    if (routeType === recordTypes.Values.workout || routeType === recordTypes.Values.exercise) {
       actionStore.record[allFields.Values.active] = false
     }
 
     // Exercise results
     if (routeGroup === recordGroups.Values.sub && routeType === recordTypes.Values.exercise) {
-      actionStore.record[allFields.Values.active] = false
       actionStore.record[allFields.Values.reps] = null
       actionStore.record[allFields.Values.weightLbs] = null
       actionStore.record[allFields.Values.distanceMiles] = null

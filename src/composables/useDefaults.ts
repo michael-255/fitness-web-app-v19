@@ -36,6 +36,7 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               multipleSets: true,
+              active: false,
               exerciseInputs: [exerciseInputs.Values.Reps, exerciseInputs.Values['Weight (lbs)']],
             },
             {
@@ -47,6 +48,7 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               multipleSets: true,
+              active: false,
               exerciseInputs: [exerciseInputs.Values.Reps, exerciseInputs.Values['Weight (lbs)']],
             },
             {
@@ -58,6 +60,7 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               multipleSets: true,
+              active: false,
               exerciseInputs: [exerciseInputs.Values.Reps, exerciseInputs.Values['Weight (lbs)']],
             },
             {
@@ -69,6 +72,7 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               multipleSets: true,
+              active: false,
               exerciseInputs: [exerciseInputs.Values.Reps, exerciseInputs.Values['Weight (lbs)']],
             },
             {
@@ -80,6 +84,7 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               multipleSets: true,
+              active: false,
               exerciseInputs: [exerciseInputs.Values.Reps, exerciseInputs.Values['Weight (lbs)']],
             },
           ]
@@ -93,6 +98,7 @@ export default function useDefaults() {
               desc: 'Workout A of the barbell strength building program where you alternate between this and workout B. Do this workout 1-2 times per week.',
               favorited: false,
               enabled: true,
+              active: false,
               exerciseIds: [
                 '50c1fc75-0975-45f8-8177-ff4988b00de2',
                 'd681459e-10c8-40ae-94e9-9b06b7c40367',
@@ -107,6 +113,7 @@ export default function useDefaults() {
               desc: 'Workout B of the barbell strength building program where you alternate between this and workout A. Do this workout 1-2 times per week. You should only do 1 set of the Barbell Deadlift exercise in this program.',
               favorited: false,
               enabled: true,
+              active: false,
               exerciseIds: [
                 '50c1fc75-0975-45f8-8177-ff4988b00de2',
                 'cc279615-91a6-42ac-a073-4339e7c2034f',
@@ -154,6 +161,7 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               multipleSets: true,
+              active: false,
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
@@ -165,6 +173,7 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               multipleSets: true,
+              active: false,
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
@@ -176,6 +185,7 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               multipleSets: true,
+              active: false,
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
@@ -187,6 +197,7 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               multipleSets: true,
+              active: false,
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
@@ -198,6 +209,7 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               multipleSets: true,
+              active: false,
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
@@ -209,6 +221,7 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               multipleSets: true,
+              active: false,
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
@@ -220,6 +233,7 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               multipleSets: true,
+              active: false,
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
@@ -231,6 +245,7 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               multipleSets: true,
+              active: false,
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
@@ -242,6 +257,7 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               multipleSets: true,
+              active: false,
               exerciseInputs: [], // No inputs (records nothing)
             },
           ]
@@ -255,6 +271,7 @@ export default function useDefaults() {
               desc: 'Simple routine with a variety of stretches focusing on larger muscle groups to help you relax and recover. Do this routine after a workout or every day if possible.',
               favorited: false,
               enabled: true,
+              active: false,
               exerciseIds: [
                 'e0cd33be-e28a-46c3-80e6-263240ad5b87',
                 '9007a082-249b-48b7-ba59-463d58a20ba5',
@@ -308,6 +325,7 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               multipleSets: true,
+              active: false,
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
@@ -319,6 +337,7 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               multipleSets: true,
+              active: false,
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
@@ -330,6 +349,7 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               multipleSets: true,
+              active: false,
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
@@ -341,6 +361,7 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               multipleSets: true,
+              active: false,
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
@@ -352,6 +373,7 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               multipleSets: true,
+              active: false,
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
@@ -363,6 +385,7 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               multipleSets: true,
+              active: false,
               exerciseInputs: [], // No inputs (records nothing)
             },
           ]
@@ -376,6 +399,7 @@ export default function useDefaults() {
               desc: 'Physical therapy routine for carpal tunnel syndrome. Do this routine on days where you did any heavy activity with your wrists.',
               favorited: false,
               enabled: true,
+              active: false,
               exerciseIds: [
                 'db513a6b-b0c0-497a-a034-7456d072d98b',
                 '3776575a-3c89-4286-904f-f724bd143aca',
@@ -425,6 +449,7 @@ export default function useDefaults() {
               desc: 'Inhale through your nose for 2 seconds, then exhale slowly through pursed lips for 4 seconds. Repeat 10 times.',
               favorited: false,
               enabled: true,
+              active: false,
               multipleSets: false,
               exerciseInputs: [], // No inputs (records nothing)
             },
@@ -436,6 +461,7 @@ export default function useDefaults() {
               desc: 'Place one hand on your chest. Inhale through your nose for 2 seconds, then contract your abdominal muscles and exhale slowly through pursed lips for 4 seconds. The hand on your chest should have minimal movement during this process. Repeat 10 times.',
               favorited: false,
               enabled: true,
+              active: false,
               multipleSets: false,
               exerciseInputs: [], // No inputs (records nothing)
             },
@@ -447,6 +473,7 @@ export default function useDefaults() {
               desc: 'Inhale through your nose for 4 seconds, hold your breath for 4 seconds, exhale through your mouth for 4 seconds, then hold your breath for 4 seconds. Repeat 10 times.',
               favorited: false,
               enabled: true,
+              active: false,
               multipleSets: false,
               exerciseInputs: [], // No inputs (records nothing)
             },
@@ -461,6 +488,7 @@ export default function useDefaults() {
               desc: 'Deep breathing routine for improving lung compacity, oxygen intake, and relieving stress. Do this routine in a comfortable position (sitting or lying down) and in a quiet environment.',
               favorited: false,
               enabled: true,
+              active: false,
               exerciseIds: [
                 '729bcb7e-6b40-4497-ba0e-8cce6b57341a',
                 '15092ca3-e7c8-4214-a935-8c90126cf408',
