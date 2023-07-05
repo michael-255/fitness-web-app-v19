@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { RouterView, useRoute } from 'vue-router'
-import { recordGroups } from '@/types/core'
 import { AppHeaderColor, AppName } from '@/constants/global'
 import { Icon, routeNames } from '@/types/general'
+import { RecordGroup } from '@/types/core'
 import DataSchema from '@/services/DataSchema'
 import useRoutables from '@/composables/useRoutables'
 import useUIStore from '@/stores/ui'
@@ -11,7 +11,7 @@ const { goBack } = useRoutables()
 const uiStore = useUIStore()
 const route = useRoute()
 
-const groupOptions = DataSchema.getGroupOptions(recordGroups.Values.core)
+const groupOptions = DataSchema.getGroupOptions(RecordGroup.CORE)
 </script>
 
 <template>

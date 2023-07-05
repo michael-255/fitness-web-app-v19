@@ -1,13 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, type Ref } from 'vue'
 import { truncateString } from '@/utils/common'
-import {
-  type AnyCoreRecord,
-  type RecordType,
-  recordGroups,
-  idSchema,
-  allFields,
-} from '@/types/core'
+import { type AnyCoreRecord, type RecordType, idSchema, allFields, RecordGroup } from '@/types/core'
 import useLogger from '@/composables/useLogger'
 import useActionStore from '@/stores/action'
 import useRoutables from '@/composables/useRoutables'
@@ -27,7 +21,7 @@ const options: Ref<{ value: string; label: string }[]> = ref([])
 onMounted(async () => {
   try {
     const records = (await DB.getRecords(
-      recordGroups.Values.core,
+      RecordGroup.CORE,
       routeType as RecordType
     )) as AnyCoreRecord[]
 

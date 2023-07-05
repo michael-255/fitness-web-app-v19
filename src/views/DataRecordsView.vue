@@ -8,9 +8,8 @@ import { AppName } from '@/constants/global'
 import { getRecordsCountDisplay } from '@/utils/common'
 import { hiddenColumnNames } from '@/services/table-columns'
 import {
-  recordGroups,
   allFields,
-  type RecordGroup,
+  RecordGroup,
   type AnyField,
   type RecordType,
   type AnyRecord,
@@ -38,7 +37,7 @@ const columnOptions: Ref<QTableColumn[]> = ref(
 )
 let subscription: Subscription | null = null
 
-if (routeGroup === recordGroups.Values.core) {
+if (routeGroup === RecordGroup.CORE) {
   visibleColumns.value = [allFields.Values.id, allFields.Values.timestamp, allFields.Values.name]
 
   subscription = DB.liveCoreRecords(routeType as RecordType).subscribe({
@@ -69,7 +68,7 @@ onUnmounted(() => {
 async function onDelete(group: RecordGroup, id: string) {
   let dialogMessage = ''
 
-  if (group === recordGroups.Values.core) {
+  if (group === RecordGroup.CORE) {
     dialogMessage = `Permanently delete ${DataSchema.getLabel(
       routeGroup as RecordGroup,
       routeType as RecordType,
@@ -146,7 +145,7 @@ async function onCharts(type: RecordType, id: string) {
         <QTd auto-width>
           <!-- CHARTS -->
           <QBtn
-            v-if="routeGroup === recordGroups.Values.core"
+            v-if="routeGroup === RecordGroup.CORE"
             flat
             round
             dense

@@ -1,13 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@/types/general'
-import {
-  allFields,
-  recordGroups,
-  type AnyRecord,
-  type RecordGroup,
-  type RecordType,
-  recordTypes,
-} from '@/types/core'
+import { allFields, type AnyRecord, RecordGroup, RecordType } from '@/types/core'
 import { onMounted, onUnmounted, ref } from 'vue'
 import { extend, uid, useMeta } from 'quasar'
 import { AppName } from '@/constants/global'
@@ -41,17 +34,17 @@ onMounted(async () => {
       actionStore.record[allFields.Values.coreId] = routeCoreId
     }
 
-    if (routeType === recordTypes.Values.workout || routeType === recordTypes.Values.exercise) {
+    if (routeType === RecordType.WORKOUT || routeType === RecordType.EXERCISE) {
       actionStore.record[allFields.Values.active] = false
     }
 
     // Exercise results
-    if (routeGroup === recordGroups.Values.sub && routeType === recordTypes.Values.exercise) {
+    if (routeGroup === RecordGroup.SUB && routeType === RecordType.EXERCISE) {
       actionStore.record[allFields.Values.setsData] = {}
     }
 
     // Measurement results
-    if (routeGroup === recordGroups.Values.sub && routeType === recordTypes.Values.measurement) {
+    if (routeGroup === RecordGroup.SUB && routeType === RecordType.MEASUREMENT) {
       actionStore.record[allFields.Values.measuredData] = {}
     }
   } catch (error) {

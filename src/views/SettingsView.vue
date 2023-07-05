@@ -9,8 +9,8 @@ import {
   type Setting,
   type BackupData,
   SettingKey,
-  recordGroups,
   heightSchema,
+  RecordGroup,
 } from '@/types/core'
 import DataSchema from '@/services/DataSchema'
 import useLogger from '@/composables/useLogger'
@@ -111,8 +111,8 @@ function onImportFile() {
 
         // Logs are never imported
         await Promise.all([
-          DB.importRecords(recordGroups.Values.core, backupData.coreRecords),
-          DB.importRecords(recordGroups.Values.sub, backupData.subRecords),
+          DB.importRecords(RecordGroup.CORE, backupData.coreRecords),
+          DB.importRecords(RecordGroup.SUB, backupData.subRecords),
         ])
 
         importFile.value = null // Clear input

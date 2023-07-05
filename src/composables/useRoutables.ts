@@ -1,9 +1,9 @@
 import {
   idSchema,
-  recordTypes,
+  recordTypeSchema,
   type RecordGroup,
   type RecordType,
-  recordGroups,
+  recordGroupSchema,
 } from '@/types/core'
 import { useRoute, useRouter } from 'vue-router'
 import { routeNames } from '@/types/general'
@@ -35,8 +35,8 @@ export default function useRoutables(): {
   // Cleaned route params
   const routeId = idSchema.safeParse(id).success ? id : undefined
   const routeCoreId = idSchema.safeParse(coreId).success ? coreId : undefined
-  const routeType = recordTypes.safeParse(type).success ? (type as RecordType) : undefined
-  const routeGroup = recordGroups.safeParse(group).success ? (group as RecordGroup) : undefined
+  const routeType = recordTypeSchema.safeParse(type).success ? (type as RecordType) : undefined
+  const routeGroup = recordGroupSchema.safeParse(group).success ? (group as RecordGroup) : undefined
 
   function goToDashboard() {
     try {

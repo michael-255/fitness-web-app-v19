@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { routeNames } from '@/types/general'
-import { idSchema, recordGroups, recordTypes } from '@/types/core'
+import { idSchema, recordGroupSchema, recordTypeSchema } from '@/types/core'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -30,8 +30,8 @@ const router = createRouter({
       component: () => import('../views/DataRecordsView.vue'),
       beforeEnter: (to, _, next) => {
         if (
-          recordGroups.safeParse(to.params.group).success &&
-          recordTypes.safeParse(to.params.type).success
+          recordGroupSchema.safeParse(to.params.group).success &&
+          recordTypeSchema.safeParse(to.params.type).success
         ) {
           next()
         } else {
@@ -46,8 +46,8 @@ const router = createRouter({
       component: () => import('../views/CreateView.vue'),
       beforeEnter: (to, _, next) => {
         if (
-          recordGroups.safeParse(to.params.group).success &&
-          recordTypes.safeParse(to.params.type).success
+          recordGroupSchema.safeParse(to.params.group).success &&
+          recordTypeSchema.safeParse(to.params.type).success
         ) {
           next()
         } else {
@@ -62,8 +62,8 @@ const router = createRouter({
       component: () => import('../views/EditView.vue'),
       beforeEnter: (to, _, next) => {
         if (
-          recordGroups.safeParse(to.params.group).success &&
-          recordTypes.safeParse(to.params.type).success &&
+          recordGroupSchema.safeParse(to.params.group).success &&
+          recordTypeSchema.safeParse(to.params.type).success &&
           idSchema.safeParse(to.params.id).success
         ) {
           next()

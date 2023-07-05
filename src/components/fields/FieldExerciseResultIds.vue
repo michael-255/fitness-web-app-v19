@@ -3,9 +3,9 @@ import { onMounted, ref, type Ref } from 'vue'
 import {
   type ExerciseResultRecord,
   allFields,
-  recordGroups,
-  recordTypes,
   exerciseResultIdsSchema,
+  RecordType,
+  RecordGroup,
 } from '@/types/core'
 import { truncateString } from '@/utils/common'
 import useLogger from '@/composables/useLogger'
@@ -27,8 +27,8 @@ onMounted(async () => {
     actionStore.record[field] = actionStore.record[field] ?? []
 
     const records = (await DB.getRecords(
-      recordGroups.Values.sub,
-      recordTypes.Values.exercise
+      RecordGroup.SUB,
+      RecordType.EXERCISE
     )) as ExerciseResultRecord[]
 
     options.value = records.map((r: ExerciseResultRecord) => ({

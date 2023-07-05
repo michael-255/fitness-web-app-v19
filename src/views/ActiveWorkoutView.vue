@@ -3,7 +3,7 @@ import { Icon } from '@/types/general'
 import { AppName } from '@/constants/global'
 import { useMeta } from 'quasar'
 import { onMounted, ref, type Ref } from 'vue'
-import { recordTypes, type AnySubRecord, numberSchema, exerciseInputs } from '@/types/core'
+import { type AnySubRecord, numberSchema, ExerciseInput } from '@/types/core'
 import ResponsivePage from '@/components/ResponsivePage.vue'
 import useLogger from '@/composables/useLogger'
 import useDialogs from '@/composables/useDialogs'
@@ -73,7 +73,7 @@ function validationRule() {
                 hint="135 (5, 5, -10, 5, 5)"
                 v-model.number="testNumber"
                 :rules="[validationRule()]"
-                :label="exerciseInputs.Values.Reps"
+                :label="ExerciseInput.REPS"
               />
               <QInput
                 stack-label
@@ -85,7 +85,7 @@ function validationRule() {
                 hint="135 (5, 5, -10, 5, 5)"
                 v-model.number="testNumber"
                 :rules="[validationRule()]"
-                :label="exerciseInputs.Values['Weight (lbs)']"
+                :label="ExerciseInput.WEIGHT"
               />
               <QInput
                 stack-label
@@ -97,7 +97,7 @@ function validationRule() {
                 hint="135 (5, 5, -10, 5, 5)"
                 v-model.number="testNumber"
                 :rules="[validationRule()]"
-                :label="exerciseInputs.Values['Distance (miles)']"
+                :label="ExerciseInput.DISTANCE"
               />
               <QInput
                 stack-label
@@ -109,7 +109,7 @@ function validationRule() {
                 hint="135 (5, 5, -10, 5, 5)"
                 v-model.number="testNumber"
                 :rules="[validationRule()]"
-                :label="exerciseInputs.Values['Duration (minutes)']"
+                :label="ExerciseInput.DURATION"
               />
               <QInput
                 stack-label
@@ -121,7 +121,7 @@ function validationRule() {
                 hint="135 (5, 5, -10, 5, 5)"
                 v-model.number="testNumber"
                 :rules="[validationRule()]"
-                :label="exerciseInputs.Values['Watts']"
+                :label="ExerciseInput.WATTS"
               />
               <QInput
                 stack-label
@@ -133,7 +133,7 @@ function validationRule() {
                 hint="135 (5, 5, -10, 5, 5)"
                 v-model.number="testNumber"
                 :rules="[validationRule()]"
-                :label="exerciseInputs.Values['Speed (mph)']"
+                :label="ExerciseInput.SPEED"
               />
               <QInput
                 stack-label
@@ -145,7 +145,7 @@ function validationRule() {
                 hint="135 (5, 5, -10, 5, 5)"
                 v-model.number="testNumber"
                 :rules="[validationRule()]"
-                :label="exerciseInputs.Values['Calories Burned']"
+                :label="ExerciseInput.CALORIES"
               />
               <QInput
                 stack-label
@@ -157,7 +157,7 @@ function validationRule() {
                 hint="135 (5, 5, -10, 5, 5)"
                 v-model.number="testNumber"
                 :rules="[validationRule()]"
-                :label="exerciseInputs.Values['Resistance']"
+                :label="ExerciseInput.RESISTANCE"
               />
             </div>
           </div>

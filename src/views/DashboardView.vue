@@ -7,13 +7,12 @@ import { ref, type Ref, onUnmounted } from 'vue'
 import { AppName } from '@/constants/global'
 import { getRecordsCountDisplay } from '@/utils/common'
 import {
-  recordGroups,
-  recordTypes,
+  SettingKey,
+  RecordType,
   type AnyCoreRecord,
-  type RecordType,
   type WorkoutResultRecord,
   type WorkoutRecord,
-  SettingKey,
+  RecordGroup,
 } from '@/types/core'
 import DataSchema from '@/services/DataSchema'
 import ResponsivePage from '@/components/ResponsivePage.vue'
@@ -35,7 +34,7 @@ const showDescription: Ref<boolean> = ref(false)
 const dashboardOptions = DataSchema.getDashboardOptions()
 // Type is used as the key to access related parent records
 const dashboardRecords: Ref<{ [key in RecordType]: AnyCoreRecord[] }> = ref(
-  recordTypes.options.reduce((acc, type) => {
+  Object.values(RecordType).reduce((acc, type) => {
     acc[type] = []
     return acc
   }, {} as { [key in RecordType]: AnyCoreRecord[] })
@@ -104,15 +103,15 @@ async function onUnfavorite(id: string, name: string) {
 }
 
 async function onInspect(type: RecordType, id: string) {
-  const title = DataSchema.getLabel(recordGroups.Values.core, type, 'singular') as string
-  const record = (await DB.getRecord(recordGroups.Values.core, id)) as AnyCoreRecord
-  const fields = DataSchema.getFields(recordGroups.Values.core, type)
+  const title = DataSchema.getLabel(RecordGroup.CORE, type, 'singular') as string
+  const record = (await DB.getRecord(RecordGroup.CORE, id)) as AnyCoreRecord
+  const fields = DataSchema.getFields(RecordGroup.CORE, type)
   inspectDialog(title, record, fields)
 }
 
 async function onCharts(type: RecordType, id: string) {
   const title = DataSchema.getLabel(
-    recordGroups.Values.core,
+    RecordGroup.CORE,
     uiStore.dashboardSelection,
     'singular'
   ) as string
@@ -171,7 +170,7 @@ async function beginActiveWorkout(record: WorkoutRecord) {
   const newWorkoutResult: WorkoutResultRecord = {
     active: true,
     id: uid(),
-    type: recordTypes.Values.workout,
+    type: RecordType.WORKOUT,
     timestamp: Date.now(),
     coreId: record.id,
     note: '',
@@ -180,24 +179,19 @@ async function beginActiveWorkout(record: WorkoutRecord) {
 
   // Setting core workout to active
   record.active = true
-  await DB.updateRecord(recordGroups.Values.core, recordTypes.Values.workout, record.id, record)
+  await DB.updateRecord(RecordGroup.CORE, RecordType.WORKOUT, record.id, record)
 
   // Setting core exercises to active
   await Promise.all(
     record.exerciseIds.map(async (id) => {
-      const exercise = (await DB.getRecord(recordGroups.Values.core, id)) as AnyCoreRecord
+      const exercise = (await DB.getRecord(RecordGroup.CORE, id)) as AnyCoreRecord
       exercise.active = true
-      return await DB.updateRecord(
-        recordGroups.Values.core,
-        recordTypes.Values.exercise,
-        exercise.id,
-        exercise
-      )
+      return await DB.updateRecord(RecordGroup.CORE, RecordType.EXERCISE, exercise.id, exercise)
     })
   )
 
   // Add new active result records to database
-  await DB.addRecord(recordGroups.Values.sub, recordTypes.Values.workout, newWorkoutResult)
+  await DB.addRecord(RecordGroup.SUB, RecordType.WORKOUT, newWorkoutResult)
 
   goToActiveWorkout()
 }
@@ -263,7 +257,7 @@ async function beginActiveWorkout(record: WorkoutRecord) {
 
               <!-- Discard Active Workout-->
               <QBtn
-                v-if="record?.type === recordTypes.Values.workout && record?.active"
+                v-if="record?.type === RecordType.WORKOUT && record?.active"
                 round
                 flat
                 color="negative"
@@ -319,7 +313,7 @@ async function beginActiveWorkout(record: WorkoutRecord) {
                     <QItem
                       v-if="!record.active"
                       clickable
-                      @click="goToEdit(recordGroups.Values.core, record?.type, record?.id)"
+                      @click="goToEdit(RecordGroup.CORE, record?.type, record?.id)"
                     >
                       <QItemSection avatar>
                         <QIcon color="warning" :name="Icon.EDIT" />
@@ -352,7 +346,7 @@ async function beginActiveWorkout(record: WorkoutRecord) {
 
           <QCardActions clas="col-auto">
             <QBtn
-              v-if="record?.type === recordTypes.Values.workout && record?.active"
+              v-if="record?.type === RecordType.WORKOUT && record?.active"
               label="Resume Workout"
               color="positive"
               class="full-width"
@@ -361,7 +355,7 @@ async function beginActiveWorkout(record: WorkoutRecord) {
             />
 
             <QBtn
-              v-else-if="record?.type === recordTypes.Values.workout && !record?.active"
+              v-else-if="record?.type === RecordType.WORKOUT && !record?.active"
               label="Begin Workout"
               color="primary"
               :icon="Icon.WORKOUT_BEGIN"
@@ -379,7 +373,7 @@ async function beginActiveWorkout(record: WorkoutRecord) {
               color="primary"
               class="full-width"
               :icon="Icon.ADD_NOTE"
-              @click="goToCreate(recordGroups.Values.sub, record?.type, record?.id)"
+              @click="goToCreate(RecordGroup.SUB, record?.type, record?.id)"
             />
           </QCardActions>
         </QCard>
@@ -398,11 +392,11 @@ async function beginActiveWorkout(record: WorkoutRecord) {
         color="positive"
         :icon="Icon.CREATE"
         :label="`Create ${DataSchema.getLabel(
-          recordGroups.Values.core,
+          RecordGroup.CORE,
           uiStore.dashboardSelection,
           'singular'
         )}`"
-        @click="goToCreate(recordGroups.Values.core, uiStore.dashboardSelection)"
+        @click="goToCreate(RecordGroup.CORE, uiStore.dashboardSelection)"
       />
     </div>
   </ResponsivePage>

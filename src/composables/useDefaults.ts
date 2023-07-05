@@ -3,10 +3,10 @@ import {
   type ExerciseRecord,
   type WorkoutRecord,
   type MeasurementRecord,
-  recordGroups,
-  recordTypes,
-  exerciseInputs,
   MeasurementInput,
+  RecordType,
+  RecordGroup,
+  ExerciseInput,
 } from '@/types/core'
 import useLogger from '@/composables/useLogger'
 import useDialogs from '@/composables/useDialogs'
@@ -28,7 +28,7 @@ export default function useDefaults() {
 
           const exercises: ExerciseRecord[] = [
             {
-              type: recordTypes.Values.exercise,
+              type: RecordType.EXERCISE,
               id: '50c1fc75-0975-45f8-8177-ff4988b00de2', // From Fitness Tracker v16 (Alpha & Beta)
               timestamp: now,
               name: 'Barbell Squat',
@@ -37,10 +37,10 @@ export default function useDefaults() {
               enabled: true,
               multipleSets: true,
               active: false,
-              exerciseInputs: [exerciseInputs.Values.Reps, exerciseInputs.Values['Weight (lbs)']],
+              exerciseInputs: [ExerciseInput.REPS, ExerciseInput.WEIGHT],
             },
             {
-              type: recordTypes.Values.exercise,
+              type: RecordType.EXERCISE,
               id: 'd681459e-10c8-40ae-94e9-9b06b7c40367', // From Fitness Tracker v16 (Alpha)
               timestamp: now,
               name: 'Barbell Bench Press',
@@ -49,10 +49,10 @@ export default function useDefaults() {
               enabled: true,
               multipleSets: true,
               active: false,
-              exerciseInputs: [exerciseInputs.Values.Reps, exerciseInputs.Values['Weight (lbs)']],
+              exerciseInputs: [ExerciseInput.REPS, ExerciseInput.WEIGHT],
             },
             {
-              type: recordTypes.Values.exercise,
+              type: RecordType.EXERCISE,
               id: '08b12cc1-d4b9-4d22-82db-9e33b3e5c3fa', // From Fitness Tracker v16 (Alpha)
               timestamp: now,
               name: 'Barbell Standing Rows',
@@ -61,10 +61,10 @@ export default function useDefaults() {
               enabled: true,
               multipleSets: true,
               active: false,
-              exerciseInputs: [exerciseInputs.Values.Reps, exerciseInputs.Values['Weight (lbs)']],
+              exerciseInputs: [ExerciseInput.REPS, ExerciseInput.WEIGHT],
             },
             {
-              type: recordTypes.Values.exercise,
+              type: RecordType.EXERCISE,
               id: 'cc279615-91a6-42ac-a073-4339e7c2034f', // From Fitness Tracker v16 (Beta)
               timestamp: now,
               name: 'Barbell Overhead Press',
@@ -73,10 +73,10 @@ export default function useDefaults() {
               enabled: true,
               multipleSets: true,
               active: false,
-              exerciseInputs: [exerciseInputs.Values.Reps, exerciseInputs.Values['Weight (lbs)']],
+              exerciseInputs: [ExerciseInput.REPS, ExerciseInput.WEIGHT],
             },
             {
-              type: recordTypes.Values.exercise,
+              type: RecordType.EXERCISE,
               id: 'b8f1a60e-7f21-4f62-8757-d9b371bffd45', // From Fitness Tracker v16 (Beta)
               timestamp: now,
               name: 'Barbell Deadlift',
@@ -85,13 +85,13 @@ export default function useDefaults() {
               enabled: true,
               multipleSets: true,
               active: false,
-              exerciseInputs: [exerciseInputs.Values.Reps, exerciseInputs.Values['Weight (lbs)']],
+              exerciseInputs: [ExerciseInput.REPS, ExerciseInput.WEIGHT],
             },
           ]
 
           const workouts: WorkoutRecord[] = [
             {
-              type: recordTypes.Values.workout,
+              type: RecordType.WORKOUT,
               id: '2158e1b2-27e0-4012-bb14-3846b3ee1d6a', // From Fitness Tracker v16
               timestamp: now,
               name: 'Barbell Strength - A',
@@ -106,7 +106,7 @@ export default function useDefaults() {
               ],
             },
             {
-              type: recordTypes.Values.workout,
+              type: RecordType.WORKOUT,
               id: 'f3a1537c-4d63-43e1-99bd-df5ef59ac220', // From Fitness Tracker v16
               timestamp: now,
               name: 'Barbell Strength - B',
@@ -123,8 +123,8 @@ export default function useDefaults() {
           ]
 
           await Promise.all([
-            DB.importRecords(recordGroups.Values.core, exercises),
-            DB.importRecords(recordGroups.Values.core, workouts),
+            DB.importRecords(RecordGroup.CORE, exercises),
+            DB.importRecords(RecordGroup.CORE, workouts),
           ])
 
           log.info('Barbell Strength workouts added', {
@@ -153,7 +153,7 @@ export default function useDefaults() {
 
           const exercises: ExerciseRecord[] = [
             {
-              type: recordTypes.Values.exercise,
+              type: RecordType.EXERCISE,
               id: 'e0cd33be-e28a-46c3-80e6-263240ad5b87',
               timestamp: now,
               name: 'Lying Glute Stretch',
@@ -165,7 +165,7 @@ export default function useDefaults() {
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
-              type: recordTypes.Values.exercise,
+              type: RecordType.EXERCISE,
               id: '9007a082-249b-48b7-ba59-463d58a20ba5',
               timestamp: now,
               name: 'Pigeon Stretch',
@@ -177,7 +177,7 @@ export default function useDefaults() {
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
-              type: recordTypes.Values.exercise,
+              type: RecordType.EXERCISE,
               id: '8653a6cf-8d26-4115-bda3-d28598065d02',
               timestamp: now,
               name: 'Frog Stretch',
@@ -189,7 +189,7 @@ export default function useDefaults() {
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
-              type: recordTypes.Values.exercise,
+              type: RecordType.EXERCISE,
               id: 'a6e35a70-9249-4515-a45f-6b7787e23156',
               timestamp: now,
               name: 'Standing Quad Stretch',
@@ -201,7 +201,7 @@ export default function useDefaults() {
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
-              type: recordTypes.Values.exercise,
+              type: RecordType.EXERCISE,
               id: '7f40466f-8621-4567-9181-5fd45fa2418b',
               timestamp: now,
               name: 'Standing Toe Touch Stretch',
@@ -213,7 +213,7 @@ export default function useDefaults() {
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
-              type: recordTypes.Values.exercise,
+              type: RecordType.EXERCISE,
               id: 'a291154a-bd22-4738-8559-0e4ee48e570d',
               timestamp: now,
               name: 'Standing Calf Stretch',
@@ -225,7 +225,7 @@ export default function useDefaults() {
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
-              type: recordTypes.Values.exercise,
+              type: RecordType.EXERCISE,
               id: '5756d452-9272-4cbd-a144-e2b98acf8a3f',
               timestamp: now,
               name: 'Standing Chest Stretch',
@@ -237,7 +237,7 @@ export default function useDefaults() {
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
-              type: recordTypes.Values.exercise,
+              type: RecordType.EXERCISE,
               id: '66c24ef3-0d53-460f-bff4-4888fb687b93',
               timestamp: now,
               name: 'Cross Spinal Foam Roll',
@@ -249,7 +249,7 @@ export default function useDefaults() {
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
-              type: recordTypes.Values.exercise,
+              type: RecordType.EXERCISE,
               id: '2a940995-08fc-4faf-9e52-d94f01e684b8',
               timestamp: now,
               name: 'Parallel Spinal Foam Roll',
@@ -264,7 +264,7 @@ export default function useDefaults() {
 
           const workouts: WorkoutRecord[] = [
             {
-              type: recordTypes.Values.workout,
+              type: RecordType.WORKOUT,
               id: '80add653-aa96-4253-9d94-a30cb10cfa5f',
               timestamp: now,
               name: 'Stretch Routine',
@@ -287,8 +287,8 @@ export default function useDefaults() {
           ]
 
           await Promise.all([
-            DB.importRecords(recordGroups.Values.core, exercises),
-            DB.importRecords(recordGroups.Values.core, workouts),
+            DB.importRecords(RecordGroup.CORE, exercises),
+            DB.importRecords(RecordGroup.CORE, workouts),
           ])
 
           log.info('Stretch Routine added', {
@@ -317,7 +317,7 @@ export default function useDefaults() {
 
           const exercises: ExerciseRecord[] = [
             {
-              type: recordTypes.Values.exercise,
+              type: RecordType.EXERCISE,
               id: 'db513a6b-b0c0-497a-a034-7456d072d98b',
               timestamp: now,
               name: 'Median Nerve Sliders',
@@ -329,7 +329,7 @@ export default function useDefaults() {
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
-              type: recordTypes.Values.exercise,
+              type: RecordType.EXERCISE,
               id: '3776575a-3c89-4286-904f-f724bd143aca',
               timestamp: now,
               name: 'Fist, Knuckle, Finger Extensions',
@@ -341,7 +341,7 @@ export default function useDefaults() {
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
-              type: recordTypes.Values.exercise,
+              type: RecordType.EXERCISE,
               id: 'ceac93d5-6db9-4cca-bcaf-570a25e4a282',
               timestamp: now,
               name: 'Finger Tip Flexion',
@@ -353,7 +353,7 @@ export default function useDefaults() {
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
-              type: recordTypes.Values.exercise,
+              type: RecordType.EXERCISE,
               id: 'e7ddd519-807e-456e-9cb5-7496be50cb9c',
               timestamp: now,
               name: 'Finger Knuckle Flexion',
@@ -365,7 +365,7 @@ export default function useDefaults() {
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
-              type: recordTypes.Values.exercise,
+              type: RecordType.EXERCISE,
               id: 'ee84a9f7-961c-4dbc-bf97-aa9f5b8a353e',
               timestamp: now,
               name: 'In/Out Thumb Stretch',
@@ -377,7 +377,7 @@ export default function useDefaults() {
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
-              type: recordTypes.Values.exercise,
+              type: RecordType.EXERCISE,
               id: 'f66d5c5f-03fc-43a4-b0f3-af0af58b41a7',
               timestamp: now,
               name: 'Gentle Wrist Stretch',
@@ -392,7 +392,7 @@ export default function useDefaults() {
 
           const workouts: WorkoutRecord[] = [
             {
-              type: recordTypes.Values.workout,
+              type: RecordType.WORKOUT,
               id: 'cba94a35-d450-4d0f-955f-df6315522622',
               timestamp: now,
               name: 'Carpal Tunnel Routine',
@@ -412,8 +412,8 @@ export default function useDefaults() {
           ]
 
           await Promise.all([
-            DB.importRecords(recordGroups.Values.core, exercises),
-            DB.importRecords(recordGroups.Values.core, workouts),
+            DB.importRecords(RecordGroup.CORE, exercises),
+            DB.importRecords(RecordGroup.CORE, workouts),
           ])
 
           log.info('Carpal Tunnel Routine added', {
@@ -442,7 +442,7 @@ export default function useDefaults() {
 
           const exercises: ExerciseRecord[] = [
             {
-              type: recordTypes.Values.exercise,
+              type: RecordType.EXERCISE,
               id: '729bcb7e-6b40-4497-ba0e-8cce6b57341a',
               timestamp: now,
               name: 'Pursed Lip Breathing',
@@ -454,7 +454,7 @@ export default function useDefaults() {
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
-              type: recordTypes.Values.exercise,
+              type: RecordType.EXERCISE,
               id: '15092ca3-e7c8-4214-a935-8c90126cf408',
               timestamp: now,
               name: 'Diaphragmatic Breathing',
@@ -466,7 +466,7 @@ export default function useDefaults() {
               exerciseInputs: [], // No inputs (records nothing)
             },
             {
-              type: recordTypes.Values.exercise,
+              type: RecordType.EXERCISE,
               id: 'cd75a9c7-fed8-4c98-83db-9dc3a64725a0',
               timestamp: now,
               name: 'Box Breathing',
@@ -481,7 +481,7 @@ export default function useDefaults() {
 
           const workouts: WorkoutRecord[] = [
             {
-              type: recordTypes.Values.workout,
+              type: RecordType.WORKOUT,
               id: 'b0752f64-e6ba-4d98-a981-67860d7ab665',
               timestamp: now,
               name: 'Deep Breathing Routine',
@@ -498,8 +498,8 @@ export default function useDefaults() {
           ]
 
           await Promise.all([
-            DB.importRecords(recordGroups.Values.core, exercises),
-            DB.importRecords(recordGroups.Values.core, workouts),
+            DB.importRecords(RecordGroup.CORE, exercises),
+            DB.importRecords(RecordGroup.CORE, workouts),
           ])
 
           log.info('Deep Breathing Routine added', {
@@ -528,7 +528,7 @@ export default function useDefaults() {
 
           const measurements: MeasurementRecord[] = [
             {
-              type: recordTypes.Values.measurement,
+              type: RecordType.MEASUREMENT,
               id: '43e3fc4e-b419-468c-9888-b5e072d81dfb', // From Fitness Tracker v16
               timestamp: now,
               name: 'Body Fat',
@@ -538,7 +538,7 @@ export default function useDefaults() {
               measurementInput: MeasurementInput.PERCENT,
             },
             {
-              type: recordTypes.Values.measurement,
+              type: RecordType.MEASUREMENT,
               id: 'b4450018-1506-450f-a429-9903aded5c9b', // From Fitness Tracker v16
               timestamp: now,
               name: 'Body Weight',
@@ -548,7 +548,7 @@ export default function useDefaults() {
               measurementInput: MeasurementInput.BODY_WEIGHT,
             },
             {
-              type: recordTypes.Values.measurement,
+              type: RecordType.MEASUREMENT,
               id: '880cb344-e537-4f0f-bad4-e212a6df51cd', // From Fitness Tracker v16
               timestamp: now,
               name: 'Chest',
@@ -558,7 +558,7 @@ export default function useDefaults() {
               measurementInput: MeasurementInput.INCHES,
             },
             {
-              type: recordTypes.Values.measurement,
+              type: RecordType.MEASUREMENT,
               id: 'e126e959-1675-4b3b-866c-261e453d8dae', // From Fitness Tracker v16
               timestamp: now,
               name: 'Left Bicep',
@@ -568,7 +568,7 @@ export default function useDefaults() {
               measurementInput: MeasurementInput.INCHES,
             },
             {
-              type: recordTypes.Values.measurement,
+              type: RecordType.MEASUREMENT,
               id: '09108d87-8337-4424-83a1-1ee5be5e8585', // From Fitness Tracker v16
               timestamp: now,
               name: 'Left Calf',
@@ -578,7 +578,7 @@ export default function useDefaults() {
               measurementInput: MeasurementInput.INCHES,
             },
             {
-              type: recordTypes.Values.measurement,
+              type: RecordType.MEASUREMENT,
               id: '96c7229d-91e8-4470-b0a9-ebb1234fe6e7', // From Fitness Tracker v16
               timestamp: now,
               name: 'Left Forearm',
@@ -588,7 +588,7 @@ export default function useDefaults() {
               measurementInput: MeasurementInput.INCHES,
             },
             {
-              type: recordTypes.Values.measurement,
+              type: RecordType.MEASUREMENT,
               id: '3e3d0d91-3280-491d-967e-d56dcfc51520', // From Fitness Tracker v16
               timestamp: now,
               name: 'Left Thigh',
@@ -598,7 +598,7 @@ export default function useDefaults() {
               measurementInput: MeasurementInput.INCHES,
             },
             {
-              type: recordTypes.Values.measurement,
+              type: RecordType.MEASUREMENT,
               id: '0090f468-5917-4124-98bd-1e7711ab360e', // From Fitness Tracker v16
               timestamp: now,
               name: 'Neck',
@@ -608,7 +608,7 @@ export default function useDefaults() {
               measurementInput: MeasurementInput.INCHES,
             },
             {
-              type: recordTypes.Values.measurement,
+              type: RecordType.MEASUREMENT,
               id: '9fddbad2-ba89-4476-95e4-10d9969e782c', // From Fitness Tracker v16
               timestamp: now,
               name: 'Right Bicep',
@@ -618,7 +618,7 @@ export default function useDefaults() {
               measurementInput: MeasurementInput.INCHES,
             },
             {
-              type: recordTypes.Values.measurement,
+              type: RecordType.MEASUREMENT,
               id: '0ee16da1-3c8d-48fc-9af1-41ec09cf6317', // From Fitness Tracker v16
               timestamp: now,
               name: 'Right Calf',
@@ -628,7 +628,7 @@ export default function useDefaults() {
               measurementInput: MeasurementInput.INCHES,
             },
             {
-              type: recordTypes.Values.measurement,
+              type: RecordType.MEASUREMENT,
               id: 'fa4c25c7-e1d5-48bf-975a-4fdfd2305646', // From Fitness Tracker v16
               timestamp: now,
               name: 'Right Forearm',
@@ -638,7 +638,7 @@ export default function useDefaults() {
               measurementInput: MeasurementInput.INCHES,
             },
             {
-              type: recordTypes.Values.measurement,
+              type: RecordType.MEASUREMENT,
               id: '843c6b0f-ce23-4468-9d67-dd1af076b10a', // From Fitness Tracker v16
               timestamp: now,
               name: 'Right Thigh',
@@ -648,7 +648,7 @@ export default function useDefaults() {
               measurementInput: MeasurementInput.INCHES,
             },
             {
-              type: recordTypes.Values.measurement,
+              type: RecordType.MEASUREMENT,
               id: '222452a2-aa29-460e-85a8-4617092d1ba5', // From Fitness Tracker v16
               timestamp: now,
               name: 'Shoulders',
@@ -658,7 +658,7 @@ export default function useDefaults() {
               measurementInput: MeasurementInput.INCHES,
             },
             {
-              type: recordTypes.Values.measurement,
+              type: RecordType.MEASUREMENT,
               id: 'ed12d669-cffd-45f7-802c-9025426341fa', // From Fitness Tracker v16
               timestamp: now,
               name: 'Waist',
@@ -669,7 +669,7 @@ export default function useDefaults() {
             },
           ]
 
-          await DB.importRecords(recordGroups.Values.core, measurements)
+          await DB.importRecords(RecordGroup.CORE, measurements)
 
           log.info('Standard Measurements added', { newMeasurements: measurements?.length ?? 0 })
         } catch (error) {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref, type Ref } from 'vue'
-import { type ExerciseInput, allFields, exerciseInputs, exerciseInputsSchema } from '@/types/core'
+import { ExerciseInput, allFields, exerciseInputsSchema } from '@/types/core'
 import useLogger from '@/composables/useLogger'
 import useActionStore from '@/stores/action'
 
@@ -18,7 +18,7 @@ onMounted(async () => {
   try {
     actionStore.record[field] = actionStore.record[field] ?? []
 
-    options.value = exerciseInputs.options.map((o: ExerciseInput) => ({
+    options.value = Object.values(ExerciseInput).map((o: ExerciseInput) => ({
       value: o,
       label: o,
     }))

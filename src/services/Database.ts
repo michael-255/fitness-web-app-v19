@@ -3,21 +3,19 @@ import { Dark, uid } from 'quasar'
 import { Duration } from '@/types/general'
 import { AppDatabaseVersion, AppName } from '@/constants/global'
 import {
+  SettingKey,
+  allFields,
   type Log,
   type Setting,
   type AnyRecord,
   type AnyCoreRecord,
   type AnySubRecord,
   type LogLevel,
-  SettingKey,
-  type RecordType,
-  type RecordGroup,
-  allFields,
-  recordTypes,
-  recordGroups,
-  exerciseInputs,
+  RecordType,
+  RecordGroup,
   type ExerciseRecord,
   type ExerciseResultRecord,
+  ExerciseInput,
 } from '@/types/core'
 import DataSchema from '@/services/DataSchema'
 
@@ -209,7 +207,7 @@ class Database extends Dexie {
         }
       })
 
-      return recordTypes.options.reduce((acc, type) => {
+      return Object.values(RecordType).reduce((acc, type) => {
         acc[type] = [
           ...active.filter((p) => p.type === type),
           ...favorites.filter((p) => p.type === type),
@@ -227,18 +225,14 @@ class Database extends Dexie {
   async getExerciseInputDefaults(coreId: string) {
     return (await this.CoreRecords.where(allFields.Values.id).equals(coreId).toArray()).map((r) => {
       return {
-        reps: r.exerciseInputs.includes(exerciseInputs.Values.Reps) ? [0] : null,
-        weightLbs: r.exerciseInputs.includes(exerciseInputs.Values['Weight (lbs)']) ? [0] : null,
-        distanceMiles: r.exerciseInputs.includes(exerciseInputs.Values['Distance (miles)'])
-          ? [0]
-          : null,
-        durationMinutes: r.exerciseInputs.includes(exerciseInputs.Values['Duration (minutes)'])
-          ? [0]
-          : null,
-        watts: r.exerciseInputs.includes(exerciseInputs.Values.Watts) ? [0] : null,
-        speedMph: r.exerciseInputs.includes(exerciseInputs.Values['Speed (mph)']) ? [0] : null,
-        calories: r.exerciseInputs.includes(exerciseInputs.Values['Calories Burned']) ? [0] : null,
-        resistance: r.exerciseInputs.includes(exerciseInputs.Values.Resistance) ? [0] : null,
+        reps: r.exerciseInputs.includes(ExerciseInput.REPS) ? [0] : null,
+        weightLbs: r.exerciseInputs.includes(ExerciseInput.WEIGHT) ? [0] : null,
+        distanceMiles: r.exerciseInputs.includes(ExerciseInput.DISTANCE) ? [0] : null,
+        durationMinutes: r.exerciseInputs.includes(ExerciseInput.DURATION) ? [0] : null,
+        watts: r.exerciseInputs.includes(ExerciseInput.WATTS) ? [0] : null,
+        speedMph: r.exerciseInputs.includes(ExerciseInput.SPEED) ? [0] : null,
+        calories: r.exerciseInputs.includes(ExerciseInput.CALORIES) ? [0] : null,
+        resistance: r.exerciseInputs.includes(ExerciseInput.RESISTANCE) ? [0] : null,
       }
     })
   }
@@ -262,7 +256,7 @@ class Database extends Dexie {
   }
 
   async getRecords(group: RecordGroup, type: RecordType) {
-    if (group === recordGroups.Values.core) {
+    if (group === RecordGroup.CORE) {
       return await this.CoreRecords.where(allFields.Values.type)
         .equals(type)
         .sortBy(allFields.Values.name)
@@ -276,7 +270,7 @@ class Database extends Dexie {
   }
 
   async getRecord(group: RecordGroup, id: string) {
-    if (group === recordGroups.Values.core) {
+    if (group === RecordGroup.CORE) {
       return await this.CoreRecords.get(id)
     } else {
       return await this.SubRecords.get(id)
@@ -308,46 +302,46 @@ class Database extends Dexie {
     const activeExerciseResult: ExerciseResultRecord = {
       active: true,
       id: uid(),
-      type: recordTypes.Values.exercise,
+      type: RecordType.EXERCISE,
       timestamp: Date.now(),
       coreId: id,
       note: '',
       setsData: {},
     }
 
-    if (coreExercise.exerciseInputs.includes(exerciseInputs.Values.Reps)) {
+    if (coreExercise.exerciseInputs.includes(ExerciseInput.REPS)) {
       activeExerciseResult.setsData.reps = [0]
     }
 
-    if (coreExercise.exerciseInputs.includes(exerciseInputs.Values['Weight (lbs)'])) {
+    if (coreExercise.exerciseInputs.includes(ExerciseInput.WEIGHT)) {
       activeExerciseResult.setsData.weightLbs = [0]
     }
 
-    if (coreExercise.exerciseInputs.includes(exerciseInputs.Values['Distance (miles)'])) {
+    if (coreExercise.exerciseInputs.includes(ExerciseInput.DISTANCE)) {
       activeExerciseResult.setsData.distanceMiles = [0]
     }
 
-    if (coreExercise.exerciseInputs.includes(exerciseInputs.Values['Duration (minutes)'])) {
+    if (coreExercise.exerciseInputs.includes(ExerciseInput.DURATION)) {
       activeExerciseResult.setsData.durationMinutes = [0]
     }
 
-    if (coreExercise.exerciseInputs.includes(exerciseInputs.Values.Watts)) {
+    if (coreExercise.exerciseInputs.includes(ExerciseInput.WATTS)) {
       activeExerciseResult.setsData.watts = [0]
     }
 
-    if (coreExercise.exerciseInputs.includes(exerciseInputs.Values['Speed (mph)'])) {
+    if (coreExercise.exerciseInputs.includes(ExerciseInput.SPEED)) {
       activeExerciseResult.setsData.speedMph = [0]
     }
 
-    if (coreExercise.exerciseInputs.includes(exerciseInputs.Values['Calories Burned'])) {
+    if (coreExercise.exerciseInputs.includes(ExerciseInput.CALORIES)) {
       activeExerciseResult.setsData.calories = [0]
     }
 
-    if (coreExercise.exerciseInputs.includes(exerciseInputs.Values.Resistance)) {
+    if (coreExercise.exerciseInputs.includes(ExerciseInput.RESISTANCE)) {
       activeExerciseResult.setsData.resistance = [0]
     }
 
-    await this.addRecord(recordGroups.Values.sub, recordTypes.Values.exercise, activeExerciseResult)
+    await this.addRecord(RecordGroup.SUB, RecordType.EXERCISE, activeExerciseResult)
 
     return activeExerciseResult.id
   }
@@ -361,7 +355,7 @@ class Database extends Dexie {
       )
     }
 
-    if (group === recordGroups.Values.core) {
+    if (group === RecordGroup.CORE) {
       const newRecord = schema.parse(record) as AnyCoreRecord
       const result = await this.CoreRecords.add(newRecord)
       await this.updateLastSub(newRecord.id)
@@ -388,7 +382,7 @@ class Database extends Dexie {
       }
     }
 
-    if (group === recordGroups.Values.core) {
+    if (group === RecordGroup.CORE) {
       await this.CoreRecords.bulkAdd(validRecords as AnyCoreRecord[])
     } else {
       await this.SubRecords.bulkAdd(validRecords as AnySubRecord[])
@@ -416,13 +410,13 @@ class Database extends Dexie {
 
     // Sub records are deleted if the active workout is abandoned
     await Promise.all(
-      activeRecords.sub.map(async (sr) => await this.deleteRecord(recordGroups.Values.sub, sr.id))
+      activeRecords.sub.map(async (sr) => await this.deleteRecord(RecordGroup.SUB, sr.id))
     )
 
     // Core records are retained with active set back to false
     await Promise.all(
       activeRecords.core.map(
-        async (cr) => await this.updateRecord(recordGroups.Values.core, cr.type, cr.id, cr)
+        async (cr) => await this.updateRecord(RecordGroup.CORE, cr.type, cr.id, cr)
       )
     )
   }
@@ -433,20 +427,18 @@ class Database extends Dexie {
     activeRecords.sub.forEach((sr) => (sr.active = false))
 
     // Add the finished timestamp to the workout record
-    const workoutResultIndex = activeRecords.sub.findIndex(
-      (cr) => cr.type === recordTypes.Values.workout
-    )
+    const workoutResultIndex = activeRecords.sub.findIndex((cr) => cr.type === RecordType.WORKOUT)
     activeRecords.sub[workoutResultIndex].finishedTimestamp = Date.now()
 
     // Core records updated last so there last sub value is accurate
     await Promise.all(
       activeRecords.sub.map(
-        async (sr) => await this.updateRecord(recordGroups.Values.sub, sr.type, sr.id, sr)
+        async (sr) => await this.updateRecord(RecordGroup.SUB, sr.type, sr.id, sr)
       )
     )
     await Promise.all(
       activeRecords.core.map(
-        async (cr) => await this.updateRecord(recordGroups.Values.core, cr.type, cr.id, cr)
+        async (cr) => await this.updateRecord(RecordGroup.CORE, cr.type, cr.id, cr)
       )
     )
   }
@@ -460,7 +452,7 @@ class Database extends Dexie {
       )
     }
 
-    if (group === recordGroups.Values.core) {
+    if (group === RecordGroup.CORE) {
       const result = await this.CoreRecords.update(id, schema.parse(updatedRecord))
       await this.updateLastSub(id)
       return result
@@ -499,7 +491,7 @@ class Database extends Dexie {
       throw new Error(`No record found to delete with: ${group}, ${id}`)
     }
 
-    if (group === recordGroups.Values.core) {
+    if (group === RecordGroup.CORE) {
       await this.CoreRecords.delete(id)
       await this.SubRecords.where(allFields.Values.coreId).equals(id).delete()
     } else {
@@ -511,7 +503,7 @@ class Database extends Dexie {
   }
 
   async clearRecordsByType(group: RecordGroup, type: RecordType) {
-    if (group === recordGroups.Values.core) {
+    if (group === RecordGroup.CORE) {
       await this.CoreRecords.where(allFields.Values.type).equals(type).delete()
       return await this.SubRecords.where(allFields.Values.type).equals(type).delete()
     } else {

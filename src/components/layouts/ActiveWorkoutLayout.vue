@@ -3,7 +3,7 @@ import { onMounted, ref, watch, type Ref } from 'vue'
 import { RouterView } from 'vue-router'
 import { AppHeaderColor } from '@/constants/global'
 import { Icon, routeNames } from '@/types/general'
-import { recordTypes } from '@/types/core'
+import { RecordType } from '@/types/core'
 import { getDurationFromMilliseconds } from '@/utils/common'
 import { useInterval } from '@vueuse/core'
 import DB from '@/services/Database'
@@ -16,10 +16,9 @@ const workoutResultTimestamp: Ref<number> = ref(Date.now())
 onMounted(async () => {
   const activeRecords = await DB.getActiveRecords()
 
-  workoutName.value =
-    activeRecords.core.find((r) => r.type === recordTypes.Values.workout)?.name ?? ''
+  workoutName.value = activeRecords.core.find((r) => r.type === RecordType.WORKOUT)?.name ?? ''
   workoutResultTimestamp.value =
-    activeRecords.sub.find((r) => r.type === recordTypes.Values.workout)?.timestamp ?? Date.now()
+    activeRecords.sub.find((r) => r.type === RecordType.WORKOUT)?.timestamp ?? Date.now()
 })
 
 watch(counter, () => {

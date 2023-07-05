@@ -13,7 +13,7 @@ import {
   LineElement,
 } from 'chart.js'
 import { onMounted, ref, type Ref } from 'vue'
-import { idSchema, allFields, recordTypes, type RecordType } from '@/types/core'
+import { idSchema, allFields, recordTypeSchema, type RecordType } from '@/types/core'
 import { Duration } from '@/types/general'
 import ErrorStates from '../ErrorStates.vue'
 import useLogger from '@/composables/useLogger'
@@ -99,7 +99,7 @@ function downwardTrend(ctx: any, color: any) {
 async function recalculateChart() {
   try {
     // Get all records for the current route type and id
-    const isTypeValid = recordTypes.safeParse(props.type).success
+    const isTypeValid = recordTypeSchema.safeParse(props.type).success
     const isIdValid = idSchema.safeParse(props.id).success
 
     if (isTypeValid && isIdValid) {

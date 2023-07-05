@@ -2,10 +2,8 @@ import { Icon } from '@/types/general'
 import { defineAsyncComponent } from 'vue'
 import {
   type RecordProps,
-  type RecordGroup,
-  type RecordType,
-  recordGroups,
-  recordTypes,
+  RecordGroup,
+  RecordType,
   workoutSchema,
   workoutResultSchema,
   exerciseSchema,
@@ -25,8 +23,8 @@ import {
 export default class DataSchema {
   private static recordProps: RecordProps[] = [
     {
-      type: recordTypes.Values.workout,
-      group: recordGroups.Values.core,
+      type: RecordType.WORKOUT,
+      group: RecordGroup.CORE,
       icon: Icon.WORKOUTS,
       singular: 'Workout',
       plural: 'Workouts',
@@ -45,8 +43,8 @@ export default class DataSchema {
       schema: workoutSchema,
     },
     {
-      type: recordTypes.Values.workout,
-      group: recordGroups.Values.sub,
+      type: RecordType.WORKOUT,
+      group: RecordGroup.SUB,
       icon: Icon.WORKOUTS,
       singular: 'Workout Result',
       plural: 'Workout Results',
@@ -64,8 +62,8 @@ export default class DataSchema {
       schema: workoutResultSchema,
     },
     {
-      type: recordTypes.Values.exercise,
-      group: recordGroups.Values.core,
+      type: RecordType.EXERCISE,
+      group: RecordGroup.CORE,
       icon: Icon.EXERCISES,
       singular: 'Exercise',
       plural: 'Exercises',
@@ -85,8 +83,8 @@ export default class DataSchema {
       schema: exerciseSchema,
     },
     {
-      type: recordTypes.Values.exercise,
-      group: recordGroups.Values.sub,
+      type: RecordType.EXERCISE,
+      group: RecordGroup.SUB,
       icon: Icon.EXERCISES,
       singular: 'Exercise Result',
       plural: 'Exercise Results',
@@ -103,8 +101,8 @@ export default class DataSchema {
       schema: exerciseResultSchema,
     },
     {
-      type: recordTypes.Values.measurement,
-      group: recordGroups.Values.core,
+      type: RecordType.MEASUREMENT,
+      group: RecordGroup.CORE,
       icon: Icon.MEASUREMENTS,
       singular: 'Measurement',
       plural: 'Measurements',
@@ -122,8 +120,8 @@ export default class DataSchema {
       schema: measurementSchema,
     },
     {
-      type: recordTypes.Values.measurement,
-      group: recordGroups.Values.sub,
+      type: RecordType.MEASUREMENT,
+      group: RecordGroup.SUB,
       icon: Icon.MEASUREMENTS,
       singular: 'Measurement Result',
       plural: 'Measurement Results',
@@ -195,7 +193,7 @@ export default class DataSchema {
     icon: Icon
   }[] {
     return this.recordProps
-      .filter((p) => p.group === recordGroups.Values.core)
+      .filter((p) => p.group === RecordGroup.CORE)
       .map((p) => ({
         value: p.type,
         label: p.plural,
@@ -221,8 +219,7 @@ export default class DataSchema {
 
   static getCharts(type: RecordType) {
     return (
-      this.recordProps.find((p) => p.group === recordGroups.Values.core && p.type === type)
-        ?.charts ?? []
+      this.recordProps.find((p) => p.group === RecordGroup.CORE && p.type === type)?.charts ?? []
     )
   }
 }

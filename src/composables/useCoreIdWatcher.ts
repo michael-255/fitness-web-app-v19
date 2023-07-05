@@ -1,5 +1,5 @@
 import { watch } from 'vue'
-import { recordGroups, type AnyCoreRecord } from '@/types/core'
+import { RecordGroup, type AnyCoreRecord } from '@/types/core'
 import useLogger from '@/composables/useLogger'
 import useActionStore from '@/stores/action'
 import DB from '@/services/Database'
@@ -20,7 +20,7 @@ export default function useCoreIdWatcher(updateFunc: (coreRecord: AnyCoreRecord)
           if (actionStore.record.coreId) {
             // Must have value after change
             const record = (await DB.getRecord(
-              recordGroups.Values.core,
+              RecordGroup.CORE,
               actionStore.record.coreId
             )) as AnyCoreRecord
 

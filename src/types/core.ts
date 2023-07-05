@@ -15,21 +15,20 @@ export const coreIdBusKey: EventBusKey<string> = Symbol('core-id-changed-event')
 //
 
 // URL friendly slugs
-// TODO
-// export enum Type {
-//   WORKOUT = 'workout',
-//   EXERCISE = 'exercise',
-//   MEASUREMENT = 'measurement',
-// }
+export enum RecordType {
+  WORKOUT = 'workout',
+  EXERCISE = 'exercise',
+  MEASUREMENT = 'measurement',
+}
+export const recordTypeSchema = z.nativeEnum(RecordType)
 
 // URL friendly slug
-// TODO
-// export enum Group {
-//   CORE = 'core',
-//   SUB = 'sub',
-// }
+export enum RecordGroup {
+  CORE = 'core',
+  SUB = 'sub',
+}
+export const recordGroupSchema = z.nativeEnum(RecordGroup)
 
-// TODO
 export enum LogLevel {
   DEBUG = 'DEBUG',
   INFO = 'INFO',
@@ -54,17 +53,17 @@ export enum MeasurementInput {
   LBS = 'Lbs',
 }
 
-// TODO
-// export enum ExerciseInput {
-//   REPS = 'Reps',
-//   WEIGHT_LBS = 'Weight (lbs)',
-//   DISTANCE_MILES = 'Distance (miles)',
-//   DURATION_MINUTES = 'Duration (minutes)',
-//   WATTS = 'Watts',
-//   SPEED_MPH = 'Speed (mph)',
-//   CALORIES = 'Calories Burned',
-//   RESISTANCE = 'Resistance',
-// }
+export enum ExerciseInput {
+  REPS = 'Reps',
+  WEIGHT = 'Weight (lbs)',
+  DISTANCE = 'Distance (miles)',
+  DURATION = 'Duration (minutes)',
+  WATTS = 'Watts',
+  SPEED = 'Speed (mph)',
+  CALORIES = 'Calories Burned',
+  RESISTANCE = 'Resistance',
+}
+export const exerciseInputSchema = z.nativeEnum(ExerciseInput)
 
 // TODO
 export enum Field {
@@ -132,24 +131,6 @@ export enum Field {
   MEASUREMENT_INPUT = 'measurementInput',
 }
 
-export const recordTypes = z.enum(['workout', 'exercise', 'measurement']) // URL friendly slug
-export type RecordType = z.infer<typeof recordTypes>
-
-export const recordGroups = z.enum(['core', 'sub']) // URL friendly slug
-export type RecordGroup = z.infer<typeof recordGroups>
-
-export const exerciseInputs = z.enum([
-  'Reps',
-  'Weight (lbs)',
-  'Distance (miles)',
-  'Duration (minutes)',
-  'Watts',
-  'Speed (mph)',
-  'Calories Burned',
-  'Resistance',
-])
-export type ExerciseInput = z.infer<typeof exerciseInputs>
-
 // TODO - organize and rename???
 export const heightSchema = z.number().positive().min(1).max(120).optional()
 export type Height = z.infer<typeof heightSchema>
@@ -165,7 +146,7 @@ export const booleanSchema = z.boolean()
 export const finishedTimestampSchema = timestampSchema.optional()
 export const exerciseIdsSchema = z.array(idSchema).min(1) // Workout must have at least 1 exercise
 export const exerciseResultIdsSchema = z.array(idSchema) // May not have any exercise results
-export const exerciseInputsSchema = z.array(exerciseInputs) // Can be empty for instructional exercises
+export const exerciseInputsSchema = z.array(exerciseInputSchema) // Can be empty for instructional exercises
 export const measurementInputSchema = z.nativeEnum(MeasurementInput)
 export const numberSchema = z.number().min(Number.MIN_SAFE_INTEGER).max(Number.MAX_SAFE_INTEGER)
 export const bodyWeightSchema = z.number().min(1).max(1000)
@@ -189,7 +170,7 @@ const logSchema = z.object({
 })
 
 const baseSchema = z.object({
-  [Field.TYPE]: recordTypes,
+  [Field.TYPE]: recordTypeSchema,
   [Field.ID]: idSchema,
   [Field.TIMESTAMP]: timestampSchema,
 })
@@ -227,7 +208,7 @@ const measuredDataObject = z.object({
 
 // Workout Result
 export const workoutResultSchema = subSchema.extend({
-  [Field.TYPE]: z.literal(recordTypes.Values.workout),
+  [Field.TYPE]: z.literal(RecordType.WORKOUT),
   [Field.FINISHED_TIMESTAMP]: finishedTimestampSchema,
   [Field.EXERCISE_RESULT_IDS]: exerciseResultIdsSchema,
   [Field.ACTIVE]: booleanSchema,
@@ -235,7 +216,7 @@ export const workoutResultSchema = subSchema.extend({
 
 // Workout
 export const workoutSchema = coreSchema.extend({
-  [Field.TYPE]: z.literal(recordTypes.Values.workout),
+  [Field.TYPE]: z.literal(RecordType.WORKOUT),
   [Field.LAST_SUB]: workoutResultSchema.optional(),
   [Field.EXERCISE_IDS]: exerciseIdsSchema,
   [Field.ACTIVE]: booleanSchema,
@@ -243,7 +224,7 @@ export const workoutSchema = coreSchema.extend({
 
 // Exercise Result
 export const exerciseResultSchema = subSchema.extend({
-  [Field.TYPE]: z.literal(recordTypes.Values.exercise),
+  [Field.TYPE]: z.literal(RecordType.EXERCISE),
   [Field.ACTIVE]: booleanSchema,
   [Field.SETS_DATA]: setsDataObject.refine(
     (data) => {
@@ -262,7 +243,7 @@ export const exerciseResultSchema = subSchema.extend({
 
 // Exercise
 export const exerciseSchema = coreSchema.extend({
-  [Field.TYPE]: z.literal(recordTypes.Values.exercise),
+  [Field.TYPE]: z.literal(RecordType.EXERCISE),
   [Field.LAST_SUB]: exerciseResultSchema.optional(),
   [Field.MULTIPLE_SETS]: booleanSchema,
   [Field.EXERCISE_INPUTS]: exerciseInputsSchema,
@@ -271,7 +252,7 @@ export const exerciseSchema = coreSchema.extend({
 
 // Measurement Result
 export const measurementResultSchema = subSchema.extend({
-  [Field.TYPE]: z.literal(recordTypes.Values.measurement),
+  [Field.TYPE]: z.literal(RecordType.MEASUREMENT),
   [Field.MEASURED_DATA]: measuredDataObject.refine(
     (data) => {
       const measuredData = Object.values(data)
@@ -288,7 +269,7 @@ export const measurementResultSchema = subSchema.extend({
 
 // Measurement
 export const measurementSchema = coreSchema.extend({
-  [Field.TYPE]: z.literal(recordTypes.Values.measurement),
+  [Field.TYPE]: z.literal(RecordType.MEASUREMENT),
   [Field.LAST_SUB]: measurementResultSchema.optional(),
   [Field.MEASUREMENT_INPUT]: measurementInputSchema,
 })
