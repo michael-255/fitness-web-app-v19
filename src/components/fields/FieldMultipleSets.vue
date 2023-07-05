@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { allFields } from '@/types/core'
+import { Field } from '@/types/core'
 import { onMounted } from 'vue'
 import useActionStore from '@/stores/action'
 
@@ -9,7 +9,7 @@ defineProps<{
 
 const actionStore = useActionStore()
 
-const field = allFields.Values.multipleSets
+const field = Field.MULTIPLE_SETS
 
 onMounted(() => {
   actionStore.record[field] = actionStore.record[field] ?? true

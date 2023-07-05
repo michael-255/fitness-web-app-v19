@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { allFields, nameSchema } from '@/types/core'
+import { Field, nameSchema } from '@/types/core'
 import { Limit } from '@/types/general'
 import useActionStore from '@/stores/action'
 
@@ -10,7 +10,7 @@ defineProps<{
 
 const actionStore = useActionStore()
 
-const field = allFields.Values.name
+const field = Field.NAME
 
 onMounted(() => {
   actionStore.record[field] = actionStore.record[field] ?? ''

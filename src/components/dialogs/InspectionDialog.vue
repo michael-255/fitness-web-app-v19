@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useDialogPluginComponent } from 'quasar'
 import { Icon } from '@/types/general'
-import type { AnyDatabaseRecord, AnyField } from '@/types/core'
+import type { AnyDatabaseRecord, Field } from '@/types/core'
 import { defineAsyncComponent, onUnmounted } from 'vue'
 import useActionStore from '@/stores/action'
 
@@ -18,7 +18,7 @@ const actionStore = useActionStore()
 
 // Setup action store record with all the record values
 Object.keys(props.record).map((key) => {
-  actionStore.record[key as AnyField] = props.record[key as AnyField]
+  actionStore.record[key as Field] = props.record[key as Field]
 })
 
 onUnmounted(() => {

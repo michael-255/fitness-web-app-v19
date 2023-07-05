@@ -6,7 +6,7 @@ import { useMeta } from 'quasar'
 import { AppName } from '@/constants/global'
 import { getRecordsCountDisplay } from '@/utils/common'
 import { hiddenColumnNames, logColumns } from '@/services/table-columns'
-import { allFields, type AnyDatabaseRecord, type AnyField, type Log } from '@/types/core'
+import { Field, type AnyDatabaseRecord, type Log } from '@/types/core'
 import useLogger from '@/composables/useLogger'
 import useRoutables from '@/composables/useRoutables'
 import useDialogs from '@/composables/useDialogs'
@@ -21,11 +21,7 @@ const { inspectDialog } = useDialogs()
 
 const searchFilter: Ref<string> = ref('')
 const rows: Ref<Log[]> = ref([])
-const visibleColumns: Ref<AnyField[]> = ref([
-  allFields.Values.timestamp,
-  allFields.Values.logLevel,
-  allFields.Values.logLabel,
-])
+const visibleColumns: Ref<Field[]> = ref([Field.TIMESTAMP, Field.LOG_LEVEL, Field.LOG_LABEL])
 const columns: Ref<QTableColumn[]> = ref(logColumns)
 const columnOptions: Ref<QTableColumn[]> = ref(
   columns.value.filter((col: QTableColumn) => !col.required)

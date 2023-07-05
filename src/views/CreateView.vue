@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@/types/general'
-import { allFields, type AnyRecord, RecordGroup, RecordType } from '@/types/core'
+import { Field, type AnyRecord, RecordGroup, RecordType } from '@/types/core'
 import { onMounted, onUnmounted, ref } from 'vue'
 import { extend, uid, useMeta } from 'quasar'
 import { AppName } from '@/constants/global'
@@ -26,26 +26,26 @@ const isFormValid = ref(true)
 
 onMounted(async () => {
   try {
-    actionStore.record[allFields.Values.id] = uid()
-    actionStore.record[allFields.Values.type] = routeType
+    actionStore.record[Field.ID] = uid()
+    actionStore.record[Field.TYPE] = routeType
 
     if (routeCoreId) {
       // Only including optional coreId if valid
-      actionStore.record[allFields.Values.coreId] = routeCoreId
+      actionStore.record[Field.CORE_ID] = routeCoreId
     }
 
     if (routeType === RecordType.WORKOUT || routeType === RecordType.EXERCISE) {
-      actionStore.record[allFields.Values.active] = false
+      actionStore.record[Field.ACTIVE] = false
     }
 
     // Exercise results
     if (routeGroup === RecordGroup.SUB && routeType === RecordType.EXERCISE) {
-      actionStore.record[allFields.Values.setsData] = {}
+      actionStore.record[Field.SETS_DATA] = {}
     }
 
     // Measurement results
     if (routeGroup === RecordGroup.SUB && routeType === RecordType.MEASUREMENT) {
-      actionStore.record[allFields.Values.measuredData] = {}
+      actionStore.record[Field.MEASURED_DATA] = {}
     }
   } catch (error) {
     log.error('Error loading create view', error)
@@ -63,7 +63,7 @@ async function onSubmit() {
       await DB.addRecord(routeGroup as RecordGroup, routeType as RecordType, deepRecordCopy)
 
       log.info('Successfully created record', {
-        id: deepRecordCopy[allFields.Values.id],
+        id: deepRecordCopy[Field.ID],
         type: routeType,
       })
 

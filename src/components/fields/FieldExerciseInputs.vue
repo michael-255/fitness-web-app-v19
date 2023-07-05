@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref, type Ref } from 'vue'
-import { ExerciseInput, allFields, exerciseInputsSchema } from '@/types/core'
+import { ExerciseInput, Field, exerciseInputsSchema } from '@/types/core'
 import useLogger from '@/composables/useLogger'
 import useActionStore from '@/stores/action'
 
@@ -11,7 +11,7 @@ defineProps<{
 const { log } = useLogger()
 const actionStore = useActionStore()
 
-const field = allFields.Values.exerciseInputs
+const field = Field.EXERCISE_INPUTS
 const options: Ref<{ value: ExerciseInput; label: ExerciseInput }[]> = ref([])
 
 onMounted(async () => {

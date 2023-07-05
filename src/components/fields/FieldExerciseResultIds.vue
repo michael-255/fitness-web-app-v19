@@ -2,7 +2,7 @@
 import { onMounted, ref, type Ref } from 'vue'
 import {
   type ExerciseResultRecord,
-  allFields,
+  Field,
   exerciseResultIdsSchema,
   RecordType,
   RecordGroup,
@@ -19,7 +19,7 @@ defineProps<{
 const { log } = useLogger()
 const actionStore = useActionStore()
 
-const field = allFields.Values.exerciseResultIds
+const field = Field.EXERCISE_RESULT_IDS
 const options: Ref<{ value: string; label: string }[]> = ref([])
 
 onMounted(async () => {

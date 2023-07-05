@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { allFields } from '@/types/core'
+import { Field } from '@/types/core'
 import useActionStore from '@/stores/action'
 
 defineProps<{
@@ -17,6 +17,6 @@ function inspectFormat(val: number) {
   <!-- Inspection only -->
   <div v-if="inspecting">
     <div class="text-weight-bold text-body1">Auto Id</div>
-    <div>{{ inspectFormat(actionStore.record[allFields.Values.autoId]) }}</div>
+    <div>{{ inspectFormat(actionStore.record[Field.AUTO_ID]) }}</div>
   </div>
 </template>

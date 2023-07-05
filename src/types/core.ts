@@ -274,24 +274,6 @@ export const measurementSchema = coreSchema.extend({
   [Field.MEASUREMENT_INPUT]: measurementInputSchema,
 })
 
-// TODO - Replacing with FIELD enum
-/**
- * - Use this schema to collect all fields from all schemas
- */
-const allSchema = settingSchema
-  .extend(logSchema.shape)
-  .extend(workoutSchema.shape)
-  .extend(workoutResultSchema.shape)
-  .extend(exerciseSchema.shape)
-  .extend(exerciseResultSchema.shape)
-  .extend(measurementSchema.shape)
-  .extend(measurementResultSchema.shape)
-  .extend(setsDataObject.shape)
-  .extend(measuredDataObject.shape)
-
-export const allFields = allSchema.keyof()
-export type AnyField = z.infer<typeof allFields>
-
 //
 // MODELS
 //

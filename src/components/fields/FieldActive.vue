@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { allFields } from '@/types/core'
+import { Field } from '@/types/core'
 import useActionStore from '@/stores/action'
 
 defineProps<{
@@ -17,6 +17,6 @@ function inspectFormat(val: boolean) {
   <!-- Inspection only -->
   <div v-if="inspecting">
     <div class="text-weight-bold text-body1">Active</div>
-    <div>{{ inspectFormat(actionStore.record[allFields.Values.active]) }}</div>
+    <div>{{ inspectFormat(actionStore.record[Field.ACTIVE]) }}</div>
   </div>
 </template>

@@ -7,13 +7,7 @@ import { useMeta } from 'quasar'
 import { AppName } from '@/constants/global'
 import { getRecordsCountDisplay } from '@/utils/common'
 import { hiddenColumnNames } from '@/services/table-columns'
-import {
-  allFields,
-  RecordGroup,
-  type AnyField,
-  type RecordType,
-  type AnyRecord,
-} from '@/types/core'
+import { Field, RecordGroup, type RecordType, type AnyRecord } from '@/types/core'
 import DataSchema from '@/services/DataSchema'
 import useLogger from '@/composables/useLogger'
 import useRoutables from '@/composables/useRoutables'
@@ -28,7 +22,7 @@ const { confirmDialog, inspectDialog, chartsDialog } = useDialogs()
 
 const searchFilter: Ref<string> = ref('')
 const rows: Ref<any[]> = ref([])
-const visibleColumns: Ref<AnyField[]> = ref([])
+const visibleColumns: Ref<Field[]> = ref([])
 const columns: Ref<QTableColumn[]> = ref(
   DataSchema.getTableColumns(routeGroup as RecordGroup, routeType as RecordType) as QTableColumn[]
 )
@@ -38,7 +32,7 @@ const columnOptions: Ref<QTableColumn[]> = ref(
 let subscription: Subscription | null = null
 
 if (routeGroup === RecordGroup.CORE) {
-  visibleColumns.value = [allFields.Values.id, allFields.Values.timestamp, allFields.Values.name]
+  visibleColumns.value = [Field.ID, Field.TIMESTAMP, Field.NAME]
 
   subscription = DB.liveCoreRecords(routeType as RecordType).subscribe({
     next: (records) => {
@@ -49,7 +43,7 @@ if (routeGroup === RecordGroup.CORE) {
     },
   })
 } else {
-  visibleColumns.value = [allFields.Values.id, allFields.Values.timestamp]
+  visibleColumns.value = [Field.ID, Field.TIMESTAMP]
 
   subscription = DB.liveSubRecords(routeType as RecordType).subscribe({
     next: (records) => {

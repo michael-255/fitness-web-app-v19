@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref, type Ref } from 'vue'
-import { allFields, measurementInputSchema, MeasurementInput } from '@/types/core'
+import { Field, measurementInputSchema, MeasurementInput } from '@/types/core'
 import useLogger from '@/composables/useLogger'
 import useActionStore from '@/stores/action'
 
@@ -11,7 +11,7 @@ defineProps<{
 const { log } = useLogger()
 const actionStore = useActionStore()
 
-const field = allFields.Values.measurementInput
+const field = Field.MEASUREMENT_INPUT
 const options: Ref<{ value: MeasurementInput; label: MeasurementInput }[]> = ref([])
 
 onMounted(async () => {

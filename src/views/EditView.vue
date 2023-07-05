@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@/types/general'
-import { allFields, type AnyRecord, type RecordGroup, type RecordType } from '@/types/core'
+import { Field, type AnyRecord, type RecordGroup, type RecordType } from '@/types/core'
 import { onMounted, onUnmounted, ref } from 'vue'
 import { extend, useMeta } from 'quasar'
 import { AppName } from '@/constants/global'
@@ -57,7 +57,7 @@ async function onSubmit() {
       )
 
       log.info('Successfully updated record', {
-        id: deepRecordCopy[allFields.Values.id],
+        id: deepRecordCopy[Field.ID],
         type: routeType,
       })
 

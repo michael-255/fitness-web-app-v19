@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { allFields } from '@/types/core'
+import { Field } from '@/types/core'
 import useActionStore from '@/stores/action'
 
 defineProps<{
@@ -17,6 +17,6 @@ function inspectFormat(val: string) {
   <!-- Inspection only -->
   <div v-if="inspecting">
     <div class="text-weight-bold text-body1">Error Message</div>
-    <div>{{ inspectFormat(actionStore.record[allFields.Values.errorMessage]) }}</div>
+    <div>{{ inspectFormat(actionStore.record[Field.ERROR_MESSAGE]) }}</div>
   </div>
 </template>

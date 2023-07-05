@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { type Ref, ref } from 'vue'
-import { ExerciseInput, type AnyField, allFields, numberSchema } from '@/types/core'
+import { ExerciseInput, Field, numberSchema } from '@/types/core'
 import { Limit, Icon } from '@/types/general'
 import type { AnyCoreRecord } from '@/types/core'
 import useActionStore from '@/stores/action'
@@ -16,7 +16,7 @@ const { log } = useLogger()
 const { confirmDialog } = useDialogs()
 const actionStore = useActionStore()
 
-const dataField = allFields.Values.setsData
+const dataField = Field.SETS_DATA
 const exerciseInputsRef: Ref<ExerciseInput[]> = ref([])
 const multipleSetsRef: Ref<boolean> = ref(false)
 const setIndexes: Ref<null[]> = ref([])
@@ -31,38 +31,38 @@ useCoreIdWatcher((coreRecord: AnyCoreRecord) => {
   // Restrict sets to one if multiple sets is off
   if (!multipleSetsRef.value) {
     setIndexes.value = [null] // Hack to update set lengths
-    restrictSets(allFields.Values.reps)
-    restrictSets(allFields.Values.weightLbs)
-    restrictSets(allFields.Values.distanceMiles)
-    restrictSets(allFields.Values.durationMinutes)
-    restrictSets(allFields.Values.watts)
-    restrictSets(allFields.Values.speedMph)
-    restrictSets(allFields.Values.calories)
-    restrictSets(allFields.Values.resistance)
+    restrictSets(Field.REPS)
+    restrictSets(Field.WEIGHT_LBS)
+    restrictSets(Field.DISTANCE_MILES)
+    restrictSets(Field.DURATION_MINUTES)
+    restrictSets(Field.WATTS)
+    restrictSets(Field.SPEED_MPH)
+    restrictSets(Field.CALORIES)
+    restrictSets(Field.RESISTANCE)
   }
 
   // Determine which exercise inputs are being used and displayed
   if (exerciseInputsRef.value.length > 0) {
-    initSets(ExerciseInput.REPS, allFields.Values.reps)
-    initSets(ExerciseInput.WEIGHT, allFields.Values.weightLbs)
-    initSets(ExerciseInput.DISTANCE, allFields.Values.distanceMiles)
-    initSets(ExerciseInput.DURATION, allFields.Values.durationMinutes)
-    initSets(ExerciseInput.WATTS, allFields.Values.watts)
-    initSets(ExerciseInput.SPEED, allFields.Values.speedMph)
-    initSets(ExerciseInput.CALORIES, allFields.Values.calories)
-    initSets(ExerciseInput.RESISTANCE, allFields.Values.resistance)
+    initSets(ExerciseInput.REPS, Field.REPS)
+    initSets(ExerciseInput.WEIGHT, Field.WEIGHT_LBS)
+    initSets(ExerciseInput.DISTANCE, Field.DISTANCE_MILES)
+    initSets(ExerciseInput.DURATION, Field.DURATION_MINUTES)
+    initSets(ExerciseInput.WATTS, Field.WATTS)
+    initSets(ExerciseInput.SPEED, Field.SPEED_MPH)
+    initSets(ExerciseInput.CALORIES, Field.CALORIES)
+    initSets(ExerciseInput.RESISTANCE, Field.RESISTANCE)
   } else {
     actionStore.record[dataField] = {}
   }
 })
 
-function restrictSets(field: AnyField) {
+function restrictSets(field: Field) {
   actionStore.record[dataField][field] = actionStore.record?.[dataField]?.[field]
     ? [actionStore.record[dataField][field][0]] // Single element array for no sets exercise
     : [undefined]
 }
 
-function initSets(input: ExerciseInput, field: AnyField) {
+function initSets(input: ExerciseInput, field: Field) {
   if (exerciseInputsRef.value.includes(input)) {
     actionStore.record[dataField][field] = actionStore.record?.[dataField]?.[field]
       ? actionStore.record[dataField][field]
@@ -76,14 +76,14 @@ function initSets(input: ExerciseInput, field: AnyField) {
 }
 
 function addSet() {
-  addInputSets(ExerciseInput.REPS, allFields.Values.reps)
-  addInputSets(ExerciseInput.WEIGHT, allFields.Values.weightLbs)
-  addInputSets(ExerciseInput.DISTANCE, allFields.Values.distanceMiles)
-  addInputSets(ExerciseInput.DURATION, allFields.Values.durationMinutes)
-  addInputSets(ExerciseInput.WATTS, allFields.Values.watts)
-  addInputSets(ExerciseInput.SPEED, allFields.Values.speedMph)
-  addInputSets(ExerciseInput.CALORIES, allFields.Values.calories)
-  addInputSets(ExerciseInput.RESISTANCE, allFields.Values.resistance)
+  addInputSets(ExerciseInput.REPS, Field.REPS)
+  addInputSets(ExerciseInput.WEIGHT, Field.WEIGHT_LBS)
+  addInputSets(ExerciseInput.DISTANCE, Field.DISTANCE_MILES)
+  addInputSets(ExerciseInput.DURATION, Field.DURATION_MINUTES)
+  addInputSets(ExerciseInput.WATTS, Field.WATTS)
+  addInputSets(ExerciseInput.SPEED, Field.SPEED_MPH)
+  addInputSets(ExerciseInput.CALORIES, Field.CALORIES)
+  addInputSets(ExerciseInput.RESISTANCE, Field.RESISTANCE)
 }
 
 function removeSet() {
@@ -94,14 +94,14 @@ function removeSet() {
     'warning',
     async () => {
       try {
-        removeInputSet(ExerciseInput.REPS, allFields.Values.reps)
-        removeInputSet(ExerciseInput.WEIGHT, allFields.Values.weightLbs)
-        removeInputSet(ExerciseInput.DISTANCE, allFields.Values.distanceMiles)
-        removeInputSet(ExerciseInput.DURATION, allFields.Values.durationMinutes)
-        removeInputSet(ExerciseInput.WATTS, allFields.Values.watts)
-        removeInputSet(ExerciseInput.SPEED, allFields.Values.speedMph)
-        removeInputSet(ExerciseInput.CALORIES, allFields.Values.calories)
-        removeInputSet(ExerciseInput.RESISTANCE, allFields.Values.resistance)
+        removeInputSet(ExerciseInput.REPS, Field.REPS)
+        removeInputSet(ExerciseInput.WEIGHT, Field.WEIGHT_LBS)
+        removeInputSet(ExerciseInput.DISTANCE, Field.DISTANCE_MILES)
+        removeInputSet(ExerciseInput.DURATION, Field.DURATION_MINUTES)
+        removeInputSet(ExerciseInput.WATTS, Field.WATTS)
+        removeInputSet(ExerciseInput.SPEED, Field.SPEED_MPH)
+        removeInputSet(ExerciseInput.CALORIES, Field.CALORIES)
+        removeInputSet(ExerciseInput.RESISTANCE, Field.RESISTANCE)
       } catch (error) {
         log.error('Failed to remove last set', error)
       }
@@ -109,7 +109,7 @@ function removeSet() {
   )
 }
 
-function addInputSets(selectedInput: ExerciseInput, field: AnyField) {
+function addInputSets(selectedInput: ExerciseInput, field: Field) {
   if (exerciseInputsRef.value.includes(selectedInput)) {
     if (
       actionStore.record?.[dataField]?.[field] &&
@@ -123,7 +123,7 @@ function addInputSets(selectedInput: ExerciseInput, field: AnyField) {
   }
 }
 
-function removeInputSet(selectedInput: ExerciseInput, field: AnyField) {
+function removeInputSet(selectedInput: ExerciseInput, field: Field) {
   if (exerciseInputsRef.value.includes(selectedInput)) {
     if (
       actionStore.record?.[dataField]?.[field] &&

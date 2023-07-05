@@ -4,18 +4,18 @@ import { Duration } from '@/types/general'
 import { AppDatabaseVersion, AppName } from '@/constants/global'
 import {
   SettingKey,
-  allFields,
+  Field,
+  RecordType,
+  RecordGroup,
+  ExerciseInput,
   type Log,
   type Setting,
   type AnyRecord,
   type AnyCoreRecord,
   type AnySubRecord,
   type LogLevel,
-  RecordType,
-  RecordGroup,
   type ExerciseRecord,
   type ExerciseResultRecord,
-  ExerciseInput,
 } from '@/types/core'
 import DataSchema from '@/services/DataSchema'
 
@@ -30,10 +30,10 @@ class Database extends Dexie {
     super(name)
 
     this.version(1).stores({
-      Logs: `++${allFields.Values.autoId}`,
-      Settings: `&${allFields.Values.key}`,
-      CoreRecords: `&${allFields.Values.id}, ${allFields.Values.type}`,
-      SubRecords: `&${allFields.Values.id}, ${allFields.Values.type}, ${allFields.Values.coreId}`,
+      Logs: `++${Field.AUTO_ID}`,
+      Settings: `&${Field.KEY}`,
+      CoreRecords: `&${Field.ID}, ${Field.TYPE}`,
+      SubRecords: `&${Field.ID}, ${Field.TYPE}, ${Field.CORE_ID}`,
     })
   }
 
@@ -160,38 +160,36 @@ class Database extends Dexie {
   //
 
   liveLogs() {
-    return liveQuery(() => this.Logs.orderBy(allFields.Values.autoId).reverse().toArray())
+    return liveQuery(() => this.Logs.orderBy(Field.AUTO_ID).reverse().toArray())
   }
 
   liveSettings() {
-    return liveQuery(() => this.Settings.orderBy(allFields.Values.key).toArray())
+    return liveQuery(() => this.Settings.orderBy(Field.KEY).toArray())
   }
 
   liveCoreRecords(type: RecordType) {
     return liveQuery(() =>
-      this.CoreRecords.where(allFields.Values.type)
+      this.CoreRecords.where(Field.TYPE)
         .equals(type)
         .and((r) => r.active !== true)
-        .sortBy(allFields.Values.name)
+        .sortBy(Field.NAME)
     )
   }
 
   liveSubRecords(type: RecordType) {
     return liveQuery(async () =>
       (
-        await this.SubRecords.where(allFields.Values.type)
+        await this.SubRecords.where(Field.TYPE)
           .equals(type)
           .and((r) => r.active !== true)
-          .sortBy(allFields.Values.timestamp)
+          .sortBy(Field.TIMESTAMP)
       ).reverse()
     )
   }
 
   liveDashboard() {
     return liveQuery(async () => {
-      const parents = await this.CoreRecords.filter((p) => p.enabled === true).sortBy(
-        allFields.Values.name
-      )
+      const parents = await this.CoreRecords.filter((p) => p.enabled === true).sortBy(Field.NAME)
 
       const active: AnyCoreRecord[] = []
       const favorites: AnyCoreRecord[] = []
@@ -223,7 +221,7 @@ class Database extends Dexie {
   //
 
   async getExerciseInputDefaults(coreId: string) {
-    return (await this.CoreRecords.where(allFields.Values.id).equals(coreId).toArray()).map((r) => {
+    return (await this.CoreRecords.where(Field.ID).equals(coreId).toArray()).map((r) => {
       return {
         reps: r.exerciseInputs.includes(ExerciseInput.REPS) ? [0] : null,
         weightLbs: r.exerciseInputs.includes(ExerciseInput.WEIGHT) ? [0] : null,
@@ -257,14 +255,10 @@ class Database extends Dexie {
 
   async getRecords(group: RecordGroup, type: RecordType) {
     if (group === RecordGroup.CORE) {
-      return await this.CoreRecords.where(allFields.Values.type)
-        .equals(type)
-        .sortBy(allFields.Values.name)
+      return await this.CoreRecords.where(Field.TYPE).equals(type).sortBy(Field.NAME)
     } else {
       return (
-        await this.SubRecords.where(allFields.Values.type)
-          .equals(type)
-          .sortBy(allFields.Values.timestamp)
+        await this.SubRecords.where(Field.TYPE).equals(type).sortBy(Field.TIMESTAMP)
       ).reverse()
     }
   }
@@ -278,16 +272,12 @@ class Database extends Dexie {
   }
 
   async getCoreSubRecords(coreId: string) {
-    return await this.SubRecords.where(allFields.Values.coreId)
-      .equals(coreId)
-      .sortBy(allFields.Values.timestamp)
+    return await this.SubRecords.where(Field.CORE_ID).equals(coreId).sortBy(Field.TIMESTAMP)
   }
 
   async getLastSubRecord(coreId: string) {
     return (
-      await this.SubRecords.where(allFields.Values.coreId)
-        .equals(coreId)
-        .sortBy(allFields.Values.timestamp)
+      await this.SubRecords.where(Field.CORE_ID).equals(coreId).sortBy(Field.TIMESTAMP)
     ).reverse()[0]
   }
 
@@ -465,9 +455,7 @@ class Database extends Dexie {
 
   async updateLastSub(coreId: string) {
     const lastSub = (
-      await this.SubRecords.where(allFields.Values.coreId)
-        .equals(coreId)
-        .sortBy(allFields.Values.timestamp)
+      await this.SubRecords.where(Field.CORE_ID).equals(coreId).sortBy(Field.TIMESTAMP)
     ).reverse()[0]
     return await this.CoreRecords.update(coreId, { lastSub })
   }
@@ -493,7 +481,7 @@ class Database extends Dexie {
 
     if (group === RecordGroup.CORE) {
       await this.CoreRecords.delete(id)
-      await this.SubRecords.where(allFields.Values.coreId).equals(id).delete()
+      await this.SubRecords.where(Field.CORE_ID).equals(id).delete()
     } else {
       await this.SubRecords.delete(id)
       await this.updateLastSub(recordToDelete.coreId)
@@ -504,13 +492,11 @@ class Database extends Dexie {
 
   async clearRecordsByType(group: RecordGroup, type: RecordType) {
     if (group === RecordGroup.CORE) {
-      await this.CoreRecords.where(allFields.Values.type).equals(type).delete()
-      return await this.SubRecords.where(allFields.Values.type).equals(type).delete()
+      await this.CoreRecords.where(Field.TYPE).equals(type).delete()
+      return await this.SubRecords.where(Field.TYPE).equals(type).delete()
     } else {
-      await this.SubRecords.where(allFields.Values.type).equals(type).delete()
-      const parentsToUpdate = await this.CoreRecords.where(allFields.Values.type)
-        .equals(type)
-        .toArray()
+      await this.SubRecords.where(Field.TYPE).equals(type).delete()
+      const parentsToUpdate = await this.CoreRecords.where(Field.TYPE).equals(type).toArray()
       return await Promise.all(
         parentsToUpdate.map((r) => this.CoreRecords.update(r.id, { lastChild: undefined }))
       )

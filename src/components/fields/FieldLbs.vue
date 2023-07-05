@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { type Ref, ref } from 'vue'
-import { MeasurementInput, type AnyCoreRecord, allFields, numberSchema } from '@/types/core'
+import { MeasurementInput, type AnyCoreRecord, Field, numberSchema } from '@/types/core'
 import useActionStore from '@/stores/action'
 import useCoreIdWatcher from '@/composables/useCoreIdWatcher'
 
@@ -10,8 +10,8 @@ defineProps<{
 
 const actionStore = useActionStore()
 
-const dataField = allFields.Values.measuredData
-const field = allFields.Values.lbs
+const dataField = Field.MEASURED_DATA
+const field = Field.LBS
 const isVisible: Ref<boolean> = ref(false)
 
 useCoreIdWatcher((coreRecord: AnyCoreRecord) => {

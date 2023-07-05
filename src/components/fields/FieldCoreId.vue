@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, type Ref } from 'vue'
 import { truncateString } from '@/utils/common'
-import { type AnyCoreRecord, type RecordType, idSchema, allFields, RecordGroup } from '@/types/core'
+import { type AnyCoreRecord, type RecordType, idSchema, RecordGroup, Field } from '@/types/core'
 import useLogger from '@/composables/useLogger'
 import useActionStore from '@/stores/action'
 import useRoutables from '@/composables/useRoutables'
@@ -15,7 +15,7 @@ const { routeType } = useRoutables()
 const { log } = useLogger()
 const actionStore = useActionStore()
 
-const field = allFields.Values.coreId
+const field = Field.CORE_ID
 const options: Ref<{ value: string; label: string }[]> = ref([])
 
 onMounted(async () => {

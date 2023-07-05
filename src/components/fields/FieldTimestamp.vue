@@ -3,7 +3,7 @@ import { date } from 'quasar'
 import { onMounted, type Ref, ref } from 'vue'
 import { Icon } from '@/types/general'
 import { getDisplayDate } from '@/utils/common'
-import { allFields } from '@/types/core'
+import { Field } from '@/types/core'
 import useActionStore from '@/stores/action'
 
 defineProps<{
@@ -12,7 +12,7 @@ defineProps<{
 
 const actionStore = useActionStore()
 
-const field = allFields.Values.timestamp
+const field = Field.TIMESTAMP
 const displayDate: Ref<string> = ref('')
 const datePicker: Ref<string> = ref('')
 const timePicker: Ref<string> = ref('')
