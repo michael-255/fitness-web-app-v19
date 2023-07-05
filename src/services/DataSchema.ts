@@ -19,6 +19,7 @@ import {
   workoutColumns,
   workoutResultColumns,
 } from '@/services/table-columns'
+import type { z } from 'zod'
 
 export default class DataSchema {
   private static recordProps: RecordProps[] = [
@@ -202,7 +203,7 @@ export default class DataSchema {
   }
 
   static getLabel(group: RecordGroup, type: RecordType, style: 'singular' | 'plural') {
-    return this.recordProps.find((p) => p.group === group && p.type === type)?.[style]
+    return this.recordProps.find((p) => p.group === group && p.type === type)?.[style] as string
   }
 
   static getTableColumns(group: RecordGroup, type: RecordType) {
@@ -210,7 +211,8 @@ export default class DataSchema {
   }
 
   static getSchema(group: RecordGroup, type: RecordType) {
-    return this.recordProps.find((p) => p.group === group && p.type === type)?.schema
+    return this.recordProps.find((p) => p.group === group && p.type === type)
+      ?.schema as z.ZodObject<any, any, any>
   }
 
   static getFields(group: RecordGroup, type: RecordType) {

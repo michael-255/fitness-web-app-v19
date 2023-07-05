@@ -4,14 +4,7 @@ import { Duration, Icon, Limit } from '@/types/general'
 import { type Ref, ref, onUnmounted } from 'vue'
 import { AppDatabaseVersion, AppName } from '@/constants/global'
 import { useMeta } from 'quasar'
-import {
-  type Height,
-  type Setting,
-  type BackupData,
-  SettingKey,
-  heightSchema,
-  RecordGroup,
-} from '@/types/core'
+import { type Setting, type BackupData, SettingKey, heightSchema, RecordGroup } from '@/types/core'
 import DataSchema from '@/services/DataSchema'
 import useLogger from '@/composables/useLogger'
 import useNotifications from '@/composables/useNotifications'
@@ -38,7 +31,7 @@ const { goToRecordsData, goToLogsData } = useRoutables()
 const allOptions = DataSchema.getAllOptions()
 const settings: Ref<Setting[]> = ref([])
 const heightInputRef: Ref<any> = ref(null)
-const heightInches: Ref<Height> = ref(undefined)
+const heightInches: Ref<number | undefined> = ref(undefined)
 const logDurationIndex: Ref<number> = ref(0)
 const importFile: Ref<any> = ref(null)
 const accessOptions = ref(allOptions)

@@ -339,12 +339,6 @@ class Database extends Dexie {
   async addRecord(group: RecordGroup, type: RecordType, record: AnyRecord) {
     const schema = DataSchema.getSchema(group, type)
 
-    if (!schema || !schema.safeParse(record).success) {
-      throw new Error(
-        `Invalid schema with parameters: ${group}, ${type}, ${JSON.stringify(record)}`
-      )
-    }
-
     if (group === RecordGroup.CORE) {
       const newRecord = schema.parse(record) as AnyCoreRecord
       const result = await this.CoreRecords.add(newRecord)
@@ -435,12 +429,6 @@ class Database extends Dexie {
 
   async updateRecord(group: RecordGroup, type: RecordType, id: string, updatedRecord: AnyRecord) {
     const schema = DataSchema.getSchema(group, type)
-
-    if (!schema || !schema.safeParse(updatedRecord).success) {
-      throw new Error(
-        `Invalid schema with parameters: ${group}, ${type}, ${id}, ${JSON.stringify(updatedRecord)}`
-      )
-    }
 
     if (group === RecordGroup.CORE) {
       const result = await this.CoreRecords.update(id, schema.parse(updatedRecord))

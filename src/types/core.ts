@@ -65,7 +65,6 @@ export enum ExerciseInput {
 }
 export const exerciseInputSchema = z.nativeEnum(ExerciseInput)
 
-// TODO
 export enum Field {
   // Setting
   KEY = 'key',
@@ -131,14 +130,10 @@ export enum Field {
   MEASUREMENT_INPUT = 'measurementInput',
 }
 
-// TODO - organize and rename???
-export const heightSchema = z.number().positive().min(1).max(120).optional()
-export type Height = z.infer<typeof heightSchema>
-
-export const timestampSchema = z.number().int()
 export const detailsSchema = z.record(z.any()).optional()
 export type Details = z.infer<typeof detailsSchema>
 
+export const timestampSchema = z.number().int()
 export const idSchema = z.string().uuid()
 export const nameSchema = z.string().min(Limit.MIN_NAME).max(Limit.MAX_NAME).trim()
 export const textAreaSchema = z.string().max(Limit.MAX_TEXT_AREA).trim()
@@ -148,6 +143,7 @@ export const exerciseIdsSchema = z.array(idSchema).min(1) // Workout must have a
 export const exerciseResultIdsSchema = z.array(idSchema) // May not have any exercise results
 export const exerciseInputsSchema = z.array(exerciseInputSchema) // Can be empty for instructional exercises
 export const measurementInputSchema = z.nativeEnum(MeasurementInput)
+export const heightSchema = z.number().positive().min(1).max(120).optional()
 export const numberSchema = z.number().min(Number.MIN_SAFE_INTEGER).max(Number.MAX_SAFE_INTEGER)
 export const bodyWeightSchema = z.number().min(1).max(1000)
 export const percentSchema = z.number().min(0).max(100)
