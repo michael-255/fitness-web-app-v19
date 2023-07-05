@@ -14,28 +14,129 @@ export const coreIdBusKey: EventBusKey<string> = Symbol('core-id-changed-event')
 // DATABASE TYPES
 //
 
+// URL friendly slugs
+// TODO
+// export enum Type {
+//   WORKOUT = 'workout',
+//   EXERCISE = 'exercise',
+//   MEASUREMENT = 'measurement',
+// }
+
+// URL friendly slug
+// TODO
+// export enum Group {
+//   CORE = 'core',
+//   SUB = 'sub',
+// }
+
+// TODO
+export enum LogLevel {
+  DEBUG = 'DEBUG',
+  INFO = 'INFO',
+  WARN = 'WARN',
+  ERROR = 'ERROR',
+}
+
+export enum SettingKey {
+  USER_HEIGHT_INCHES = 'user-height-inches',
+  WELCOME_OVERLAY = 'welcome-overlay',
+  DASHBOARD_DESCRIPTIONS = 'dashboard-descriptions',
+  DARK_MODE = 'dark-mode',
+  CONSOLE_LOGS = 'console-logs',
+  INFO_MESSAGES = 'info-messages',
+  LOG_RETENTION_DURATION = 'log-retention-duration',
+}
+
+export enum MeasurementInput {
+  BODY_WEIGHT = 'Body Weight (lbs)',
+  PERCENT = 'Percentage',
+  INCHES = 'Inches',
+  LBS = 'Lbs',
+}
+
+// TODO
+// export enum ExerciseInput {
+//   REPS = 'Reps',
+//   WEIGHT_LBS = 'Weight (lbs)',
+//   DISTANCE_MILES = 'Distance (miles)',
+//   DURATION_MINUTES = 'Duration (minutes)',
+//   WATTS = 'Watts',
+//   SPEED_MPH = 'Speed (mph)',
+//   CALORIES = 'Calories Burned',
+//   RESISTANCE = 'Resistance',
+// }
+
+// TODO
+export enum Field {
+  // Setting
+  KEY = 'key',
+  VALUE = 'value',
+
+  // Log
+  AUTO_ID = 'autoId',
+  LOG_LEVEL = 'logLevel',
+  LOG_LABEL = 'logLabel',
+  DETAILS = 'details',
+  ERROR_MESSAGE = 'errorMessage',
+  STACK_TRACE = 'stackTrace',
+
+  // Shared
+  TIMESTAMP = 'timestamp',
+  ACTIVE = 'active',
+
+  // Base
+  TYPE = 'type',
+  ID = 'id',
+
+  // Sub
+  CORE_ID = 'coreId',
+  NOTE = 'note',
+
+  // Core
+  NAME = 'name',
+  DESC = 'desc',
+  ENABLED = 'enabled',
+  FAVORITED = 'favorited',
+  LAST_SUB = 'lastSub',
+
+  // Workout Result
+  FINISHED_TIMESTAMP = 'finishedTimestamp',
+  EXERCISE_RESULT_IDS = 'exerciseResultIds',
+
+  // Workout
+  EXERCISE_IDS = 'exerciseIds',
+
+  // Exercise Result
+  SETS_DATA = 'setsData',
+  REPS = 'reps',
+  WEIGHT_LBS = 'weightLbs',
+  DISTANCE_MILES = 'distanceMiles',
+  DURATION_MINUTES = 'durationMinutes',
+  WATTS = 'watts',
+  SPEED_MPH = 'speedMph',
+  CALORIES = 'calories',
+  RESISTANCE = 'resistance',
+
+  // Exercise
+  EXERCISE_INPUTS = 'exerciseInputs',
+  MULTIPLE_SETS = 'multipleSets',
+
+  // Measurement Result
+  MEASURED_DATA = 'measuredData',
+  BODY_WEIGHT = 'bodyWeight',
+  PERCENT = 'percent',
+  INCHES = 'inches',
+  LBS = 'lbs',
+
+  // Measurement
+  MEASUREMENT_INPUT = 'measurementInput',
+}
+
 export const recordTypes = z.enum(['workout', 'exercise', 'measurement']) // URL friendly slug
 export type RecordType = z.infer<typeof recordTypes>
 
 export const recordGroups = z.enum(['core', 'sub']) // URL friendly slug
 export type RecordGroup = z.infer<typeof recordGroups>
-
-export const logLevels = z.enum(['DEBUG', 'INFO', 'WARN', 'ERROR'])
-export type LogLevel = z.infer<typeof logLevels>
-
-export const settingkeys = z.enum([
-  'user-height-inches',
-  'welcome-overlay',
-  'dashboard-descriptions',
-  'dark-mode',
-  'console-logs',
-  'info-messages',
-  'log-retention-duration',
-])
-export type SettingKey = z.infer<typeof settingkeys>
-
-export const measurementInputs = z.enum(['Body Weight (lbs)', 'Percentage', 'Inches', 'Lbs'])
-export type MeasurementInput = z.infer<typeof measurementInputs>
 
 export const exerciseInputs = z.enum([
   'Reps',
@@ -45,18 +146,15 @@ export const exerciseInputs = z.enum([
   'Watts',
   'Speed (mph)',
   'Calories Burned',
-  'Resistence',
+  'Resistance',
 ])
 export type ExerciseInput = z.infer<typeof exerciseInputs>
 
+// TODO - organize and rename???
 export const heightSchema = z.number().positive().min(1).max(120).optional()
 export type Height = z.infer<typeof heightSchema>
 
-export const settingValueSchema = z.boolean().or(z.string()).or(z.number()).optional()
-export const autoIdSchema = z.number().int().positive().optional() // Handled by Dexie
 export const timestampSchema = z.number().int()
-export const logLabelSchema = z.string().trim()
-export const textSchema = z.string().trim().optional()
 export const detailsSchema = z.record(z.any()).optional()
 export type Details = z.infer<typeof detailsSchema>
 
@@ -64,137 +162,151 @@ export const idSchema = z.string().uuid()
 export const nameSchema = z.string().min(Limit.MIN_NAME).max(Limit.MAX_NAME).trim()
 export const textAreaSchema = z.string().max(Limit.MAX_TEXT_AREA).trim()
 export const booleanSchema = z.boolean()
-export const finishedTimestampSchema = z.number().int().optional()
+export const finishedTimestampSchema = timestampSchema.optional()
 export const exerciseIdsSchema = z.array(idSchema).min(1) // Workout must have at least 1 exercise
 export const exerciseResultIdsSchema = z.array(idSchema) // May not have any exercise results
 export const exerciseInputsSchema = z.array(exerciseInputs) // Can be empty for instructional exercises
-export const measurementInputSchema = measurementInputs
-export const numberSchema = z.number().min(0).max(Number.MAX_SAFE_INTEGER)
-export const bodyWeightSchema = z.number().min(1).max(1000).nullable()
-export const percentSchema = z.number().min(0).max(100).nullable()
-export const measureNumberSchema = numberSchema.nullable()
-export const setsSchema = z.array(z.number().min(0).max(Number.MAX_SAFE_INTEGER)).nullable()
+export const measurementInputSchema = z.nativeEnum(MeasurementInput)
+export const numberSchema = z.number().min(Number.MIN_SAFE_INTEGER).max(Number.MAX_SAFE_INTEGER)
+export const bodyWeightSchema = z.number().min(1).max(1000)
+export const percentSchema = z.number().min(0).max(100)
+export const setsSchema = z.array(numberSchema)
 
 // Non-exported schemas
 const settingSchema = z.object({
-  key: settingkeys,
-  value: settingValueSchema,
+  [Field.KEY]: z.nativeEnum(SettingKey),
+  [Field.VALUE]: z.boolean().or(z.string()).or(z.number()).optional(),
 })
 
 const logSchema = z.object({
-  autoId: autoIdSchema,
-  timestamp: timestampSchema,
-  logLevel: logLevels,
-  logLabel: logLabelSchema,
-  details: detailsSchema,
-  errorMessage: textSchema,
-  stackTrace: textSchema,
+  [Field.AUTO_ID]: z.number().int().positive().optional(), // Handled by Dexie
+  [Field.TIMESTAMP]: z.number().int(),
+  [Field.LOG_LEVEL]: z.nativeEnum(LogLevel),
+  [Field.LOG_LABEL]: z.string().trim(),
+  [Field.DETAILS]: detailsSchema,
+  [Field.ERROR_MESSAGE]: z.string().trim().optional(),
+  [Field.STACK_TRACE]: z.string().trim().optional(),
 })
 
 const baseSchema = z.object({
-  type: recordTypes,
-  id: idSchema,
-  timestamp: timestampSchema,
+  [Field.TYPE]: recordTypes,
+  [Field.ID]: idSchema,
+  [Field.TIMESTAMP]: timestampSchema,
 })
 
-const subSchema = baseSchema.merge(
-  z.object({
-    coreId: idSchema,
-    note: textAreaSchema,
-  })
-)
+const subSchema = baseSchema.extend({
+  [Field.CORE_ID]: idSchema,
+  [Field.NOTE]: textAreaSchema,
+})
 
-const coreSchema = baseSchema.merge(
-  z.object({
-    name: nameSchema,
-    desc: textAreaSchema,
-    enabled: booleanSchema,
-    favorited: booleanSchema,
-    lastSub: subSchema.optional(),
-  })
-)
+const coreSchema = baseSchema.extend({
+  [Field.NAME]: nameSchema,
+  [Field.DESC]: textAreaSchema,
+  [Field.ENABLED]: booleanSchema,
+  [Field.FAVORITED]: booleanSchema,
+  [Field.LAST_SUB]: subSchema.optional(),
+})
+
+const setsDataObject = z.object({
+  [Field.REPS]: setsSchema.optional(),
+  [Field.WEIGHT_LBS]: setsSchema.optional(),
+  [Field.DISTANCE_MILES]: setsSchema.optional(),
+  [Field.DURATION_MINUTES]: setsSchema.optional(),
+  [Field.WATTS]: setsSchema.optional(),
+  [Field.SPEED_MPH]: setsSchema.optional(),
+  [Field.CALORIES]: setsSchema.optional(),
+  [Field.RESISTANCE]: setsSchema.optional(),
+})
+
+const measuredDataObject = z.object({
+  [Field.BODY_WEIGHT]: bodyWeightSchema.optional(),
+  [Field.PERCENT]: percentSchema.optional(),
+  [Field.INCHES]: numberSchema.optional(),
+  [Field.LBS]: numberSchema.optional(),
+})
+
+// Workout Result
+export const workoutResultSchema = subSchema.extend({
+  [Field.TYPE]: z.literal(recordTypes.Values.workout),
+  [Field.FINISHED_TIMESTAMP]: finishedTimestampSchema,
+  [Field.EXERCISE_RESULT_IDS]: exerciseResultIdsSchema,
+  [Field.ACTIVE]: booleanSchema,
+})
 
 // Workout
-export const workoutResultSchema = subSchema.merge(
-  z.object({
-    type: z.literal(recordTypes.Values.workout),
-    finishedTimestamp: finishedTimestampSchema,
-    exerciseResultIds: exerciseResultIdsSchema,
-    active: booleanSchema,
-  })
-)
+export const workoutSchema = coreSchema.extend({
+  [Field.TYPE]: z.literal(recordTypes.Values.workout),
+  [Field.LAST_SUB]: workoutResultSchema.optional(),
+  [Field.EXERCISE_IDS]: exerciseIdsSchema,
+  [Field.ACTIVE]: booleanSchema,
+})
 
-export const workoutSchema = coreSchema.merge(
-  z.object({
-    type: z.literal(recordTypes.Values.workout),
-    lastSub: workoutResultSchema.optional(),
-    exerciseIds: exerciseIdsSchema,
-    active: booleanSchema,
-  })
-)
+// Exercise Result
+export const exerciseResultSchema = subSchema.extend({
+  [Field.TYPE]: z.literal(recordTypes.Values.exercise),
+  [Field.ACTIVE]: booleanSchema,
+  [Field.SETS_DATA]: setsDataObject.refine(
+    (data) => {
+      const setsData = Object.values(data)
+      const foundUndefined = setsData.some((value) => value === undefined)
+      const foundEmpty = setsData.some((value) => value?.length === 0)
+      const foundMissing = setsData.length === 0
+      return !foundUndefined && !foundEmpty && !foundMissing
+    },
+    {
+      message: 'Must have at least one valid setsData field with at least one set',
+      path: ['measuredData'],
+    }
+  ),
+})
 
 // Exercise
-export const exerciseResultSchema = subSchema.merge(
-  z.object({
-    type: z.literal(recordTypes.Values.exercise),
-    active: booleanSchema,
-    reps: setsSchema,
-    weightLbs: setsSchema,
-    distanceMiles: setsSchema,
-    durationMinutes: setsSchema,
-    watts: setsSchema,
-    speedMph: setsSchema,
-    calories: setsSchema,
-    resistence: setsSchema,
-  })
-)
+export const exerciseSchema = coreSchema.extend({
+  [Field.TYPE]: z.literal(recordTypes.Values.exercise),
+  [Field.LAST_SUB]: exerciseResultSchema.optional(),
+  [Field.MULTIPLE_SETS]: booleanSchema,
+  [Field.EXERCISE_INPUTS]: exerciseInputsSchema,
+  [Field.ACTIVE]: booleanSchema,
+})
 
-export const exerciseSchema = coreSchema.merge(
-  z.object({
-    type: z.literal(recordTypes.Values.exercise),
-    lastSub: exerciseResultSchema.optional(),
-    multipleSets: booleanSchema,
-    exerciseInputs: exerciseInputsSchema,
-    active: booleanSchema,
-  })
-)
-
-export const bodyWeightObject = z.object({ measured: bodyWeightSchema })
-export const percentObject = z.object({ measured: percentSchema })
-export const inchesObject = z.object({ measured: numberSchema })
-export const lbsObject = z.object({ measured: numberSchema })
+// Measurement Result
+export const measurementResultSchema = subSchema.extend({
+  [Field.TYPE]: z.literal(recordTypes.Values.measurement),
+  [Field.MEASURED_DATA]: measuredDataObject.refine(
+    (data) => {
+      const measuredData = Object.values(data)
+      const foundUndefined = measuredData.some((value) => value === undefined)
+      const foundInexact = measuredData.length !== 1
+      return !foundUndefined && !foundInexact
+    },
+    {
+      message: 'Must have exactly one valid measuredData field',
+      path: ['measuredData'],
+    }
+  ),
+})
 
 // Measurement
-export const measurementResultSchema = subSchema.merge(
-  z.object({
-    type: z.literal(recordTypes.Values.measurement),
-    bodyWeight: bodyWeightSchema,
-    percent: percentSchema,
-    inches: measureNumberSchema,
-    lbs: measureNumberSchema,
-  })
-)
+export const measurementSchema = coreSchema.extend({
+  [Field.TYPE]: z.literal(recordTypes.Values.measurement),
+  [Field.LAST_SUB]: measurementResultSchema.optional(),
+  [Field.MEASUREMENT_INPUT]: measurementInputSchema,
+})
 
-export const measurementSchema = coreSchema.merge(
-  z.object({
-    type: z.literal(recordTypes.Values.measurement),
-    lastSub: measurementResultSchema.optional(),
-    measurementInput: measurementInputSchema,
-  })
-)
-
+// TODO - Replacing with FIELD enum
 /**
  * - Use this schema to collect all fields from all schemas
  */
 const allSchema = settingSchema
-  .merge(logSchema)
-  .merge(workoutSchema)
-  .merge(workoutResultSchema)
-  .merge(exerciseSchema)
-  .merge(exerciseResultSchema)
-  .merge(measurementSchema)
-  .merge(measurementResultSchema)
-  .merge(bodyWeightObject)
+  .extend(logSchema.shape)
+  .extend(workoutSchema.shape)
+  .extend(workoutResultSchema.shape)
+  .extend(exerciseSchema.shape)
+  .extend(exerciseResultSchema.shape)
+  .extend(measurementSchema.shape)
+  .extend(measurementResultSchema.shape)
+  .extend(setsDataObject.shape)
+  .extend(measuredDataObject.shape)
 
 export const allFields = allSchema.keyof()
 export type AnyField = z.infer<typeof allFields>

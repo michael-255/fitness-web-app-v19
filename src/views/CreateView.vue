@@ -47,22 +47,12 @@ onMounted(async () => {
 
     // Exercise results
     if (routeGroup === recordGroups.Values.sub && routeType === recordTypes.Values.exercise) {
-      actionStore.record[allFields.Values.reps] = null
-      actionStore.record[allFields.Values.weightLbs] = null
-      actionStore.record[allFields.Values.distanceMiles] = null
-      actionStore.record[allFields.Values.durationMinutes] = null
-      actionStore.record[allFields.Values.watts] = null
-      actionStore.record[allFields.Values.speedMph] = null
-      actionStore.record[allFields.Values.calories] = null
-      actionStore.record[allFields.Values.resistence] = null
+      actionStore.record[allFields.Values.setsData] = {}
     }
 
     // Measurement results
     if (routeGroup === recordGroups.Values.sub && routeType === recordTypes.Values.measurement) {
-      actionStore.record[allFields.Values.bodyWeight] = null
-      actionStore.record[allFields.Values.percent] = null
-      actionStore.record[allFields.Values.inches] = null
-      actionStore.record[allFields.Values.lbs] = null
+      actionStore.record[allFields.Values.measuredData] = {}
     }
   } catch (error) {
     log.error('Error loading create view', error)

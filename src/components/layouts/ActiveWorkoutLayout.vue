@@ -44,7 +44,7 @@ watch(counter, () => {
       </RouterView>
     </QPageContainer>
 
-    <QFooter elevated class="bg-primary">
+    <QFooter v-if="workoutName" elevated class="bg-primary">
       <QToolbar>
         <QSpace />
         <QIcon :name="Icon.STOPWATCH" size="sm" class="q-mr-sm" />

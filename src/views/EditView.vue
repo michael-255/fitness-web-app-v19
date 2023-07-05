@@ -1,12 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@/types/general'
-import {
-  allFields,
-  type AnyField,
-  type AnyRecord,
-  type RecordGroup,
-  type RecordType,
-} from '@/types/core'
+import { allFields, type AnyRecord, type RecordGroup, type RecordType } from '@/types/core'
 import { onMounted, onUnmounted, ref } from 'vue'
 import { extend, useMeta } from 'quasar'
 import { AppName } from '@/constants/global'
@@ -38,10 +32,7 @@ onMounted(async () => {
     )) as AnyRecord
 
     if (editRecord) {
-      // Setup action store record with all the record values
-      Object.keys(editRecord).map((key) => {
-        actionStore.record[key as AnyField] = editRecord[key as AnyField]
-      })
+      extend(true, actionStore.record, editRecord)
     } else {
       throw new Error('Record not found')
     }

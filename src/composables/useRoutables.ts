@@ -14,7 +14,8 @@ export default function useRoutables(): {
   routeCoreId?: string
   routeType?: RecordType
   routeGroup?: RecordGroup
-  goToActiveWorkout: (id: string) => void
+  goToDashboard: () => void
+  goToActiveWorkout: () => void
   goToLogsData: () => void
   goToRecordsData: (group: RecordGroup, type: RecordType) => void
   goToCreate: (group: RecordGroup, type: RecordType, coreId?: string) => void
@@ -36,6 +37,16 @@ export default function useRoutables(): {
   const routeCoreId = idSchema.safeParse(coreId).success ? coreId : undefined
   const routeType = recordTypes.safeParse(type).success ? (type as RecordType) : undefined
   const routeGroup = recordGroups.safeParse(group).success ? (group as RecordGroup) : undefined
+
+  function goToDashboard() {
+    try {
+      router.push({
+        name: routeNames.Values.Dashboard,
+      })
+    } catch (error) {
+      log.error('Error accessing dashboard route', error)
+    }
+  }
 
   function goToActiveWorkout() {
     try {
@@ -110,6 +121,7 @@ export default function useRoutables(): {
     routeCoreId,
     routeType,
     routeGroup,
+    goToDashboard,
     goToActiveWorkout,
     goToLogsData,
     goToRecordsData,

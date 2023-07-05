@@ -22,6 +22,7 @@ const { log } = useLogger()
 const { confirmDialog } = useDialogs()
 const actionStore = useActionStore()
 
+const dataField = allFields.Values.setsData
 const exerciseInputsRef: Ref<ExerciseInput[]> = ref([])
 const multipleSetsRef: Ref<boolean> = ref(false)
 const setIndexes: Ref<null[]> = ref([])
@@ -29,6 +30,9 @@ const setIndexes: Ref<null[]> = ref([])
 useCoreIdWatcher((coreRecord: AnyCoreRecord) => {
   exerciseInputsRef.value = (coreRecord?.exerciseInputs ?? []) as ExerciseInput[]
   multipleSetsRef.value = Boolean(coreRecord?.multipleSets)
+
+  // Reset sets data field
+  actionStore.record[dataField] = {}
 
   // Restrict sets to one if multiple sets is off
   if (!multipleSetsRef.value) {
@@ -40,7 +44,7 @@ useCoreIdWatcher((coreRecord: AnyCoreRecord) => {
     restrictSets(allFields.Values.watts)
     restrictSets(allFields.Values.speedMph)
     restrictSets(allFields.Values.calories)
-    restrictSets(allFields.Values.resistence)
+    restrictSets(allFields.Values.resistance)
   }
 
   // Determine which exercise inputs are being used and displayed
@@ -52,31 +56,28 @@ useCoreIdWatcher((coreRecord: AnyCoreRecord) => {
     initSets(exerciseInputs.Values['Watts'], allFields.Values.watts)
     initSets(exerciseInputs.Values['Speed (mph)'], allFields.Values.speedMph)
     initSets(exerciseInputs.Values['Calories Burned'], allFields.Values.calories)
-    initSets(exerciseInputs.Values['Resistence'], allFields.Values.resistence)
+    initSets(exerciseInputs.Values['Resistance'], allFields.Values.resistance)
   } else {
-    // No exercise inputs being display is likely an error
-    actionStore.record[allFields.Values.reps] = null
-    actionStore.record[allFields.Values.weightLbs] = null
-    actionStore.record[allFields.Values.distanceMiles] = null
-    actionStore.record[allFields.Values.durationMinutes] = null
-    actionStore.record[allFields.Values.watts] = null
-    actionStore.record[allFields.Values.speedMph] = null
-    actionStore.record[allFields.Values.calories] = null
-    actionStore.record[allFields.Values.resistence] = null
+    actionStore.record[dataField] = {}
   }
 })
 
 function restrictSets(field: AnyField) {
-  const value = actionStore.record?.[field] ? [actionStore.record?.[field][0]] : [undefined]
-  actionStore.record[field] = value
+  actionStore.record[dataField][field] = actionStore.record?.[dataField]?.[field]
+    ? [actionStore.record[dataField][field][0]] // Single element array for no sets exercise
+    : [undefined]
 }
 
 function initSets(input: ExerciseInput, field: AnyField) {
   if (exerciseInputsRef.value.includes(input)) {
-    actionStore.record[field] = actionStore.record?.[field] ?? [undefined] // Empty sets array
-    setIndexes.value = Array(actionStore.record[field].length).fill(null)
+    actionStore.record[dataField][field] = actionStore.record?.[dataField]?.[field]
+      ? actionStore.record[dataField][field]
+      : [undefined] // Initial empty sets array
+
+    // Hack to keep track of number of sets
+    setIndexes.value = Array(actionStore.record[dataField][field].length).fill(null)
   } else {
-    actionStore.record[field] = null
+    delete actionStore.record[dataField][field]
   }
 }
 
@@ -88,7 +89,7 @@ function addSet() {
   addInputSets(exerciseInputs.Values['Watts'], allFields.Values.watts)
   addInputSets(exerciseInputs.Values['Speed (mph)'], allFields.Values.speedMph)
   addInputSets(exerciseInputs.Values['Calories Burned'], allFields.Values.calories)
-  addInputSets(exerciseInputs.Values['Resistence'], allFields.Values.resistence)
+  addInputSets(exerciseInputs.Values['Resistance'], allFields.Values.resistance)
 }
 
 function removeSet() {
@@ -109,7 +110,7 @@ function removeSet() {
         removeInputSet(exerciseInputs.Values['Watts'], allFields.Values.watts)
         removeInputSet(exerciseInputs.Values['Speed (mph)'], allFields.Values.speedMph)
         removeInputSet(exerciseInputs.Values['Calories Burned'], allFields.Values.calories)
-        removeInputSet(exerciseInputs.Values['Resistence'], allFields.Values.resistence)
+        removeInputSet(exerciseInputs.Values['Resistance'], allFields.Values.resistance)
       } catch (error) {
         log.error('Failed to remove last set', error)
       }
@@ -119,18 +120,28 @@ function removeSet() {
 
 function addInputSets(selectedInput: ExerciseInput, field: AnyField) {
   if (exerciseInputsRef.value.includes(selectedInput)) {
-    if (actionStore.record?.[field] && actionStore.record?.[field].length < Limit.MAX_SETS) {
-      actionStore.record[field].push(undefined) // Add empty value
-      setIndexes.value = Array(actionStore.record[field].length).fill(null)
+    if (
+      actionStore.record?.[dataField]?.[field] &&
+      actionStore.record[dataField][field].length < Limit.MAX_SETS
+    ) {
+      actionStore.record[dataField][field].push(undefined) // Add empty exercise set
+
+      // Hack to keep track of number of sets
+      setIndexes.value = Array(actionStore.record[dataField][field].length).fill(null)
     }
   }
 }
 
 function removeInputSet(selectedInput: ExerciseInput, field: AnyField) {
   if (exerciseInputsRef.value.includes(selectedInput)) {
-    if (actionStore.record?.[field] && actionStore.record?.[field].length > 1) {
-      actionStore.record[field].pop() // Remove last value
-      setIndexes.value = Array(actionStore.record[field].length).fill(null)
+    if (
+      actionStore.record?.[dataField]?.[field] &&
+      actionStore.record[dataField][field].length > 1
+    ) {
+      actionStore.record[dataField][field].pop() // Remove last exercise set
+
+      // Hack to keep track of number of sets
+      setIndexes.value = Array(actionStore.record[dataField][field].length).fill(null)
     }
   }
 }
@@ -150,35 +161,35 @@ function validationRule() {
   <div v-if="inspecting" class="q-ml-sm">
     <li v-if="exerciseInputsRef.includes(exerciseInputs.Values.Reps)">
       {{ exerciseInputs.Values.Reps }}:
-      {{ inspectFormat(actionStore.record?.reps) }}
+      {{ inspectFormat(actionStore.record?.[dataField]?.reps) }}
     </li>
     <li v-if="exerciseInputsRef.includes(exerciseInputs.Values['Weight (lbs)'])">
       {{ exerciseInputs.Values['Weight (lbs)'] }}:
-      {{ inspectFormat(actionStore.record?.weightLbs) }}
+      {{ inspectFormat(actionStore.record?.[dataField]?.weightLbs) }}
     </li>
     <li v-if="exerciseInputsRef.includes(exerciseInputs.Values['Distance (miles)'])">
       {{ exerciseInputs.Values['Distance (miles)'] }}:
-      {{ inspectFormat(actionStore.record?.distanceMiles) }}
+      {{ inspectFormat(actionStore.record?.[dataField]?.distanceMiles) }}
     </li>
     <li v-if="exerciseInputsRef.includes(exerciseInputs.Values['Duration (minutes)'])">
       {{ exerciseInputs.Values['Duration (minutes)'] }}:
-      {{ inspectFormat(actionStore.record?.durationMinutes) }}
+      {{ inspectFormat(actionStore.record?.[dataField]?.durationMinutes) }}
     </li>
     <li v-if="exerciseInputsRef.includes(exerciseInputs.Values.Watts)">
       {{ exerciseInputs.Values.Watts }}:
-      {{ inspectFormat(actionStore.record?.watts) }}
+      {{ inspectFormat(actionStore.record?.[dataField]?.watts) }}
     </li>
     <li v-if="exerciseInputsRef.includes(exerciseInputs.Values['Speed (mph)'])">
       {{ exerciseInputs.Values['Speed (mph)'] }}:
-      {{ inspectFormat(actionStore.record?.speedMph) }}
+      {{ inspectFormat(actionStore.record?.[dataField]?.speedMph) }}
     </li>
     <li v-if="exerciseInputsRef.includes(exerciseInputs.Values['Calories Burned'])">
       {{ exerciseInputs.Values['Calories Burned'] }}:
-      {{ inspectFormat(actionStore.record?.calories) }}
+      {{ inspectFormat(actionStore.record?.[dataField]?.calories) }}
     </li>
-    <li v-if="exerciseInputsRef.includes(exerciseInputs.Values.Resistence)">
-      {{ exerciseInputs.Values.Resistence }}:
-      {{ inspectFormat(actionStore.record?.resistence) }}
+    <li v-if="exerciseInputsRef.includes(exerciseInputs.Values.Resistance)">
+      {{ exerciseInputs.Values.Resistance }}:
+      {{ inspectFormat(actionStore.record?.[dataField]?.resistance) }}
     </li>
   </div>
 
@@ -231,7 +242,7 @@ function validationRule() {
             square
             dense
             hint="135 (5, 5, -10, 5, 5)"
-            v-model.number="actionStore.record.reps[index]"
+            v-model.number="actionStore.record[dataField].reps[index]"
             :rules="[validationRule()]"
             :label="exerciseInputs.Values.Reps"
           />
@@ -244,7 +255,7 @@ function validationRule() {
             square
             dense
             hint="135 (5, 5, -10, 5, 5)"
-            v-model.number="actionStore.record.weightLbs[index]"
+            v-model.number="actionStore.record[dataField].weightLbs[index]"
             :rules="[validationRule()]"
             :label="exerciseInputs.Values['Weight (lbs)']"
           />
@@ -257,7 +268,7 @@ function validationRule() {
             square
             dense
             hint="135 (5, 5, -10, 5, 5)"
-            v-model.number="actionStore.record.distanceMiles[index]"
+            v-model.number="actionStore.record[dataField].distanceMiles[index]"
             :rules="[validationRule()]"
             :label="exerciseInputs.Values['Distance (miles)']"
           />
@@ -270,7 +281,7 @@ function validationRule() {
             square
             dense
             hint="135 (5, 5, -10, 5, 5)"
-            v-model.number="actionStore.record.durationMinutes[index]"
+            v-model.number="actionStore.record[dataField].durationMinutes[index]"
             :rules="[validationRule()]"
             :label="exerciseInputs.Values['Duration (minutes)']"
           />
@@ -283,7 +294,7 @@ function validationRule() {
             square
             dense
             hint="135 (5, 5, -10, 5, 5)"
-            v-model.number="actionStore.record.watts[index]"
+            v-model.number="actionStore.record[dataField].watts[index]"
             :rules="[validationRule()]"
             :label="exerciseInputs.Values['Watts']"
           />
@@ -296,7 +307,7 @@ function validationRule() {
             square
             dense
             hint="135 (5, 5, -10, 5, 5)"
-            v-model.number="actionStore.record.speedMph[index]"
+            v-model.number="actionStore.record[dataField].speedMph[index]"
             :rules="[validationRule()]"
             :label="exerciseInputs.Values['Speed (mph)']"
           />
@@ -309,12 +320,12 @@ function validationRule() {
             square
             dense
             hint="135 (5, 5, -10, 5, 5)"
-            v-model.number="actionStore.record.calories[index]"
+            v-model.number="actionStore.record[dataField].calories[index]"
             :rules="[validationRule()]"
             :label="exerciseInputs.Values['Calories Burned']"
           />
           <QInput
-            v-if="exerciseInputsRef.includes(exerciseInputs.Values.Resistence)"
+            v-if="exerciseInputsRef.includes(exerciseInputs.Values.Resistance)"
             stack-label
             class="col-6 q-mb-xs"
             type="number"
@@ -322,9 +333,9 @@ function validationRule() {
             square
             dense
             hint="135 (5, 5, -10, 5, 5)"
-            v-model.number="actionStore.record.resistence[index]"
+            v-model.number="actionStore.record[dataField].resistance[index]"
             :rules="[validationRule()]"
-            :label="exerciseInputs.Values['Resistence']"
+            :label="exerciseInputs.Values['Resistance']"
           />
         </div>
       </div>

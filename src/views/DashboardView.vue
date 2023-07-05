@@ -7,14 +7,13 @@ import { ref, type Ref, onUnmounted } from 'vue'
 import { AppName } from '@/constants/global'
 import { getRecordsCountDisplay } from '@/utils/common'
 import {
-  type AnyCoreRecord,
-  type RecordType,
-  settingkeys,
   recordGroups,
   recordTypes,
+  type AnyCoreRecord,
+  type RecordType,
   type WorkoutResultRecord,
   type WorkoutRecord,
-  type ExerciseResultRecord,
+  SettingKey,
 } from '@/types/core'
 import DataSchema from '@/services/DataSchema'
 import ResponsivePage from '@/components/ResponsivePage.vue'
@@ -44,9 +43,8 @@ const dashboardRecords: Ref<{ [key in RecordType]: AnyCoreRecord[] }> = ref(
 
 const settingsSubscription = DB.liveSettings().subscribe({
   next: (liveSettings) => {
-    showDescription.value = liveSettings.find(
-      (s) => s.key === settingkeys.Values['dashboard-descriptions']
-    )?.value as boolean
+    showDescription.value = liveSettings.find((s) => s.key === SettingKey.DASHBOARD_DESCRIPTIONS)
+      ?.value as boolean
   },
   error: (error) => {
     log.error('Error fetching live Settings', error)
@@ -109,7 +107,6 @@ async function onInspect(type: RecordType, id: string) {
   const title = DataSchema.getLabel(recordGroups.Values.core, type, 'singular') as string
   const record = (await DB.getRecord(recordGroups.Values.core, id)) as AnyCoreRecord
   const fields = DataSchema.getFields(recordGroups.Values.core, type)
-  console.log('record', record)
   inspectDialog(title, record, fields)
 }
 
@@ -125,7 +122,7 @@ async function onCharts(type: RecordType, id: string) {
 async function onDiscardActiveWorkout(name: string) {
   confirmDialog(
     'Discard Active Workout',
-    `Are you sure you want to discard the active workout ${name}?`,
+    `Are you sure you want to discard the active workout ${name}? Any progress recorded in the workout will be lost.`,
     Icon.DELETE,
     'negative',
     async () => {
@@ -165,28 +162,11 @@ async function onBeginWorkout(record: WorkoutRecord) {
 }
 
 async function beginActiveWorkout(record: WorkoutRecord) {
-  // TODO - Create Exercise Result Records
-
-  console.log('record', record.exerciseIds)
-
-  const newExerciseResults: ExerciseResultRecord[] = record.exerciseIds.map((exerciseId) => {
-    return {
-      active: true,
-      id: uid(),
-      type: recordTypes.Values.exercise,
-      timestamp: Date.now(),
-      coreId: exerciseId,
-      note: '',
-      reps: null,
-      weightLbs: null,
-      distanceMiles: null,
-      durationMinutes: null,
-      watts: null,
-      speedMph: null,
-      calories: null,
-      resistence: null,
-    }
-  })
+  const activeExerciseResultIds = await Promise.all(
+    record.exerciseIds.map(async (exerciseId) => {
+      return await DB.createActiveExerciseResultRecord(exerciseId)
+    })
+  )
 
   const newWorkoutResult: WorkoutResultRecord = {
     active: true,
@@ -195,7 +175,7 @@ async function beginActiveWorkout(record: WorkoutRecord) {
     timestamp: Date.now(),
     coreId: record.id,
     note: '',
-    exerciseResultIds: newExerciseResults.map((r) => r.id),
+    exerciseResultIds: activeExerciseResultIds,
   }
 
   // Setting core workout to active
@@ -204,8 +184,8 @@ async function beginActiveWorkout(record: WorkoutRecord) {
 
   // Setting core exercises to active
   await Promise.all(
-    newExerciseResults.map(async (r) => {
-      const exercise = (await DB.getRecord(recordGroups.Values.core, r.coreId)) as AnyCoreRecord
+    record.exerciseIds.map(async (id) => {
+      const exercise = (await DB.getRecord(recordGroups.Values.core, id)) as AnyCoreRecord
       exercise.active = true
       return await DB.updateRecord(
         recordGroups.Values.core,
@@ -216,15 +196,10 @@ async function beginActiveWorkout(record: WorkoutRecord) {
     })
   )
 
-  // Add new result records to database
+  // Add new active result records to database
   await DB.addRecord(recordGroups.Values.sub, recordTypes.Values.workout, newWorkoutResult)
-  await Promise.all(
-    newExerciseResults.map((r) =>
-      DB.addRecord(recordGroups.Values.sub, recordTypes.Values.exercise, r)
-    )
-  )
 
-  goToActiveWorkout(record.id)
+  goToActiveWorkout()
 }
 </script>
 
@@ -263,6 +238,17 @@ async function beginActiveWorkout(record: WorkoutRecord) {
             <p class="text-h6">{{ record.name }}</p>
             <p v-if="showDescription">{{ record.desc }}</p>
 
+            <!-- Is Active -->
+            <QBadge
+              v-if="record.active"
+              rounded
+              color="warning"
+              class="absolute-top-left q-py-none"
+              style="left: -4px; top: -6px"
+            >
+              <span class="text-caption">Active</span>
+            </QBadge>
+
             <!-- Top right corner buttons on card -->
             <div class="absolute-top-right q-ma-xs">
               <!-- Note -->
@@ -288,6 +274,7 @@ async function beginActiveWorkout(record: WorkoutRecord) {
               <!-- Favorite Star -->
               <span v-else>
                 <QIcon
+                  v-if="!record.active"
                   v-show="record.favorited"
                   :name="Icon.FAVORITE_ON"
                   color="warning"
@@ -296,6 +283,7 @@ async function beginActiveWorkout(record: WorkoutRecord) {
                   @click="onUnfavorite(record.id, record.name)"
                 />
                 <QIcon
+                  v-if="!record.active"
                   v-show="!record.favorited"
                   :name="Icon.FAVORITE_OFF"
                   color="grey"
@@ -329,6 +317,7 @@ async function beginActiveWorkout(record: WorkoutRecord) {
                     </QItem>
 
                     <QItem
+                      v-if="!record.active"
                       clickable
                       @click="goToEdit(recordGroups.Values.core, record?.type, record?.id)"
                     >
@@ -368,7 +357,7 @@ async function beginActiveWorkout(record: WorkoutRecord) {
               color="positive"
               class="full-width"
               :icon="Icon.WORKOUT_RESUME"
-              @click="goToActiveWorkout(record?.id)"
+              @click="goToActiveWorkout()"
             />
 
             <QBtn
@@ -379,6 +368,10 @@ async function beginActiveWorkout(record: WorkoutRecord) {
               class="full-width"
               @click="onBeginWorkout(record as WorkoutRecord)"
             />
+
+            <div v-else-if="record?.active" class="text-center full-width">
+              Restricted access while active
+            </div>
 
             <QBtn
               v-else

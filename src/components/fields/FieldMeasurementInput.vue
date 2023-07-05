@@ -1,11 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref, type Ref } from 'vue'
-import {
-  allFields,
-  measurementInputs,
-  measurementInputSchema,
-  type MeasurementInput,
-} from '@/types/core'
+import { allFields, measurementInputSchema, MeasurementInput } from '@/types/core'
 import useLogger from '@/composables/useLogger'
 import useActionStore from '@/stores/action'
 
@@ -23,7 +18,7 @@ onMounted(async () => {
   try {
     actionStore.record[field] = actionStore.record[field] ?? []
 
-    options.value = measurementInputs.options.map((o: MeasurementInput) => ({
+    options.value = Object.values(MeasurementInput).map((o: MeasurementInput) => ({
       value: o,
       label: o,
     }))

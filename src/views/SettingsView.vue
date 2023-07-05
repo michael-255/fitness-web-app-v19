@@ -8,8 +8,7 @@ import {
   type Height,
   type Setting,
   type BackupData,
-  type SettingKey,
-  settingkeys,
+  SettingKey,
   recordGroups,
   heightSchema,
 } from '@/types/core'
@@ -58,9 +57,8 @@ const subscription = DB.liveSettings().subscribe({
   next: (liveSettings) => {
     settings.value = liveSettings
 
-    const logDuration = liveSettings.find(
-      (s) => s.key === settingkeys.Values['log-retention-duration']
-    )?.value as number
+    const logDuration = liveSettings.find((s) => s.key === SettingKey.LOG_RETENTION_DURATION)
+      ?.value as number
 
     logDurationIndex.value = logDurationKeys.findIndex((i) => i === Duration[logDuration])
   },
@@ -106,7 +104,7 @@ function onImportFile() {
         if (backupData.settings.length > 0) {
           await Promise.all(
             backupData.settings
-              .filter((s) => settingkeys.options.includes(s.key))
+              .filter((s) => Object.values(SettingKey).includes(s.key))
               .map(async (s) => await DB.setSetting(s.key, s.value))
           )
         }
@@ -175,7 +173,7 @@ async function onChangeLogRetention(logDurationIndex: number) {
     const logDurationKey = logDurationKeys[logDurationIndex]
     const logDuration = Duration[logDurationKey as keyof typeof Duration]
 
-    await DB.setSetting(settingkeys.Values['log-retention-duration'], logDuration)
+    await DB.setSetting(SettingKey.LOG_RETENTION_DURATION, logDuration)
 
     log.info('Updated log retention duration', {
       logDurationKey,
@@ -265,7 +263,7 @@ async function updateHeight() {
   }
 
   if (heightInputRef?.value?.validate()) {
-    await DB.setSetting(settingkeys.Values['user-height-inches'], heightInches.value)
+    await DB.setSetting(SettingKey.USER_HEIGHT_INCHES, heightInches.value)
   }
 }
 </script>
@@ -310,8 +308,8 @@ async function updateHeight() {
         </p>
         <QToggle
           label="Show Welcome Overlay"
-          :model-value="getSettingValue(settingkeys.Values['welcome-overlay'])"
-          @update:model-value="DB.setSetting(settingkeys.Values['welcome-overlay'], $event)"
+          :model-value="getSettingValue(SettingKey.WELCOME_OVERLAY)"
+          @update:model-value="DB.setSetting(SettingKey.WELCOME_OVERLAY, $event)"
         />
       </div>
 
@@ -319,8 +317,8 @@ async function updateHeight() {
         <p>Show descriptions for records displayed on the Dashboard page.</p>
         <QToggle
           label="Show Dashboard Descriptions"
-          :model-value="getSettingValue(settingkeys.Values['dashboard-descriptions'])"
-          @update:model-value="DB.setSetting(settingkeys.Values['dashboard-descriptions'], $event)"
+          :model-value="getSettingValue(SettingKey.DASHBOARD_DESCRIPTIONS)"
+          @update:model-value="DB.setSetting(SettingKey.DASHBOARD_DESCRIPTIONS, $event)"
         />
       </div>
 
@@ -328,8 +326,8 @@ async function updateHeight() {
         <p>Dark mode allows you to switch between a light or dark theme for the app.</p>
         <QToggle
           label="Dark Mode"
-          :model-value="getSettingValue(settingkeys.Values['dark-mode'])"
-          @update:model-value="DB.setSetting(settingkeys.Values['dark-mode'], $event)"
+          :model-value="getSettingValue(SettingKey.DARK_MODE)"
+          @update:model-value="DB.setSetting(SettingKey.DARK_MODE, $event)"
         />
       </div>
     </section>
@@ -442,8 +440,8 @@ async function updateHeight() {
         <p>Show Console Logs will display all log messages in the browser console.</p>
         <QToggle
           label="Show Console Logs"
-          :model-value="getSettingValue(settingkeys.Values['console-logs'])"
-          @update:model-value="DB.setSetting(settingkeys.Values['console-logs'], $event)"
+          :model-value="getSettingValue(SettingKey.CONSOLE_LOGS)"
+          @update:model-value="DB.setSetting(SettingKey.CONSOLE_LOGS, $event)"
         />
       </div>
 
@@ -451,8 +449,8 @@ async function updateHeight() {
         <p>Show Info Messages will display info level notifications.</p>
         <QToggle
           label="Show Info Messages"
-          :model-value="getSettingValue(settingkeys.Values['info-messages'])"
-          @update:model-value="DB.setSetting(settingkeys.Values['info-messages'], $event)"
+          :model-value="getSettingValue(SettingKey.INFO_MESSAGES)"
+          @update:model-value="DB.setSetting(SettingKey.INFO_MESSAGES, $event)"
         />
       </div>
 

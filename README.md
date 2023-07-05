@@ -4,10 +4,14 @@ Fitness Tracker is for tracking workouts, exercises, and measurements as well as
 
 ## TODO
 
+_QOL UPDATES:_
+
+- Look at replacing SOME zod enums with TypeScript enums for easier refactoring
+
 _ACTIVE WORKOUT:_
 
+- Back port exercise schema changes to active workout
 - Build out the exercises in the active workout view
-- Add the finish workout button
 
 _MISC:_
 

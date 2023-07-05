@@ -6,7 +6,7 @@ import {
   recordGroups,
   recordTypes,
   exerciseInputs,
-  measurementInputs,
+  MeasurementInput,
 } from '@/types/core'
 import useLogger from '@/composables/useLogger'
 import useDialogs from '@/composables/useDialogs'
@@ -535,7 +535,7 @@ export default function useDefaults() {
               desc: 'Body fat percentage (%).',
               favorited: false,
               enabled: true,
-              measurementInput: measurementInputs.Values.Percentage,
+              measurementInput: MeasurementInput.PERCENT,
             },
             {
               type: recordTypes.Values.measurement,
@@ -545,7 +545,7 @@ export default function useDefaults() {
               desc: 'Body weight in pounds (lbs).',
               favorited: false,
               enabled: true,
-              measurementInput: measurementInputs.Values['Body Weight (lbs)'],
+              measurementInput: MeasurementInput.BODY_WEIGHT,
             },
             {
               type: recordTypes.Values.measurement,
@@ -555,7 +555,7 @@ export default function useDefaults() {
               desc: 'Chest circumference in inches.',
               favorited: false,
               enabled: true,
-              measurementInput: measurementInputs.Values.Inches,
+              measurementInput: MeasurementInput.INCHES,
             },
             {
               type: recordTypes.Values.measurement,
@@ -565,7 +565,7 @@ export default function useDefaults() {
               desc: 'Left bicep circumference in inches.',
               favorited: false,
               enabled: true,
-              measurementInput: measurementInputs.Values.Inches,
+              measurementInput: MeasurementInput.INCHES,
             },
             {
               type: recordTypes.Values.measurement,
@@ -575,7 +575,7 @@ export default function useDefaults() {
               desc: 'Left calf circumference in inches.',
               favorited: false,
               enabled: true,
-              measurementInput: measurementInputs.Values.Inches,
+              measurementInput: MeasurementInput.INCHES,
             },
             {
               type: recordTypes.Values.measurement,
@@ -585,7 +585,7 @@ export default function useDefaults() {
               desc: 'Left forearm circumference in inches.',
               favorited: false,
               enabled: true,
-              measurementInput: measurementInputs.Values.Inches,
+              measurementInput: MeasurementInput.INCHES,
             },
             {
               type: recordTypes.Values.measurement,
@@ -595,7 +595,7 @@ export default function useDefaults() {
               desc: 'Left thigh circumference in inches.',
               favorited: false,
               enabled: true,
-              measurementInput: measurementInputs.Values.Inches,
+              measurementInput: MeasurementInput.INCHES,
             },
             {
               type: recordTypes.Values.measurement,
@@ -605,7 +605,7 @@ export default function useDefaults() {
               desc: 'Neck circumference in inches.',
               favorited: false,
               enabled: true,
-              measurementInput: measurementInputs.Values.Inches,
+              measurementInput: MeasurementInput.INCHES,
             },
             {
               type: recordTypes.Values.measurement,
@@ -615,7 +615,7 @@ export default function useDefaults() {
               desc: 'Right bicep circumference in inches.',
               favorited: false,
               enabled: true,
-              measurementInput: measurementInputs.Values.Inches,
+              measurementInput: MeasurementInput.INCHES,
             },
             {
               type: recordTypes.Values.measurement,
@@ -625,7 +625,7 @@ export default function useDefaults() {
               desc: 'Right calf circumference in inches.',
               favorited: false,
               enabled: true,
-              measurementInput: measurementInputs.Values.Inches,
+              measurementInput: MeasurementInput.INCHES,
             },
             {
               type: recordTypes.Values.measurement,
@@ -635,7 +635,7 @@ export default function useDefaults() {
               desc: 'Right forearm circumference in inches.',
               favorited: false,
               enabled: true,
-              measurementInput: measurementInputs.Values.Inches,
+              measurementInput: MeasurementInput.INCHES,
             },
             {
               type: recordTypes.Values.measurement,
@@ -645,7 +645,7 @@ export default function useDefaults() {
               desc: 'Right thigh circumference in inches.',
               favorited: false,
               enabled: true,
-              measurementInput: measurementInputs.Values.Inches,
+              measurementInput: MeasurementInput.INCHES,
             },
             {
               type: recordTypes.Values.measurement,
@@ -655,7 +655,7 @@ export default function useDefaults() {
               desc: 'Shoulder circumference in inches.',
               favorited: false,
               enabled: true,
-              measurementInput: measurementInputs.Values.Inches,
+              measurementInput: MeasurementInput.INCHES,
             },
             {
               type: recordTypes.Values.measurement,
@@ -665,7 +665,7 @@ export default function useDefaults() {
               desc: 'Waist circumference in inches at the belly button.',
               favorited: false,
               enabled: true,
-              measurementInput: measurementInputs.Values.Inches,
+              measurementInput: MeasurementInput.INCHES,
             },
           ]
 

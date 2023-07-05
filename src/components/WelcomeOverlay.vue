@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Icon, routeNames } from '@/types/general'
 import { type Ref, ref, onUnmounted } from 'vue'
-import { settingkeys } from '@/types/core'
+import { SettingKey } from '@/types/core'
 import { AppDescription, AppName } from '@/constants/global'
 import useLogger from '@/composables/useLogger'
 import DB from '@/services/Database'
@@ -13,9 +13,7 @@ const showWelcome: Ref<any> = ref(false)
 
 const subscription = DB.liveSettings().subscribe({
   next: (liveSettings) => {
-    showWelcome.value = liveSettings.find(
-      (s) => s.key === settingkeys.Values['welcome-overlay']
-    )?.value
+    showWelcome.value = liveSettings.find((s) => s.key === SettingKey.WELCOME_OVERLAY)?.value
   },
   error: (error) => {
     log.error('Error fetching live Settings', error)
@@ -27,7 +25,7 @@ onUnmounted(() => {
 })
 
 async function onCloseWelcomeOverlay() {
-  await DB.setSetting(settingkeys.Values['welcome-overlay'], false)
+  await DB.setSetting(SettingKey.WELCOME_OVERLAY, false)
 }
 </script>
 

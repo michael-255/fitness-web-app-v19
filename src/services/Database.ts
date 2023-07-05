@@ -1,5 +1,5 @@
 import Dexie, { liveQuery, type Table } from 'dexie'
-import { Dark } from 'quasar'
+import { Dark, uid } from 'quasar'
 import { Duration } from '@/types/general'
 import { AppDatabaseVersion, AppName } from '@/constants/global'
 import {
@@ -9,13 +9,15 @@ import {
   type AnyCoreRecord,
   type AnySubRecord,
   type LogLevel,
-  type SettingKey,
+  SettingKey,
   type RecordType,
   type RecordGroup,
   allFields,
-  settingkeys,
   recordTypes,
   recordGroups,
+  exerciseInputs,
+  type ExerciseRecord,
+  type ExerciseResultRecord,
 } from '@/types/core'
 import DataSchema from '@/services/DataSchema'
 
@@ -74,7 +76,7 @@ class Database extends Dexie {
   }
 
   async deleteExpiredLogs() {
-    const logDuration = (await this.Settings.get(settingkeys.Values['log-retention-duration']))
+    const logDuration = (await this.Settings.get(SettingKey.LOG_RETENTION_DURATION))
       ?.value as Duration
 
     if (!logDuration || logDuration === Duration.Forever) {
@@ -113,16 +115,16 @@ class Database extends Dexie {
     const defaultSettings: Readonly<{
       [key in SettingKey]: any
     }> = {
-      [settingkeys.Values['user-height-inches']]: null,
-      [settingkeys.Values['welcome-overlay']]: true,
-      [settingkeys.Values['dashboard-descriptions']]: true,
-      [settingkeys.Values['dark-mode']]: true,
-      [settingkeys.Values['console-logs']]: false,
-      [settingkeys.Values['info-messages']]: true,
-      [settingkeys.Values['log-retention-duration']]: Duration['Three Months'],
+      [SettingKey.USER_HEIGHT_INCHES]: null,
+      [SettingKey.WELCOME_OVERLAY]: true,
+      [SettingKey.DASHBOARD_DESCRIPTIONS]: true,
+      [SettingKey.DARK_MODE]: true,
+      [SettingKey.CONSOLE_LOGS]: false,
+      [SettingKey.INFO_MESSAGES]: true,
+      [SettingKey.LOG_RETENTION_DURATION]: Duration['Three Months'],
     }
 
-    const keys = settingkeys.options
+    const keys = Object.values(SettingKey)
 
     const settings = await Promise.all(
       keys.map(async (key) => {
@@ -136,13 +138,13 @@ class Database extends Dexie {
       })
     )
 
-    Dark.set(Boolean(settings.find((s) => s.key === settingkeys.Values['dark-mode'])?.value))
+    Dark.set(Boolean(settings.find((s) => s.key === SettingKey.DARK_MODE)?.value))
 
     await Promise.all(settings.map((s) => this.setSetting(s.key as SettingKey, s.value)))
   }
 
   async setSetting(key: SettingKey, value: any) {
-    if (key === settingkeys.Values['dark-mode']) {
+    if (key === SettingKey.DARK_MODE) {
       Dark.set(Boolean(value))
     }
 
@@ -222,6 +224,25 @@ class Database extends Dexie {
   // RECORD GETS
   //
 
+  async getExerciseInputDefaults(coreId: string) {
+    return (await this.CoreRecords.where(allFields.Values.id).equals(coreId).toArray()).map((r) => {
+      return {
+        reps: r.exerciseInputs.includes(exerciseInputs.Values.Reps) ? [0] : null,
+        weightLbs: r.exerciseInputs.includes(exerciseInputs.Values['Weight (lbs)']) ? [0] : null,
+        distanceMiles: r.exerciseInputs.includes(exerciseInputs.Values['Distance (miles)'])
+          ? [0]
+          : null,
+        durationMinutes: r.exerciseInputs.includes(exerciseInputs.Values['Duration (minutes)'])
+          ? [0]
+          : null,
+        watts: r.exerciseInputs.includes(exerciseInputs.Values.Watts) ? [0] : null,
+        speedMph: r.exerciseInputs.includes(exerciseInputs.Values['Speed (mph)']) ? [0] : null,
+        calories: r.exerciseInputs.includes(exerciseInputs.Values['Calories Burned']) ? [0] : null,
+        resistance: r.exerciseInputs.includes(exerciseInputs.Values.Resistance) ? [0] : null,
+      }
+    })
+  }
+
   async getActiveRecords() {
     const activeCoreRecords = await this.CoreRecords.filter((p) => p.active === true).toArray()
     const activeSubRecords = await this.SubRecords.filter((p) => p.active === true).toArray()
@@ -279,6 +300,57 @@ class Database extends Dexie {
   //
   // RECORD CREATES
   //
+
+  // TODO - Fix
+  async createActiveExerciseResultRecord(id: string) {
+    const coreExercise = (await this.CoreRecords.get(id)) as ExerciseRecord
+
+    const activeExerciseResult: ExerciseResultRecord = {
+      active: true,
+      id: uid(),
+      type: recordTypes.Values.exercise,
+      timestamp: Date.now(),
+      coreId: id,
+      note: '',
+      setsData: {},
+    }
+
+    if (coreExercise.exerciseInputs.includes(exerciseInputs.Values.Reps)) {
+      activeExerciseResult.setsData.reps = [0]
+    }
+
+    if (coreExercise.exerciseInputs.includes(exerciseInputs.Values['Weight (lbs)'])) {
+      activeExerciseResult.setsData.weightLbs = [0]
+    }
+
+    if (coreExercise.exerciseInputs.includes(exerciseInputs.Values['Distance (miles)'])) {
+      activeExerciseResult.setsData.distanceMiles = [0]
+    }
+
+    if (coreExercise.exerciseInputs.includes(exerciseInputs.Values['Duration (minutes)'])) {
+      activeExerciseResult.setsData.durationMinutes = [0]
+    }
+
+    if (coreExercise.exerciseInputs.includes(exerciseInputs.Values.Watts)) {
+      activeExerciseResult.setsData.watts = [0]
+    }
+
+    if (coreExercise.exerciseInputs.includes(exerciseInputs.Values['Speed (mph)'])) {
+      activeExerciseResult.setsData.speedMph = [0]
+    }
+
+    if (coreExercise.exerciseInputs.includes(exerciseInputs.Values['Calories Burned'])) {
+      activeExerciseResult.setsData.calories = [0]
+    }
+
+    if (coreExercise.exerciseInputs.includes(exerciseInputs.Values.Resistance)) {
+      activeExerciseResult.setsData.resistance = [0]
+    }
+
+    await this.addRecord(recordGroups.Values.sub, recordTypes.Values.exercise, activeExerciseResult)
+
+    return activeExerciseResult.id
+  }
 
   async addRecord(group: RecordGroup, type: RecordType, record: AnyRecord) {
     const schema = DataSchema.getSchema(group, type)
@@ -340,17 +412,43 @@ class Database extends Dexie {
 
   async discardActiveRecords() {
     const activeRecords = await this.getActiveRecords()
-    const activeCoreIds = activeRecords.core.map((cr) => {
-      return {
-        ...cr,
-        active: false,
-      }
-    })
+    activeRecords.core.forEach((cr) => (cr.active = false))
 
-    // Core records are retained with active as false
-    await this.CoreRecords.bulkPut(activeCoreIds)
-    // Sub records are deleted
-    await this.SubRecords.bulkDelete(activeRecords.sub.map((sr) => sr.id))
+    // Sub records are deleted if the active workout is abandoned
+    await Promise.all(
+      activeRecords.sub.map(async (sr) => await this.deleteRecord(recordGroups.Values.sub, sr.id))
+    )
+
+    // Core records are retained with active set back to false
+    await Promise.all(
+      activeRecords.core.map(
+        async (cr) => await this.updateRecord(recordGroups.Values.core, cr.type, cr.id, cr)
+      )
+    )
+  }
+
+  async keepActiveRecords() {
+    const activeRecords = await this.getActiveRecords()
+    activeRecords.core.forEach((cr) => (cr.active = false))
+    activeRecords.sub.forEach((sr) => (sr.active = false))
+
+    // Add the finished timestamp to the workout record
+    const workoutResultIndex = activeRecords.sub.findIndex(
+      (cr) => cr.type === recordTypes.Values.workout
+    )
+    activeRecords.sub[workoutResultIndex].finishedTimestamp = Date.now()
+
+    // Core records updated last so there last sub value is accurate
+    await Promise.all(
+      activeRecords.sub.map(
+        async (sr) => await this.updateRecord(recordGroups.Values.sub, sr.type, sr.id, sr)
+      )
+    )
+    await Promise.all(
+      activeRecords.core.map(
+        async (cr) => await this.updateRecord(recordGroups.Values.core, cr.type, cr.id, cr)
+      )
+    )
   }
 
   async updateRecord(group: RecordGroup, type: RecordType, id: string, updatedRecord: AnyRecord) {

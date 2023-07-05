@@ -1,12 +1,6 @@
 <script setup lang="ts">
 import { type Ref, ref } from 'vue'
-import {
-  type MeasurementInput,
-  type AnyCoreRecord,
-  allFields,
-  bodyWeightSchema,
-  measurementInputs,
-} from '@/types/core'
+import { MeasurementInput, type AnyCoreRecord, allFields, bodyWeightSchema } from '@/types/core'
 import useActionStore from '@/stores/action'
 import useCoreIdWatcher from '@/composables/useCoreIdWatcher'
 
@@ -16,18 +10,17 @@ defineProps<{
 
 const actionStore = useActionStore()
 
+const dataField = allFields.Values.measuredData
 const field = allFields.Values.bodyWeight
 const isVisible: Ref<boolean> = ref(false)
 
 useCoreIdWatcher((coreRecord: AnyCoreRecord) => {
   const measurementInput = coreRecord?.measurementInput as MeasurementInput | undefined
 
-  if (measurementInput === measurementInputs.Values['Body Weight (lbs)']) {
-    actionStore.record[field] = actionStore.record?.[field] ?? 0 // Defaulting
-    // Nulling out other measurement data fields
-    actionStore.record.percent = null
-    actionStore.record.inches = null
-    actionStore.record.lbs = null
+  if (measurementInput === MeasurementInput.BODY_WEIGHT) {
+    actionStore.record[dataField] = {
+      [field]: actionStore.record?.[dataField]?.[field] ?? 0, // Defaulting
+    }
     isVisible.value = true
   } else {
     isVisible.value = false
@@ -44,12 +37,13 @@ function inspectFormat(val: number) {
     <div class="text-weight-bold text-body1">Body Weight (lbs)</div>
 
     <div v-if="inspecting">
-      {{ inspectFormat(actionStore.record[field]) }}
+      {{ inspectFormat(actionStore.record[dataField][field]) }}
     </div>
 
+    <!-- TODO - Hint with last value -->
     <QInput
       v-else
-      v-model.number="actionStore.record[field]"
+      v-model.number="actionStore.record[dataField][field]"
       :rules="[(val: number) => bodyWeightSchema.safeParse(val).success || 'Must greater then 0']"
       type="number"
       lazy-rules

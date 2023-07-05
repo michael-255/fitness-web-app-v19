@@ -254,9 +254,9 @@ const caloriesColumn: QTableColumn = {
   format: (val: number[] | null) => truncateString(val ? val?.join(', ') : '', 30, '...'),
 }
 
-const resistenceColumn: QTableColumn = {
-  ...makeStandardColumn(allFields.Values.resistence),
-  label: 'Resistence',
+const resistanceColumn: QTableColumn = {
+  ...makeStandardColumn(allFields.Values.resistance),
+  label: 'Resistance',
   format: (val: number[] | null) => truncateString(val ? val?.join(', ') : '', 30, '...'),
 }
 
@@ -315,7 +315,7 @@ export const exerciseResultColumns: QTableColumn[] = [
   wattsColumn,
   speedMphColumn,
   caloriesColumn,
-  resistenceColumn,
+  resistanceColumn,
 ]
 
 export const measurementColumns: QTableColumn[] = [
