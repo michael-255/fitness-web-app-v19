@@ -1,6 +1,6 @@
 import type { QTableColumn } from 'quasar'
 import { truncateString, getDisplayDate } from '@/utils/common'
-import { type LogLevel, Field, type MeasurementInput, type ExerciseInput } from '@/types/core'
+import { type LogLevel, Field, type MeasurementInput, ExercisePreset } from '@/types/core'
 
 function makeStandardColumn(field: Field, required: boolean = false) {
   return {
@@ -164,16 +164,10 @@ const measurementInputColumn: QTableColumn = {
   format: (val: MeasurementInput) => `${val}`,
 }
 
-const exerciseInputsColumn: QTableColumn = {
-  ...makeStandardColumn(Field.EXERCISE_INPUTS),
-  label: 'Exercise Inputs',
-  format: (val: ExerciseInput[]) => truncateString(val ? val?.join(', ') : '', 30, '...'),
-}
-
-const multipleSetsColumn: QTableColumn = {
-  ...makeStandardColumn(Field.MULTIPLE_SETS),
-  label: 'Multiple Sets',
-  format: (val: boolean) => (val ? 'Yes' : 'No'),
+const exercisePresetColumn: QTableColumn = {
+  ...makeStandardColumn(Field.EXERCISE_PRESET),
+  label: 'Exercise Preset',
+  format: (val: ExercisePreset) => `${val}`,
 }
 
 const bodyWeightColumn: QTableColumn = {
@@ -254,12 +248,6 @@ const inclineColumn: QTableColumn = {
   format: (val: number[] | null) => truncateString(val ? val?.join(', ') : '', 30, '...'),
 }
 
-const stepsColumn: QTableColumn = {
-  ...makeStandardColumn(Field.STEPS),
-  label: 'Steps',
-  format: (val: number[] | null) => truncateString(val ? val?.join(', ') : '', 30, '...'),
-}
-
 //
 // TABLE COLUMNS
 //
@@ -304,8 +292,7 @@ export const workoutResultColumns: QTableColumn[] = [
 export const exerciseColumns: QTableColumn[] = [
   hiddenIdColumn,
   ...coreColumns,
-  multipleSetsColumn,
-  exerciseInputsColumn,
+  exercisePresetColumn,
 ]
 export const exerciseResultColumns: QTableColumn[] = [
   hiddenIdColumn,
@@ -319,7 +306,6 @@ export const exerciseResultColumns: QTableColumn[] = [
   caloriesColumn,
   resistanceColumn,
   inclineColumn,
-  stepsColumn,
 ]
 
 export const measurementColumns: QTableColumn[] = [

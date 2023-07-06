@@ -10,8 +10,7 @@ import {
   exerciseResultSchema,
   measurementSchema,
   measurementResultSchema,
-  ExerciseInput,
-  MeasurementInput,
+  ExercisePreset,
   Field,
 } from '@/types/core'
 import {
@@ -76,11 +75,10 @@ export default class DataSchema {
         defineAsyncComponent(() => import('@/components/fields/FieldId.vue')),
         defineAsyncComponent(() => import('@/components/fields/FieldName.vue')),
         defineAsyncComponent(() => import('@/components/fields/FieldDesc.vue')),
-        defineAsyncComponent(() => import('@/components/fields/FieldExerciseInputs.vue')),
+        defineAsyncComponent(() => import('@/components/fields/FieldExercisePreset.vue')),
         defineAsyncComponent(() => import('@/components/fields/FieldTimestamp.vue')),
         defineAsyncComponent(() => import('@/components/fields/FieldEnabled.vue')),
         defineAsyncComponent(() => import('@/components/fields/FieldFavorited.vue')),
-        defineAsyncComponent(() => import('@/components/fields/FieldMultipleSets.vue')),
         defineAsyncComponent(() => import('@/components/fields/FieldActive.vue')),
       ],
       tableColumns: exerciseColumns,
@@ -211,36 +209,22 @@ export default class DataSchema {
     )
   }
 
-  static getFieldForInput(input: ExerciseInput | MeasurementInput) {
-    switch (input) {
-      case ExerciseInput.REPS:
-        return Field.REPS
-      case ExerciseInput.WEIGHT:
-        return Field.WEIGHT
-      case ExerciseInput.DISTANCE:
-        return Field.DISTANCE
-      case ExerciseInput.DURATION:
-        return Field.DURATION
-      case ExerciseInput.WATTS:
-        return Field.WATTS
-      case ExerciseInput.SPEED:
-        return Field.SPEED
-      case ExerciseInput.CALORIES:
-        return Field.CALORIES
-      case ExerciseInput.RESISTANCE:
-        return Field.RESISTANCE
-      case ExerciseInput.INCLINE:
-        return Field.INCLINE
-      case ExerciseInput.STEPS:
-        return Field.STEPS
-      case MeasurementInput.BODY_WEIGHT:
-        return Field.BODY_WEIGHT
-      case MeasurementInput.PERCENT:
-        return Field.PERCENT
-      case MeasurementInput.INCHES:
-        return Field.INCHES
-      case MeasurementInput.LBS:
-        return Field.LBS
+  static getFieldsForPreset(preset: ExercisePreset) {
+    switch (preset) {
+      case ExercisePreset.INSTRUCTIONAL:
+        return undefined
+      case ExercisePreset.STRENGTH:
+        return [Field.REPS, Field.WEIGHT]
+      case ExercisePreset.CARDIO:
+        return [
+          Field.DISTANCE,
+          Field.DURATION,
+          Field.WATTS,
+          Field.SPEED,
+          Field.RESISTANCE,
+          Field.INCLINE,
+          Field.CALORIES,
+        ]
     }
   }
 }

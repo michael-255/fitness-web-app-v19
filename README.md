@@ -6,6 +6,7 @@ Fitness Tracker is for tracking workouts, exercises, and measurements as well as
 
 _ACTIVE WORKOUT:_
 
+- Use `ExercisePrest` now that it's available
 - Back port exercise schema changes to active workout
 - Build out the exercises in the active workout view
 
