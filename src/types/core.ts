@@ -62,6 +62,8 @@ export enum ExerciseInput {
   SPEED = 'Speed (mph)',
   CALORIES = 'Calories Burned',
   RESISTANCE = 'Resistance',
+  INCLINE = 'Incline',
+  STEPS = 'Steps',
 }
 export const exerciseInputSchema = z.nativeEnum(ExerciseInput)
 
@@ -107,13 +109,15 @@ export enum Field {
   // Exercise Result
   SETS_DATA = 'setsData',
   REPS = 'reps',
-  WEIGHT_LBS = 'weightLbs',
-  DISTANCE_MILES = 'distanceMiles',
-  DURATION_MINUTES = 'durationMinutes',
+  WEIGHT = 'weightLbs',
+  DISTANCE = 'distanceMiles',
+  DURATION = 'durationMinutes',
   WATTS = 'watts',
-  SPEED_MPH = 'speedMph',
+  SPEED = 'speedMph',
   CALORIES = 'calories',
   RESISTANCE = 'resistance',
+  INCLINE = 'incline',
+  STEPS = 'steps',
 
   // Exercise
   EXERCISE_INPUTS = 'exerciseInputs',
@@ -186,13 +190,15 @@ const coreSchema = baseSchema.extend({
 
 const setsDataObject = z.object({
   [Field.REPS]: setsSchema.optional(),
-  [Field.WEIGHT_LBS]: setsSchema.optional(),
-  [Field.DISTANCE_MILES]: setsSchema.optional(),
-  [Field.DURATION_MINUTES]: setsSchema.optional(),
+  [Field.WEIGHT]: setsSchema.optional(),
+  [Field.DISTANCE]: setsSchema.optional(),
+  [Field.DURATION]: setsSchema.optional(),
   [Field.WATTS]: setsSchema.optional(),
-  [Field.SPEED_MPH]: setsSchema.optional(),
+  [Field.SPEED]: setsSchema.optional(),
   [Field.CALORIES]: setsSchema.optional(),
   [Field.RESISTANCE]: setsSchema.optional(),
+  [Field.INCLINE]: setsSchema.optional(),
+  [Field.STEPS]: setsSchema.optional(),
 })
 
 const measuredDataObject = z.object({

@@ -207,19 +207,19 @@ const repsColumn: QTableColumn = {
 }
 
 const weightLbsColumn: QTableColumn = {
-  ...makeStandardColumn(Field.WEIGHT_LBS),
+  ...makeStandardColumn(Field.WEIGHT),
   label: 'Weight (lbs)',
   format: (val: number[] | null) => truncateString(val ? val?.join(', ') : '', 30, '...'),
 }
 
 const distanceMilesColumn: QTableColumn = {
-  ...makeStandardColumn(Field.DISTANCE_MILES),
+  ...makeStandardColumn(Field.DISTANCE),
   label: 'Distance (miles)',
   format: (val: number[] | null) => truncateString(val ? val?.join(', ') : '', 30, '...'),
 }
 
 const durationMinutesColumn: QTableColumn = {
-  ...makeStandardColumn(Field.DURATION_MINUTES),
+  ...makeStandardColumn(Field.DURATION),
   label: 'Duration (minutes)',
   format: (val: number[] | null) => truncateString(val ? val?.join(', ') : '', 30, '...'),
 }
@@ -231,7 +231,7 @@ const wattsColumn: QTableColumn = {
 }
 
 const speedMphColumn: QTableColumn = {
-  ...makeStandardColumn(Field.SPEED_MPH),
+  ...makeStandardColumn(Field.SPEED),
   label: 'Speed (mph)',
   format: (val: number[] | null) => truncateString(val ? val?.join(', ') : '', 30, '...'),
 }
@@ -245,6 +245,18 @@ const caloriesColumn: QTableColumn = {
 const resistanceColumn: QTableColumn = {
   ...makeStandardColumn(Field.RESISTANCE),
   label: 'Resistance',
+  format: (val: number[] | null) => truncateString(val ? val?.join(', ') : '', 30, '...'),
+}
+
+const inclineColumn: QTableColumn = {
+  ...makeStandardColumn(Field.INCLINE),
+  label: 'Incline',
+  format: (val: number[] | null) => truncateString(val ? val?.join(', ') : '', 30, '...'),
+}
+
+const stepsColumn: QTableColumn = {
+  ...makeStandardColumn(Field.STEPS),
+  label: 'Steps',
   format: (val: number[] | null) => truncateString(val ? val?.join(', ') : '', 30, '...'),
 }
 
@@ -306,6 +318,8 @@ export const exerciseResultColumns: QTableColumn[] = [
   speedMphColumn,
   caloriesColumn,
   resistanceColumn,
+  inclineColumn,
+  stepsColumn,
 ]
 
 export const measurementColumns: QTableColumn[] = [

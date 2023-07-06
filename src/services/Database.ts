@@ -331,6 +331,14 @@ class Database extends Dexie {
       activeExerciseResult.setsData.resistance = [0]
     }
 
+    if (coreExercise.exerciseInputs.includes(ExerciseInput.INCLINE)) {
+      activeExerciseResult.setsData.incline = [0]
+    }
+
+    if (coreExercise.exerciseInputs.includes(ExerciseInput.STEPS)) {
+      activeExerciseResult.setsData.steps = [0]
+    }
+
     await this.addRecord(RecordGroup.SUB, RecordType.EXERCISE, activeExerciseResult)
 
     return activeExerciseResult.id

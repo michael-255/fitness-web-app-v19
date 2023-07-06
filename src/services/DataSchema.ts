@@ -10,6 +10,9 @@ import {
   exerciseResultSchema,
   measurementSchema,
   measurementResultSchema,
+  ExerciseInput,
+  MeasurementInput,
+  Field,
 } from '@/types/core'
 import {
   exerciseColumns,
@@ -206,5 +209,38 @@ export default class DataSchema {
     return (
       this.recordProps.find((p) => p.group === RecordGroup.CORE && p.type === type)?.charts ?? []
     )
+  }
+
+  static getFieldForInput(input: ExerciseInput | MeasurementInput) {
+    switch (input) {
+      case ExerciseInput.REPS:
+        return Field.REPS
+      case ExerciseInput.WEIGHT:
+        return Field.WEIGHT
+      case ExerciseInput.DISTANCE:
+        return Field.DISTANCE
+      case ExerciseInput.DURATION:
+        return Field.DURATION
+      case ExerciseInput.WATTS:
+        return Field.WATTS
+      case ExerciseInput.SPEED:
+        return Field.SPEED
+      case ExerciseInput.CALORIES:
+        return Field.CALORIES
+      case ExerciseInput.RESISTANCE:
+        return Field.RESISTANCE
+      case ExerciseInput.INCLINE:
+        return Field.INCLINE
+      case ExerciseInput.STEPS:
+        return Field.STEPS
+      case MeasurementInput.BODY_WEIGHT:
+        return Field.BODY_WEIGHT
+      case MeasurementInput.PERCENT:
+        return Field.PERCENT
+      case MeasurementInput.INCHES:
+        return Field.INCHES
+      case MeasurementInput.LBS:
+        return Field.LBS
+    }
   }
 }

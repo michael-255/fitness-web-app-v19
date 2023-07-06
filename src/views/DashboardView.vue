@@ -364,16 +364,25 @@ async function beginActiveWorkout(record: WorkoutRecord) {
             />
 
             <div v-else-if="record?.active" class="text-center full-width">
-              Restricted access while active
+              Access limited while active
             </div>
 
             <QBtn
+              v-else-if="record?.type === RecordType.MEASUREMENT"
+              label="Take Measurement"
+              color="primary"
+              class="full-width"
+              :icon="Icon.MEASUREMENTS"
+              @click="goToCreate(RecordGroup.SUB, RecordType.MEASUREMENT, record?.id)"
+            />
+
+            <QBtn
               v-else
-              label="Add Sub Record"
+              label="Add Exercise Entry"
               color="primary"
               class="full-width"
               :icon="Icon.ADD_NOTE"
-              @click="goToCreate(RecordGroup.SUB, record?.type, record?.id)"
+              @click="goToCreate(RecordGroup.SUB, RecordType.EXERCISE, record?.id)"
             />
           </QCardActions>
         </QCard>

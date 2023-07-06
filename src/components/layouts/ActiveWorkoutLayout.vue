@@ -27,7 +27,7 @@ watch(counter, () => {
 </script>
 
 <template>
-  <QLayout view="hHh LpR lff">
+  <QLayout view="hHh LpR fFf">
     <QHeader elevated :class="`bg-${AppHeaderColor}`">
       <QToolbar>
         <QToolbarTitle class="q-ml-xs">{{ workoutName }}</QToolbarTitle>
@@ -43,7 +43,7 @@ watch(counter, () => {
       </RouterView>
     </QPageContainer>
 
-    <QFooter v-if="workoutName" elevated class="bg-primary">
+    <QFooter elevated class="bg-primary">
       <QToolbar>
         <QSpace />
         <QIcon :name="Icon.STOPWATCH" size="sm" class="q-mr-sm" />

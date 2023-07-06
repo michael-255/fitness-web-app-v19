@@ -3,7 +3,13 @@ import { Icon } from '@/types/general'
 import { AppName } from '@/constants/global'
 import { useMeta } from 'quasar'
 import { onMounted, ref, type Ref } from 'vue'
-import { type AnySubRecord, numberSchema, ExerciseInput } from '@/types/core'
+import {
+  type AnySubRecord,
+  numberSchema,
+  ExerciseInput,
+  type AnyCoreRecord,
+  RecordType,
+} from '@/types/core'
 import ResponsivePage from '@/components/ResponsivePage.vue'
 import useLogger from '@/composables/useLogger'
 import useDialogs from '@/composables/useDialogs'
@@ -16,14 +22,20 @@ const { log } = useLogger()
 const { confirmDialog } = useDialogs()
 const { goToDashboard } = useRoutables()
 
-const activeRecords: Ref<AnySubRecord[]> = ref([])
+const activeRecords: Ref<{
+  core: AnyCoreRecord[]
+  sub: AnySubRecord[]
+  count: number
+}> = ref({} as { core: AnyCoreRecord[]; sub: AnySubRecord[]; count: number })
 const isFormValid = ref(true)
 
 const testNumber = ref(0)
 
 onMounted(async () => {
-  activeRecords.value = (await DB.getActiveRecords()).sub
+  activeRecords.value = await DB.getActiveRecords()
+  const activeWorkout = activeRecords.value.core.find((r) => r.type === RecordType.WORKOUT)
   console.log('activeRecords', activeRecords.value)
+  console.log('activeWorkout', activeWorkout)
 })
 
 async function onSubmit() {
@@ -63,102 +75,23 @@ function validationRule() {
           </QBadge>
           <div class="col">
             <div class="row q-mt-xs">
-              <QInput
+              <!-- TODO - Hint with last value -->
+              <!-- <QInput
+                v-for="(input, i) in exerciseInputsRef"
+                :key="i"
                 stack-label
                 class="col-6 q-mb-xs"
                 type="number"
                 filled
                 square
                 dense
-                hint="135 (5, 5, -10, 5, 5)"
-                v-model.number="testNumber"
+                hint="TODO - Hint with last value"
+                v-model.number="
+                  actionStore.record[Field.SETS_DATA][DataSchema.getFieldForInput(input)][index]
+                "
                 :rules="[validationRule()]"
-                :label="ExerciseInput.REPS"
-              />
-              <QInput
-                stack-label
-                class="col-6 q-mb-xs"
-                type="number"
-                filled
-                square
-                dense
-                hint="135 (5, 5, -10, 5, 5)"
-                v-model.number="testNumber"
-                :rules="[validationRule()]"
-                :label="ExerciseInput.WEIGHT"
-              />
-              <QInput
-                stack-label
-                class="col-6 q-mb-xs"
-                type="number"
-                filled
-                square
-                dense
-                hint="135 (5, 5, -10, 5, 5)"
-                v-model.number="testNumber"
-                :rules="[validationRule()]"
-                :label="ExerciseInput.DISTANCE"
-              />
-              <QInput
-                stack-label
-                class="col-6 q-mb-xs"
-                type="number"
-                filled
-                square
-                dense
-                hint="135 (5, 5, -10, 5, 5)"
-                v-model.number="testNumber"
-                :rules="[validationRule()]"
-                :label="ExerciseInput.DURATION"
-              />
-              <QInput
-                stack-label
-                class="col-6 q-mb-xs"
-                type="number"
-                filled
-                square
-                dense
-                hint="135 (5, 5, -10, 5, 5)"
-                v-model.number="testNumber"
-                :rules="[validationRule()]"
-                :label="ExerciseInput.WATTS"
-              />
-              <QInput
-                stack-label
-                class="col-6 q-mb-xs"
-                type="number"
-                filled
-                square
-                dense
-                hint="135 (5, 5, -10, 5, 5)"
-                v-model.number="testNumber"
-                :rules="[validationRule()]"
-                :label="ExerciseInput.SPEED"
-              />
-              <QInput
-                stack-label
-                class="col-6 q-mb-xs"
-                type="number"
-                filled
-                square
-                dense
-                hint="135 (5, 5, -10, 5, 5)"
-                v-model.number="testNumber"
-                :rules="[validationRule()]"
-                :label="ExerciseInput.CALORIES"
-              />
-              <QInput
-                stack-label
-                class="col-6 q-mb-xs"
-                type="number"
-                filled
-                square
-                dense
-                hint="135 (5, 5, -10, 5, 5)"
-                v-model.number="testNumber"
-                :rules="[validationRule()]"
-                :label="ExerciseInput.RESISTANCE"
-              />
+                :label="input"
+              /> -->
             </div>
           </div>
         </div>
