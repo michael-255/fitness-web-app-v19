@@ -3,15 +3,13 @@ import { RouterView, useRoute } from 'vue-router'
 import { AppHeaderColor, AppName } from '@/constants/global'
 import { Icon, routeNames } from '@/types/general'
 import { RecordGroup } from '@/types/core'
-import DataSchema from '@/services/DataSchema'
 import useRoutables from '@/composables/useRoutables'
 import useUIStore from '@/stores/ui'
 
 const { goBack } = useRoutables()
-const uiStore = useUIStore()
+const { goToRecordsData } = useRoutables()
 const route = useRoute()
-
-const groupOptions = DataSchema.getGroupOptions(RecordGroup.CORE)
+const uiStore = useUIStore()
 </script>
 
 <template>
@@ -30,6 +28,23 @@ const groupOptions = DataSchema.getGroupOptions(RecordGroup.CORE)
           :icon="Icon.BACK"
           @click="goBack()"
         />
+
+        <!-- Dashboard Table Links -->
+        <div v-else>
+          <QSeparator vertical dark />
+          <QBtn
+            flat
+            round
+            :icon="Icon.TABLE"
+            @click="goToRecordsData(RecordGroup.CORE, uiStore.dashboardSelection)"
+          />
+          <QBtn
+            flat
+            round
+            :icon="Icon.RESULTS"
+            @click="goToRecordsData(RecordGroup.SUB, uiStore.dashboardSelection)"
+          />
+        </div>
       </QToolbar>
     </QHeader>
 
@@ -52,26 +67,6 @@ const groupOptions = DataSchema.getGroupOptions(RecordGroup.CORE)
 
         <QSeparator spaced="md" inset />
 
-        <!-- Parent Data Table Links -->
-        <QItem
-          v-for="(opt, i) in groupOptions"
-          :key="i"
-          clickable
-          v-ripple
-          :to="{
-            name: routeNames.Values.DataRecords,
-            params: { group: opt?.value?.group, type: opt?.value?.type },
-          }"
-        >
-          <QItemSection avatar>
-            <QIcon color="primary" :name="opt.icon" />
-          </QItemSection>
-          <QItemSection>{{ opt.label }}</QItemSection>
-        </QItem>
-
-        <QSeparator spaced="md" inset />
-
-        <!-- Common App Links -->
         <QItem clickable v-ripple :to="{ name: routeNames.Values.Settings }">
           <QItemSection avatar>
             <QIcon color="primary" :name="Icon.SETTINGS" />

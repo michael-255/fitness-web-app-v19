@@ -31,7 +31,7 @@ async function onCloseWelcomeOverlay() {
 
 <template>
   <QDialog v-model="showWelcome" persistent>
-    <QCard>
+    <QCard flat square>
       <QCardSection>
         <p class="text-h6">Welcome to {{ AppName }}</p>
 

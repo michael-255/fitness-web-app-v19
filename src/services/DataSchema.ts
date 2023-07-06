@@ -171,23 +171,6 @@ export default class DataSchema {
     }))
   }
 
-  static getGroupOptions(group: RecordGroup): {
-    value: { type: RecordType; group: RecordGroup }
-    label: string
-    icon: Icon
-  }[] {
-    return this.recordProps
-      .filter((p) => p.group === group)
-      .map((p) => ({
-        value: {
-          type: p.type,
-          group: p.group,
-        },
-        label: p.plural,
-        icon: p.icon,
-      }))
-  }
-
   static getDashboardOptions(): {
     value: RecordType
     label: string

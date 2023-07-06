@@ -170,12 +170,6 @@ const exerciseInputsColumn: QTableColumn = {
   format: (val: ExerciseInput[]) => truncateString(val ? val?.join(', ') : '', 30, '...'),
 }
 
-const activeColumn: QTableColumn = {
-  ...makeStandardColumn(Field.ACTIVE),
-  label: 'Active',
-  format: (val: boolean) => (val ? 'Yes' : 'No'),
-}
-
 const multipleSetsColumn: QTableColumn = {
   ...makeStandardColumn(Field.MULTIPLE_SETS),
   label: 'Multiple Sets',
@@ -258,6 +252,10 @@ const resistanceColumn: QTableColumn = {
 // TABLE COLUMNS
 //
 
+/**
+ * Active is NOT shown in the data tables because active records are restricted
+ */
+
 export const hiddenColumnNames: Readonly<string[]> = [hiddenIdColumn, hiddenAutoIdColumn].map(
   (c) => c.name
 )
@@ -287,7 +285,6 @@ export const workoutColumns: QTableColumn[] = [hiddenIdColumn, ...coreColumns, e
 export const workoutResultColumns: QTableColumn[] = [
   hiddenIdColumn,
   ...subColumns,
-  activeColumn,
   exerciseResultIdsColumn,
   finishedTimestampColumn,
 ]
@@ -301,7 +298,6 @@ export const exerciseColumns: QTableColumn[] = [
 export const exerciseResultColumns: QTableColumn[] = [
   hiddenIdColumn,
   ...subColumns,
-  activeColumn,
   repsColumn,
   weightLbsColumn,
   distanceMilesColumn,

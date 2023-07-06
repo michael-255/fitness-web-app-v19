@@ -66,6 +66,7 @@ export enum Icon {
   LOGS = 'plagiarism',
   CHARTS = 'bar_chart',
   RECORDS = 'storage',
+  RESULTS = 'fact_check',
   WORKOUTS = 'assignment',
   WORKOUT_BEGIN = 'directions_run',
   EXERCISES = 'fitness_center',

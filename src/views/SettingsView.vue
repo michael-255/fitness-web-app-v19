@@ -405,6 +405,10 @@ async function updateHeight() {
         </p>
         <QBtn label="Export" color="primary" @click="onExportRecords()" />
       </div>
+    </section>
+
+    <section class="q-mb-xl">
+      <p class="text-h6">Logging</p>
 
       <div class="q-mb-md">
         <p>View the app logs to troubleshoot issues.</p>
@@ -412,22 +416,12 @@ async function updateHeight() {
       </div>
 
       <div class="q-mb-md">
-        <p>Access any app data tables to view your records.</p>
-        <QSelect v-model="accessModel" outlined dense label="Record Type" :options="accessOptions">
-          <template v-slot:before>
-            <QBtn
-              :disable="!accessModel"
-              label="Access Data"
-              color="primary"
-              @click="goToRecordsData(accessModel?.value?.group, accessModel?.value?.type)"
-            />
-          </template>
-        </QSelect>
+        <p>
+          Validate that the logging settings below are working as expected by generating some test
+          logs.
+        </p>
+        <QBtn label="Test Logger" color="primary" @click="onTestLogger()" />
       </div>
-    </section>
-
-    <section class="q-mb-xl">
-      <p class="text-h6">Logging</p>
 
       <div class="q-mb-md">
         <p>Show Console Logs will display all log messages in the browser console.</p>
@@ -445,14 +439,6 @@ async function updateHeight() {
           :model-value="getSettingValue(SettingKey.INFO_MESSAGES)"
           @update:model-value="DB.setSetting(SettingKey.INFO_MESSAGES, $event)"
         />
-      </div>
-
-      <div class="q-mb-md">
-        <p>
-          Validate that your logging settings above are working as expected by using the test action
-          below.
-        </p>
-        <QBtn label="Test Logger" color="primary" @click="onTestLogger()" />
       </div>
 
       <div class="q-mb-md">

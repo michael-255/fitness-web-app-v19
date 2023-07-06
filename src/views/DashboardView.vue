@@ -9,10 +9,10 @@ import { getRecordsCountDisplay } from '@/utils/common'
 import {
   SettingKey,
   RecordType,
+  RecordGroup,
   type AnyCoreRecord,
   type WorkoutResultRecord,
   type WorkoutRecord,
-  RecordGroup,
 } from '@/types/core'
 import DataSchema from '@/services/DataSchema'
 import ResponsivePage from '@/components/ResponsivePage.vue'
