@@ -161,39 +161,34 @@ async function onBeginWorkout(record: WorkoutRecord) {
 }
 
 async function beginActiveWorkout(record: WorkoutRecord) {
-  const activeExerciseResultIds = await Promise.all(
-    record.exerciseIds.map(async (exerciseId) => {
-      return await DB.createActiveExerciseResultRecord(exerciseId)
-    })
-  )
-
-  const newWorkoutResult: WorkoutResultRecord = {
-    active: true,
-    id: uid(),
-    type: RecordType.WORKOUT,
-    timestamp: Date.now(),
-    coreId: record.id,
-    note: '',
-    exerciseResultIds: activeExerciseResultIds,
-  }
-
-  // Setting core workout to active
-  record.active = true
-  await DB.updateRecord(RecordGroup.CORE, RecordType.WORKOUT, record.id, record)
-
-  // Setting core exercises to active
-  await Promise.all(
-    record.exerciseIds.map(async (id) => {
-      const exercise = (await DB.getRecord(RecordGroup.CORE, id)) as AnyCoreRecord
-      exercise.active = true
-      return await DB.updateRecord(RecordGroup.CORE, RecordType.EXERCISE, exercise.id, exercise)
-    })
-  )
-
-  // Add new active result records to database
-  await DB.addRecord(RecordGroup.SUB, RecordType.WORKOUT, newWorkoutResult)
-
-  goToActiveWorkout()
+  // const activeExerciseResultIds = await Promise.all(
+  //   record.exerciseIds.map(async (exerciseId) => {
+  //     return await DB.createActiveExerciseResultRecord(exerciseId)
+  //   })
+  // )
+  // const newWorkoutResult: WorkoutResultRecord = {
+  //   active: true,
+  //   id: uid(),
+  //   type: RecordType.WORKOUT,
+  //   timestamp: Date.now(),
+  //   coreId: record.id,
+  //   note: '',
+  //   exerciseResultIds: activeExerciseResultIds,
+  // }
+  // // Setting core workout to active
+  // record.active = true
+  // await DB.updateRecord(RecordGroup.CORE, RecordType.WORKOUT, record.id, record)
+  // // Setting core exercises to active
+  // await Promise.all(
+  //   record.exerciseIds.map(async (id) => {
+  //     const exercise = (await DB.getRecord(RecordGroup.CORE, id)) as AnyCoreRecord
+  //     exercise.active = true
+  //     return await DB.updateRecord(RecordGroup.CORE, RecordType.EXERCISE, exercise.id, exercise)
+  //   })
+  // )
+  // // Add new active result records to database
+  // await DB.addRecord(RecordGroup.SUB, RecordType.WORKOUT, newWorkoutResult)
+  // goToActiveWorkout()
 }
 </script>
 
