@@ -23,12 +23,13 @@ function inspectFormat(val: boolean) {
 <template>
   <div class="text-weight-bold text-body1">Multiple Sets</div>
 
-  <div v-if="inspecting">
-    {{ inspectFormat(actionStore.record[field]) }}
-  </div>
+  <div v-if="inspecting">{{ inspectFormat(actionStore.record[field]) }}</div>
 
   <div v-else>
-    <p>Whether the record provides the ability to record multiple sets.</p>
+    <p>
+      Whether the record allows recording multiple sets or only a single set. This is irrelevant for
+      instructional records with no inputs.
+    </p>
     <QToggle v-model="actionStore.record[field]" />
   </div>
 </template>

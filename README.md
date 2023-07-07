@@ -14,6 +14,10 @@ _MISC:_
 - Clearable button uses `null` instead of `undefined` for value
 - Inspect fields with lists should use `<li>`
 - Validate that checking for value change on chart time watcher didn't break it
+- Exporting while you have active workout should:
+  - Warn the user, but they can continue and...
+  - Update core records active to false
+  - Delete sub records that are active
 
 ## Table of Contents
 

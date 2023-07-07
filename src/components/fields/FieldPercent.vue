@@ -10,17 +10,12 @@ defineProps<{
 
 const actionStore = useActionStore()
 
-const dataField = Field.MEASURED_DATA
 const field = Field.PERCENT
 const isVisible: Ref<boolean> = ref(false)
 
 useCoreIdWatcher((coreRecord: AnyCoreRecord) => {
-  const measurementInput = coreRecord?.measurementInput as MeasurementInput | undefined
-
-  if (measurementInput === MeasurementInput.PERCENT) {
-    actionStore.record[dataField] = {
-      [field]: actionStore.record?.[dataField]?.[field] ?? 0, // Defaulting
-    }
+  if (coreRecord?.measurementInput === MeasurementInput.PERCENT) {
+    actionStore.record[field] = actionStore.record?.[field] ?? undefined
     isVisible.value = true
   } else {
     isVisible.value = false
@@ -34,17 +29,15 @@ function inspectFormat(val: number) {
 
 <template>
   <div v-if="isVisible">
-    <div class="text-weight-bold text-body1">Percentage</div>
+    <div class="text-weight-bold text-body1">{{ MeasurementInput.PERCENT }}</div>
 
-    <div v-if="inspecting">
-      {{ inspectFormat(actionStore.record[dataField][field]) }}
-    </div>
+    <div v-if="inspecting">{{ inspectFormat(actionStore.record[field]) }}</div>
 
     <!-- TODO - Hint with last value -->
     <QInput
       v-else
-      v-model.number="actionStore.record[dataField][field]"
-      :rules="[(val: number) => percentSchema.safeParse(val).success || 'Percent must be between 0 and 100']"
+      v-model.number="actionStore.record[field]"
+      :rules="[(val: number) => percentSchema.safeParse(val).success || 'Must be between 1 and 100']"
       type="number"
       lazy-rules
       dense

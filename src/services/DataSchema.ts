@@ -77,10 +77,10 @@ export default class DataSchema {
         defineAsyncComponent(() => import('@/components/fields/FieldName.vue')),
         defineAsyncComponent(() => import('@/components/fields/FieldDesc.vue')),
         defineAsyncComponent(() => import('@/components/fields/FieldExerciseInputs.vue')),
+        defineAsyncComponent(() => import('@/components/fields/FieldMultipleSets.vue')),
         defineAsyncComponent(() => import('@/components/fields/FieldTimestamp.vue')),
         defineAsyncComponent(() => import('@/components/fields/FieldEnabled.vue')),
         defineAsyncComponent(() => import('@/components/fields/FieldFavorited.vue')),
-        defineAsyncComponent(() => import('@/components/fields/FieldMultipleSets.vue')),
         defineAsyncComponent(() => import('@/components/fields/FieldActive.vue')),
       ],
       tableColumns: exerciseColumns,
@@ -137,6 +137,7 @@ export default class DataSchema {
         defineAsyncComponent(() => import('@/components/fields/FieldPercent.vue')),
         defineAsyncComponent(() => import('@/components/fields/FieldInches.vue')),
         defineAsyncComponent(() => import('@/components/fields/FieldLbs.vue')),
+        defineAsyncComponent(() => import('@/components/fields/FieldNumber.vue')),
         defineAsyncComponent(() => import('@/components/fields/FieldTimestamp.vue')),
         defineAsyncComponent(() => import('@/components/fields/FieldNote.vue')),
       ],
@@ -157,21 +158,6 @@ export default class DataSchema {
 
   static getLogFields() {
     return this.logFields
-  }
-
-  static getAllOptions(): {
-    value: { type: RecordType; group: RecordGroup }
-    label: string
-    icon: Icon
-  }[] {
-    return this.recordProps.map((p) => ({
-      value: {
-        type: p.type,
-        group: p.group,
-      },
-      label: p.plural,
-      icon: p.icon,
-    }))
   }
 
   static getDashboardOptions(): {
@@ -231,8 +217,6 @@ export default class DataSchema {
         return Field.RESISTANCE
       case ExerciseInput.INCLINE:
         return Field.INCLINE
-      case ExerciseInput.STEPS:
-        return Field.STEPS
       case MeasurementInput.BODY_WEIGHT:
         return Field.BODY_WEIGHT
       case MeasurementInput.PERCENT:
@@ -241,6 +225,10 @@ export default class DataSchema {
         return Field.INCHES
       case MeasurementInput.LBS:
         return Field.LBS
+      case MeasurementInput.NUMBER:
+        return Field.NUMBER
+      default:
+        throw new Error(`Invalid input type: ${input}`)
     }
   }
 }

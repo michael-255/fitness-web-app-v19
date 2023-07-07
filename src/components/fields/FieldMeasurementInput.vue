@@ -16,7 +16,7 @@ const options: Ref<{ value: MeasurementInput; label: MeasurementInput }[]> = ref
 
 onMounted(async () => {
   try {
-    actionStore.record[field] = actionStore.record[field] ?? []
+    actionStore.record[field] = actionStore.record[field] ?? undefined
 
     options.value = Object.values(MeasurementInput).map((o: MeasurementInput) => ({
       value: o,
@@ -35,9 +35,7 @@ function inspectFormat(val: MeasurementInput) {
 <template>
   <div class="text-weight-bold text-body1">Measurement Input</div>
 
-  <div v-if="inspecting">
-    {{ inspectFormat(actionStore.record[field]) }}
-  </div>
+  <div v-if="inspecting">{{ inspectFormat(actionStore.record[field]) }}</div>
 
   <div v-else>
     <p>

@@ -2,7 +2,7 @@
 import { onMounted, ref, watch, type Ref } from 'vue'
 import { RouterView } from 'vue-router'
 import { AppHeaderColor } from '@/constants/global'
-import { Icon, routeNames } from '@/types/general'
+import { Icon, RouteName } from '@/types/general'
 import { RecordType } from '@/types/core'
 import { getDurationFromMilliseconds } from '@/utils/common'
 import { useInterval } from '@vueuse/core'
@@ -31,7 +31,7 @@ watch(counter, () => {
     <QHeader elevated :class="`bg-${AppHeaderColor}`">
       <QToolbar>
         <QToolbarTitle class="q-ml-xs">{{ workoutName }}</QToolbarTitle>
-        <QBtn flat round :icon="Icon.BACK" :to="{ name: routeNames.Values.Dashboard }" />
+        <QBtn flat round :icon="Icon.BACK" :to="{ name: RouteName.DASHBOARD }" />
       </QToolbar>
     </QHeader>
 

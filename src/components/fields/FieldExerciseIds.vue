@@ -45,9 +45,7 @@ function inspectFormat(val: ExerciseRecord[]) {
 <template>
   <div class="text-weight-bold text-body1">Exercises</div>
 
-  <div v-if="inspecting">
-    {{ inspectFormat(actionStore.record[field]) }}
-  </div>
+  <div v-if="inspecting">{{ inspectFormat(actionStore.record[field]) }}</div>
 
   <div v-else>
     <p>Exercises associated with this workout.</p>

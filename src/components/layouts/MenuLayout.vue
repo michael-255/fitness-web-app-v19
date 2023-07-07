@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { RouterView, useRoute } from 'vue-router'
 import { AppHeaderColor, AppName } from '@/constants/global'
-import { Icon, routeNames } from '@/types/general'
+import { Icon, RouteName } from '@/types/general'
 import { RecordGroup } from '@/types/core'
 import useRoutables from '@/composables/useRoutables'
 import useUIStore from '@/stores/ui'
@@ -22,7 +22,7 @@ const uiStore = useUIStore()
         <QToolbarTitle>{{ AppName }}</QToolbarTitle>
 
         <QBtn
-          v-if="route.name !== routeNames.Values.Dashboard"
+          v-if="route.name !== RouteName.DASHBOARD"
           flat
           round
           :icon="Icon.BACK"
@@ -58,7 +58,7 @@ const uiStore = useUIStore()
 
       <QList>
         <!-- Dashboard Link -->
-        <QItem clickable v-ripple :to="{ name: routeNames.Values.Dashboard }">
+        <QItem clickable v-ripple :to="{ name: RouteName.DASHBOARD }">
           <QItemSection avatar>
             <QIcon color="primary" :name="Icon.DASHBOARD" />
           </QItemSection>
@@ -67,33 +67,28 @@ const uiStore = useUIStore()
 
         <QSeparator spaced="md" inset />
 
-        <QItem clickable v-ripple :to="{ name: routeNames.Values.Settings }">
+        <QItem clickable v-ripple :to="{ name: RouteName.SETTINGS }">
           <QItemSection avatar>
             <QIcon color="primary" :name="Icon.SETTINGS" />
           </QItemSection>
           <QItemSection>Settings</QItemSection>
         </QItem>
 
-        <QItem clickable v-ripple :to="{ name: routeNames.Values.FAQ }">
+        <QItem clickable v-ripple :to="{ name: RouteName.FAQ }">
           <QItemSection avatar>
             <QIcon color="primary" :name="Icon.HELP" />
           </QItemSection>
           <QItemSection>FAQ</QItemSection>
         </QItem>
 
-        <QItem clickable v-ripple :to="{ name: routeNames.Values.About }">
+        <QItem clickable v-ripple :to="{ name: RouteName.ABOUT }">
           <QItemSection avatar>
             <QIcon color="primary" :name="Icon.INFO" />
           </QItemSection>
           <QItemSection>About</QItemSection>
         </QItem>
 
-        <QItem
-          clickable
-          v-ripple
-          active-class="text-warning"
-          :to="{ name: routeNames.Values.Donate }"
-        >
+        <QItem clickable v-ripple active-class="text-warning" :to="{ name: RouteName.DONATE }">
           <QItemSection avatar>
             <QIcon color="warning" :name="Icon.DONATE" />
           </QItemSection>

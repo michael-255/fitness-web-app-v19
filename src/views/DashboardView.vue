@@ -240,7 +240,8 @@ async function beginActiveWorkout(record: WorkoutRecord) {
               class="absolute-top-left q-py-none"
               style="left: -4px; top: -6px"
             >
-              <span class="text-caption">Active</span>
+              <QIcon :name="Icon.LOCK" />
+              <span class="text-caption q-ml-xs">Active</span>
             </QBadge>
 
             <!-- Top right corner buttons on card -->
@@ -311,7 +312,7 @@ async function beginActiveWorkout(record: WorkoutRecord) {
                     </QItem>
 
                     <QItem
-                      v-if="!record.active"
+                      :disable="record.active"
                       clickable
                       @click="goToEdit(RecordGroup.CORE, record?.type, record?.id)"
                     >
@@ -391,9 +392,7 @@ async function beginActiveWorkout(record: WorkoutRecord) {
 
     <!-- Record Count & Create -->
     <div class="row justify-center q-mt-md">
-      <QIcon class="col-12 text-center" name="menu_open" size="80px" color="grey" />
-
-      <p class="col-12 text-grey text-center">
+      <p class="col-12 text-grey text-center text-body1">
         {{ getRecordsCountDisplay(dashboardRecords[uiStore.dashboardSelection]) }}
       </p>
 

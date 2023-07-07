@@ -23,9 +23,7 @@ function inspectFormat(val: boolean) {
 <template>
   <div class="text-weight-bold text-body1">Favorited</div>
 
-  <div v-if="inspecting">
-    {{ inspectFormat(actionStore.record[field]) }}
-  </div>
+  <div v-if="inspecting">{{ inspectFormat(actionStore.record[field]) }}</div>
 
   <div v-else>
     <p>Whether the record is favorited and is prioritized on the Dashboard.</p>

@@ -1,12 +1,23 @@
 <script setup lang="ts">
 import { Icon } from '@/types/general'
-import { Field, type AnyRecord, type RecordGroup, type RecordType } from '@/types/core'
+import {
+  type AnyRecord,
+  type RecordGroup,
+  type AnyCoreRecord,
+  RecordType,
+  Field,
+  measurementDataFields,
+  exerciseDataFields,
+  MeasurementInput,
+  ExerciseInput,
+} from '@/types/core'
 import { onMounted, onUnmounted, ref } from 'vue'
 import { extend, useMeta } from 'quasar'
 import { AppName } from '@/constants/global'
 import DataSchema from '@/services/DataSchema'
 import ErrorStates from '@/components/ErrorStates.vue'
 import ResponsivePage from '@/components/ResponsivePage.vue'
+import useCoreIdWatcher from '@/composables/useCoreIdWatcher'
 import useRoutables from '@/composables/useRoutables'
 import useActionStore from '@/stores/action'
 import useLogger from '@/composables/useLogger'
@@ -38,6 +49,41 @@ onMounted(async () => {
     }
   } catch (error) {
     log.error('Error loading edit view', error)
+  }
+})
+
+useCoreIdWatcher((coreRecord: AnyCoreRecord) => {
+  const type = coreRecord?.[Field.TYPE]
+
+  if (type === RecordType.MEASUREMENT) {
+    const measurementInput = coreRecord?.[Field.MEASUREMENT_INPUT] as MeasurementInput
+
+    measurementDataFields.forEach((field) => {
+      if (field === DataSchema.getFieldForInput(measurementInput)) {
+        actionStore.record[field] = actionStore.record[field] ?? undefined
+      } else {
+        delete actionStore.record[field]
+      }
+    })
+  } else if (type === RecordType.EXERCISE) {
+    const exerciseInputs = (coreRecord?.[Field.EXERCISE_INPUTS] ?? []) as ExerciseInput[]
+    const inputFields = exerciseInputs.map((input) => DataSchema.getFieldForInput(input)) as Field[]
+
+    exerciseDataFields.forEach((field) => {
+      if (inputFields.includes(field)) {
+        actionStore.record[field] =
+          actionStore.record?.[field]?.length > 1
+            ? actionStore.record[field]
+            : [actionStore.record?.[field]?.[0]] ?? [undefined]
+        actionStore.setIndexes = Array(actionStore.record[field].length).fill(null) // Hack
+      } else {
+        delete actionStore.record[field]
+      }
+    })
+
+    if (exerciseInputs.length === 0) {
+      actionStore.setIndexes = [] // Hack
+    }
   }
 })
 
@@ -83,8 +129,11 @@ async function onSubmit() {
         </div>
 
         <!-- Submit -->
-        <div class="row justify-center q-my-sm">
+        <div v-if="!actionStore.record[Field.ACTIVE]" class="row justify-center q-my-sm">
           <QBtn label="Update" type="submit" color="positive" :icon="Icon.SAVE" />
+        </div>
+        <div v-else class="row justify-center q-my-sm">
+          <QBtn disable label="Active" color="warning" :icon="Icon.LOCK" />
         </div>
 
         <!-- Validation Message -->

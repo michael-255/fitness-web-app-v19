@@ -1,5 +1,5 @@
 import Dexie, { liveQuery, type Table } from 'dexie'
-import { Dark, uid } from 'quasar'
+import { Dark } from 'quasar'
 import { Duration } from '@/types/general'
 import { AppDatabaseVersion, AppName } from '@/constants/global'
 import {
@@ -7,15 +7,12 @@ import {
   Field,
   RecordType,
   RecordGroup,
-  ExerciseInput,
   type Log,
   type Setting,
   type AnyRecord,
   type AnyCoreRecord,
   type AnySubRecord,
   type LogLevel,
-  type ExerciseRecord,
-  type ExerciseResultRecord,
 } from '@/types/core'
 import DataSchema from '@/services/DataSchema'
 
@@ -221,18 +218,18 @@ class Database extends Dexie {
   //
 
   async getExerciseInputDefaults(coreId: string) {
-    return (await this.CoreRecords.where(Field.ID).equals(coreId).toArray()).map((r) => {
-      return {
-        reps: r.exerciseInputs.includes(ExerciseInput.REPS) ? [0] : null,
-        weightLbs: r.exerciseInputs.includes(ExerciseInput.WEIGHT) ? [0] : null,
-        distanceMiles: r.exerciseInputs.includes(ExerciseInput.DISTANCE) ? [0] : null,
-        durationMinutes: r.exerciseInputs.includes(ExerciseInput.DURATION) ? [0] : null,
-        watts: r.exerciseInputs.includes(ExerciseInput.WATTS) ? [0] : null,
-        speedMph: r.exerciseInputs.includes(ExerciseInput.SPEED) ? [0] : null,
-        calories: r.exerciseInputs.includes(ExerciseInput.CALORIES) ? [0] : null,
-        resistance: r.exerciseInputs.includes(ExerciseInput.RESISTANCE) ? [0] : null,
-      }
-    })
+    // return (await this.CoreRecords.where(Field.ID).equals(coreId).toArray()).map((r) => {
+    //   return {
+    //     reps: r.exerciseInputs.includes(ExerciseInput.REPS) ? [0] : null,
+    //     weightLbs: r.exerciseInputs.includes(ExerciseInput.WEIGHT) ? [0] : null,
+    //     distanceMiles: r.exerciseInputs.includes(ExerciseInput.DISTANCE) ? [0] : null,
+    //     durationMinutes: r.exerciseInputs.includes(ExerciseInput.DURATION) ? [0] : null,
+    //     watts: r.exerciseInputs.includes(ExerciseInput.WATTS) ? [0] : null,
+    //     speedMph: r.exerciseInputs.includes(ExerciseInput.SPEED) ? [0] : null,
+    //     calories: r.exerciseInputs.includes(ExerciseInput.CALORIES) ? [0] : null,
+    //     resistance: r.exerciseInputs.includes(ExerciseInput.RESISTANCE) ? [0] : null,
+    //   }
+    // })
   }
 
   async getActiveRecords() {
@@ -287,61 +284,45 @@ class Database extends Dexie {
 
   // TODO - Fix
   async createActiveExerciseResultRecord(id: string) {
-    const coreExercise = (await this.CoreRecords.get(id)) as ExerciseRecord
-
-    const activeExerciseResult: ExerciseResultRecord = {
-      active: true,
-      id: uid(),
-      type: RecordType.EXERCISE,
-      timestamp: Date.now(),
-      coreId: id,
-      note: '',
-      setsData: {},
-    }
-
-    if (coreExercise.exerciseInputs.includes(ExerciseInput.REPS)) {
-      activeExerciseResult.setsData.reps = [0]
-    }
-
-    if (coreExercise.exerciseInputs.includes(ExerciseInput.WEIGHT)) {
-      activeExerciseResult.setsData.weightLbs = [0]
-    }
-
-    if (coreExercise.exerciseInputs.includes(ExerciseInput.DISTANCE)) {
-      activeExerciseResult.setsData.distanceMiles = [0]
-    }
-
-    if (coreExercise.exerciseInputs.includes(ExerciseInput.DURATION)) {
-      activeExerciseResult.setsData.durationMinutes = [0]
-    }
-
-    if (coreExercise.exerciseInputs.includes(ExerciseInput.WATTS)) {
-      activeExerciseResult.setsData.watts = [0]
-    }
-
-    if (coreExercise.exerciseInputs.includes(ExerciseInput.SPEED)) {
-      activeExerciseResult.setsData.speedMph = [0]
-    }
-
-    if (coreExercise.exerciseInputs.includes(ExerciseInput.CALORIES)) {
-      activeExerciseResult.setsData.calories = [0]
-    }
-
-    if (coreExercise.exerciseInputs.includes(ExerciseInput.RESISTANCE)) {
-      activeExerciseResult.setsData.resistance = [0]
-    }
-
-    if (coreExercise.exerciseInputs.includes(ExerciseInput.INCLINE)) {
-      activeExerciseResult.setsData.incline = [0]
-    }
-
-    if (coreExercise.exerciseInputs.includes(ExerciseInput.STEPS)) {
-      activeExerciseResult.setsData.steps = [0]
-    }
-
-    await this.addRecord(RecordGroup.SUB, RecordType.EXERCISE, activeExerciseResult)
-
-    return activeExerciseResult.id
+    // const coreExercise = (await this.CoreRecords.get(id)) as ExerciseRecord
+    // const activeExerciseResult: ExerciseResultRecord = {
+    //   active: true,
+    //   id: uid(),
+    //   type: RecordType.EXERCISE,
+    //   timestamp: Date.now(),
+    //   coreId: id,
+    //   note: '',
+    //   setsData: {},
+    // }
+    // if (coreExercise.exerciseInputs.includes(ExerciseInput.REPS)) {
+    //   activeExerciseResult.setsData.reps = [0]
+    // }
+    // if (coreExercise.exerciseInputs.includes(ExerciseInput.WEIGHT)) {
+    //   activeExerciseResult.setsData.weightLbs = [0]
+    // }
+    // if (coreExercise.exerciseInputs.includes(ExerciseInput.DISTANCE)) {
+    //   activeExerciseResult.setsData.distanceMiles = [0]
+    // }
+    // if (coreExercise.exerciseInputs.includes(ExerciseInput.DURATION)) {
+    //   activeExerciseResult.setsData.durationMinutes = [0]
+    // }
+    // if (coreExercise.exerciseInputs.includes(ExerciseInput.WATTS)) {
+    //   activeExerciseResult.setsData.watts = [0]
+    // }
+    // if (coreExercise.exerciseInputs.includes(ExerciseInput.SPEED)) {
+    //   activeExerciseResult.setsData.speedMph = [0]
+    // }
+    // if (coreExercise.exerciseInputs.includes(ExerciseInput.CALORIES)) {
+    //   activeExerciseResult.setsData.calories = [0]
+    // }
+    // if (coreExercise.exerciseInputs.includes(ExerciseInput.RESISTANCE)) {
+    //   activeExerciseResult.setsData.resistance = [0]
+    // }
+    // if (coreExercise.exerciseInputs.includes(ExerciseInput.INCLINE)) {
+    //   activeExerciseResult.setsData.incline = [0]
+    // }
+    // await this.addRecord(RecordGroup.SUB, RecordType.EXERCISE, activeExerciseResult)
+    // return activeExerciseResult.id
   }
 
   async addRecord(group: RecordGroup, type: RecordType, record: AnyRecord) {

@@ -65,7 +65,7 @@ function chartTimeRule(time: string) {
           dense
           outlined
           color="primary"
-          @blur="!!inputRef?.value?.validate()"
+          @blur="Boolean(inputRef?.value?.validate())"
         />
 
         <!-- Chart components -->

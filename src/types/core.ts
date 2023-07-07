@@ -51,7 +51,9 @@ export enum MeasurementInput {
   PERCENT = 'Percentage',
   INCHES = 'Inches',
   LBS = 'Lbs',
+  NUMBER = 'Number',
 }
+export const measurementInputSchema = z.nativeEnum(MeasurementInput)
 
 export enum ExerciseInput {
   REPS = 'Reps',
@@ -66,6 +68,7 @@ export enum ExerciseInput {
   STEPS = 'Steps',
 }
 export const exerciseInputSchema = z.nativeEnum(ExerciseInput)
+export const exerciseInputsSchema = z.array(exerciseInputSchema)
 
 export enum Field {
   // Setting
@@ -107,7 +110,6 @@ export enum Field {
   EXERCISE_IDS = 'exerciseIds',
 
   // Exercise Result
-  SETS_DATA = 'setsData',
   REPS = 'reps',
   WEIGHT = 'weightLbs',
   DISTANCE = 'distanceMiles',
@@ -117,22 +119,41 @@ export enum Field {
   CALORIES = 'calories',
   RESISTANCE = 'resistance',
   INCLINE = 'incline',
-  STEPS = 'steps',
 
   // Exercise
   EXERCISE_INPUTS = 'exerciseInputs',
   MULTIPLE_SETS = 'multipleSets',
 
   // Measurement Result
-  MEASURED_DATA = 'measuredData',
   BODY_WEIGHT = 'bodyWeight',
   PERCENT = 'percent',
   INCHES = 'inches',
   LBS = 'lbs',
+  NUMBER = 'number',
 
   // Measurement
   MEASUREMENT_INPUT = 'measurementInput',
 }
+
+export const exerciseDataFields = [
+  Field.REPS,
+  Field.WEIGHT,
+  Field.DISTANCE,
+  Field.DURATION,
+  Field.WATTS,
+  Field.SPEED,
+  Field.CALORIES,
+  Field.RESISTANCE,
+  Field.INCLINE,
+]
+
+export const measurementDataFields = [
+  Field.BODY_WEIGHT,
+  Field.PERCENT,
+  Field.INCHES,
+  Field.LBS,
+  Field.NUMBER,
+]
 
 export const detailsSchema = z.record(z.any()).optional()
 export type Details = z.infer<typeof detailsSchema>
@@ -145,8 +166,6 @@ export const booleanSchema = z.boolean()
 export const finishedTimestampSchema = timestampSchema.optional()
 export const exerciseIdsSchema = z.array(idSchema).min(1) // Workout must have at least 1 exercise
 export const exerciseResultIdsSchema = z.array(idSchema) // May not have any exercise results
-export const exerciseInputsSchema = z.array(exerciseInputSchema) // Can be empty for instructional exercises
-export const measurementInputSchema = z.nativeEnum(MeasurementInput)
 export const heightSchema = z.number().positive().min(1).max(120).optional()
 export const numberSchema = z.number().min(Number.MIN_SAFE_INTEGER).max(Number.MAX_SAFE_INTEGER)
 export const bodyWeightSchema = z.number().min(1).max(1000)
@@ -188,26 +207,6 @@ const coreSchema = baseSchema.extend({
   [Field.LAST_SUB]: subSchema.optional(),
 })
 
-const setsDataObject = z.object({
-  [Field.REPS]: setsSchema.optional(),
-  [Field.WEIGHT]: setsSchema.optional(),
-  [Field.DISTANCE]: setsSchema.optional(),
-  [Field.DURATION]: setsSchema.optional(),
-  [Field.WATTS]: setsSchema.optional(),
-  [Field.SPEED]: setsSchema.optional(),
-  [Field.CALORIES]: setsSchema.optional(),
-  [Field.RESISTANCE]: setsSchema.optional(),
-  [Field.INCLINE]: setsSchema.optional(),
-  [Field.STEPS]: setsSchema.optional(),
-})
-
-const measuredDataObject = z.object({
-  [Field.BODY_WEIGHT]: bodyWeightSchema.optional(),
-  [Field.PERCENT]: percentSchema.optional(),
-  [Field.INCHES]: numberSchema.optional(),
-  [Field.LBS]: numberSchema.optional(),
-})
-
 // Workout Result
 export const workoutResultSchema = subSchema.extend({
   [Field.TYPE]: z.literal(RecordType.WORKOUT),
@@ -225,49 +224,65 @@ export const workoutSchema = coreSchema.extend({
 })
 
 // Exercise Result
-export const exerciseResultSchema = subSchema.extend({
-  [Field.TYPE]: z.literal(RecordType.EXERCISE),
-  [Field.ACTIVE]: booleanSchema,
-  [Field.SETS_DATA]: setsDataObject.refine(
-    (data) => {
-      const setsData = Object.values(data)
-      const foundUndefined = setsData.some((value) => value === undefined)
-      const foundEmpty = setsData.some((value) => value?.length === 0)
-      const foundMissing = setsData.length === 0
-      return !foundUndefined && !foundEmpty && !foundMissing
+export const exerciseResultSchema = subSchema
+  .extend({
+    [Field.TYPE]: z.literal(RecordType.EXERCISE),
+    [Field.ACTIVE]: booleanSchema,
+    [Field.REPS]: setsSchema.optional(),
+    [Field.WEIGHT]: setsSchema.optional(),
+    [Field.DISTANCE]: setsSchema.optional(),
+    [Field.DURATION]: setsSchema.optional(),
+    [Field.WATTS]: setsSchema.optional(),
+    [Field.SPEED]: setsSchema.optional(),
+    [Field.RESISTANCE]: setsSchema.optional(),
+    [Field.INCLINE]: setsSchema.optional(),
+    [Field.CALORIES]: setsSchema.optional(),
+  })
+  .refine(
+    (obj) => {
+      const fieldArray = Object.keys(obj).filter((f) => exerciseDataFields.includes(f as Field))
+      const noUndefined = fieldArray.every((val) => val !== undefined)
+      const noEmptySets = fieldArray.every((val) => val?.length !== 0)
+      const noMissingData = fieldArray.length > 0
+      return noUndefined && noEmptySets && noMissingData
     },
     {
-      message: 'Must have at least one valid setsData field with at least one set',
-      path: ['measuredData'],
+      message: 'Must have valid entries in exercise result data fields',
+      path: exerciseDataFields,
     }
-  ),
-})
+  )
 
 // Exercise
 export const exerciseSchema = coreSchema.extend({
   [Field.TYPE]: z.literal(RecordType.EXERCISE),
   [Field.LAST_SUB]: exerciseResultSchema.optional(),
-  [Field.MULTIPLE_SETS]: booleanSchema,
   [Field.EXERCISE_INPUTS]: exerciseInputsSchema,
+  [Field.MULTIPLE_SETS]: booleanSchema,
   [Field.ACTIVE]: booleanSchema,
 })
 
 // Measurement Result
-export const measurementResultSchema = subSchema.extend({
-  [Field.TYPE]: z.literal(RecordType.MEASUREMENT),
-  [Field.MEASURED_DATA]: measuredDataObject.refine(
-    (data) => {
-      const measuredData = Object.values(data)
-      const foundUndefined = measuredData.some((value) => value === undefined)
-      const foundInexact = measuredData.length !== 1
-      return !foundUndefined && !foundInexact
+export const measurementResultSchema = subSchema
+  .extend({
+    [Field.TYPE]: z.literal(RecordType.MEASUREMENT),
+    [Field.BODY_WEIGHT]: bodyWeightSchema.optional(),
+    [Field.PERCENT]: percentSchema.optional(),
+    [Field.INCHES]: numberSchema.optional(),
+    [Field.LBS]: numberSchema.optional(),
+    [Field.NUMBER]: numberSchema.optional(),
+  })
+  .refine(
+    (obj) => {
+      const fieldArray = Object.keys(obj).filter((f) => measurementDataFields.includes(f as Field))
+      const noUndefined = fieldArray.every((val) => val !== undefined)
+      const noWrongCount = fieldArray.length === 1
+      return noUndefined && noWrongCount
     },
     {
-      message: 'Must have exactly one valid measuredData field',
-      path: ['measuredData'],
+      message: 'Must have exactly one valid measurement result data field',
+      path: measurementDataFields,
     }
-  ),
-})
+  )
 
 // Measurement
 export const measurementSchema = coreSchema.extend({
@@ -320,5 +335,5 @@ export type RecordProps = {
   charts: ReturnType<typeof defineAsyncComponent>[]
   fields: ReturnType<typeof defineAsyncComponent>[]
   tableColumns: QTableColumn[]
-  schema: z.ZodObject<any, any, any>
+  schema: z.ZodObject<any, any, any> | z.ZodEffects<any, any, any>
 }

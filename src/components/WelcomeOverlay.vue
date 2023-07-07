@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Icon, routeNames } from '@/types/general'
+import { Icon, RouteName } from '@/types/general'
 import { type Ref, ref, onUnmounted } from 'vue'
 import { SettingKey } from '@/types/core'
 import { AppDescription, AppName } from '@/constants/global'
@@ -81,7 +81,7 @@ async function onCloseWelcomeOverlay() {
           <QBtn
             color="warning"
             label="Donate"
-            :to="{ name: routeNames.Values.Donate }"
+            :to="{ name: RouteName.DONATE }"
             :icon="Icon.DONATE"
           />
         </div>

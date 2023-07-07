@@ -1,18 +1,16 @@
-import { z } from 'zod'
-
-export const routeNames = z.enum([
-  'Dashboard',
-  'ActiveWorkout',
-  'DataLogs',
-  'DataRecords',
-  'Create',
-  'Edit',
-  'Settings',
-  'FAQ',
-  'About',
-  'Donate',
-  'NotFound',
-])
+export enum RouteName {
+  DASHBOARD = 'Dashboard',
+  ACTIVE_WORKOUT = 'ActiveWorkout',
+  DATA_LOGS = 'DataLogs',
+  DATA_RECORDS = 'DataRecords',
+  CREATE = 'Create',
+  EDIT = 'Edit',
+  SETTINGS = 'Settings',
+  FAQ = 'FAQ',
+  ABOUT = 'About',
+  DONATE = 'Donate',
+  NOT_FOUND = 'NotFound',
+}
 
 export enum Limit {
   MAX_FILE_SIZE = 1_000_000,

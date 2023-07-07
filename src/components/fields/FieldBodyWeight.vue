@@ -10,17 +10,12 @@ defineProps<{
 
 const actionStore = useActionStore()
 
-const dataField = Field.MEASURED_DATA
 const field = Field.BODY_WEIGHT
 const isVisible: Ref<boolean> = ref(false)
 
 useCoreIdWatcher((coreRecord: AnyCoreRecord) => {
-  const measurementInput = coreRecord?.measurementInput as MeasurementInput | undefined
-
-  if (measurementInput === MeasurementInput.BODY_WEIGHT) {
-    actionStore.record[dataField] = {
-      [field]: actionStore.record?.[dataField]?.[field] ?? 0, // Defaulting
-    }
+  if (coreRecord?.measurementInput === MeasurementInput.BODY_WEIGHT) {
+    actionStore.record[field] = actionStore.record?.[field] ?? undefined
     isVisible.value = true
   } else {
     isVisible.value = false
@@ -34,17 +29,15 @@ function inspectFormat(val: number) {
 
 <template>
   <div v-if="isVisible">
-    <div class="text-weight-bold text-body1">Body Weight (lbs)</div>
+    <div class="text-weight-bold text-body1">{{ MeasurementInput.BODY_WEIGHT }}</div>
 
-    <div v-if="inspecting">
-      {{ inspectFormat(actionStore.record[dataField][field]) }}
-    </div>
+    <div v-if="inspecting">{{ inspectFormat(actionStore.record[field]) }}</div>
 
     <!-- TODO - Hint with last value -->
     <QInput
       v-else
-      v-model.number="actionStore.record[dataField][field]"
-      :rules="[(val: number) => bodyWeightSchema.safeParse(val).success || 'Must greater then 0']"
+      v-model.number="actionStore.record[field]"
+      :rules="[(val: number) => bodyWeightSchema.safeParse(val).success || 'Must be between 1 and 1000']"
       type="number"
       lazy-rules
       dense

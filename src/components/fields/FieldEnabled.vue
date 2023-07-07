@@ -23,9 +23,7 @@ function inspectFormat(val: boolean) {
 <template>
   <div class="text-weight-bold text-body1">Enabled</div>
 
-  <div v-if="inspecting">
-    {{ inspectFormat(actionStore.record[field]) }}
-  </div>
+  <div v-if="inspecting">{{ inspectFormat(actionStore.record[field]) }}</div>
 
   <div v-else>
     <p>Whether the record is enabled and shows up on the Dashboard and in other lists.</p>

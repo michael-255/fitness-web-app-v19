@@ -35,13 +35,12 @@ function inspectFormat(val: ExerciseInput[]) {
 <template>
   <div class="text-weight-bold text-body1">Exercise Inputs</div>
 
-  <div v-if="inspecting">
-    {{ inspectFormat(actionStore.record[field]) }}
-  </div>
+  <div v-if="inspecting">{{ inspectFormat(actionStore.record[field]) }}</div>
 
   <div v-else>
     <p>
-      Select exercise inputs that represents the type of data you want to record for this exercise.
+      Select inputs that represents the type of data you want to record. Select no inputs if you
+      want the exercise to be purely instructional.
     </p>
 
     <QSelect
