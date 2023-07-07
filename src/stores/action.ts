@@ -6,6 +6,7 @@ const useActionStore = defineStore({
 
   state: () => ({
     record: {} as { [key in Field]: any },
+    setIndexes: [null], // Hack used with v-for in FieldSets component
   }),
 })
 

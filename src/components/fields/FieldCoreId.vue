@@ -33,7 +33,7 @@ onMounted(async () => {
     const coreIdFound = options.value.some((o) => o.value === actionStore.record[field])
 
     if (!coreIdFound) {
-      actionStore.record[field] = options.value[0].value || undefined // If no options
+      actionStore.record[field] = options.value[0].value ?? undefined // If no options
     }
   } catch (error) {
     log.error('Error with core id field', error)
@@ -48,9 +48,7 @@ function inspectFormat(val: string) {
 <template>
   <div class="text-weight-bold text-body1">Core Record</div>
 
-  <div v-if="inspecting">
-    {{ inspectFormat(actionStore.record[field]) }}
-  </div>
+  <div v-if="inspecting">{{ inspectFormat(actionStore.record[field]) }}</div>
 
   <div v-else>
     <p>The core record that this sub record is associated with.</p>

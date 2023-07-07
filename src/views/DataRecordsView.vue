@@ -22,18 +22,16 @@ const { confirmDialog, inspectDialog, chartsDialog } = useDialogs()
 
 const searchFilter: Ref<string> = ref('')
 const rows: Ref<any[]> = ref([])
-const visibleColumns: Ref<Field[]> = ref([])
 const columns: Ref<QTableColumn[]> = ref(
   DataSchema.getTableColumns(routeGroup as RecordGroup, routeType as RecordType) as QTableColumn[]
 )
 const columnOptions: Ref<QTableColumn[]> = ref(
   columns.value.filter((col: QTableColumn) => !col.required)
 )
+const visibleColumns: Ref<Field[]> = ref(columnOptions.value.map((col) => col.name) as Field[])
 let subscription: Subscription | null = null
 
 if (routeGroup === RecordGroup.CORE) {
-  visibleColumns.value = [Field.ID, Field.TIMESTAMP, Field.NAME]
-
   subscription = DB.liveCoreRecords(routeType as RecordType).subscribe({
     next: (records) => {
       rows.value = records
@@ -43,8 +41,6 @@ if (routeGroup === RecordGroup.CORE) {
     },
   })
 } else {
-  visibleColumns.value = [Field.ID, Field.TIMESTAMP]
-
   subscription = DB.liveSubRecords(routeType as RecordType).subscribe({
     next: (records) => {
       rows.value = records

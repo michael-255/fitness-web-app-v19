@@ -53,9 +53,7 @@ function inspectFormat(val: number) {
 <template>
   <div class="text-weight-bold text-body1">Finished Date</div>
 
-  <div v-if="inspecting">
-    {{ inspectFormat(actionStore.record[field]) }}
-  </div>
+  <div v-if="inspecting">{{ inspectFormat(actionStore.record[field]) }}</div>
 
   <QInput v-else v-model="displayDate" dense outlined disable color="primary" hint="Auto formatted">
     <template v-slot:after>

@@ -6,7 +6,6 @@ Fitness Tracker is for tracking workouts, exercises, and measurements as well as
 
 _ACTIVE WORKOUT:_
 
-- Use `ExercisePrest` now that it's available
 - Back port exercise schema changes to active workout
 - Build out the exercises in the active workout view
 
@@ -15,6 +14,10 @@ _MISC:_
 - Clearable button uses `null` instead of `undefined` for value
 - Inspect fields with lists should use `<li>`
 - Validate that checking for value change on chart time watcher didn't break it
+- Exporting while you have active workout should:
+  - Warn the user, but they can continue and...
+  - Update core records active to false
+  - Delete sub records that are active
 
 ## Table of Contents
 

@@ -24,9 +24,7 @@ function inspectFormat(val: string) {
 <template>
   <div class="text-weight-bold text-body1">Name</div>
 
-  <div v-if="inspecting">
-    {{ inspectFormat(actionStore.record[field]) }}
-  </div>
+  <div v-if="inspecting">{{ inspectFormat(actionStore.record[field]) }}</div>
 
   <QInput
     v-else

@@ -9,10 +9,10 @@ defineProps<{
 
 const actionStore = useActionStore()
 
-const field = Field.FAVORITED
+const field = Field.MULTIPLE_SETS
 
 onMounted(() => {
-  actionStore.record[field] = actionStore.record[field] ?? false
+  actionStore.record[field] = actionStore.record[field] ?? true
 })
 
 function inspectFormat(val: boolean) {
@@ -21,12 +21,15 @@ function inspectFormat(val: boolean) {
 </script>
 
 <template>
-  <div class="text-weight-bold text-body1">Favorited</div>
+  <div class="text-weight-bold text-body1">Multiple Sets</div>
 
   <div v-if="inspecting">{{ inspectFormat(actionStore.record[field]) }}</div>
 
   <div v-else>
-    <p>Whether the record is favorited and is prioritized on the Dashboard.</p>
+    <p>
+      Whether the record allows recording multiple sets or only a single set. This is irrelevant for
+      instructional records with no inputs.
+    </p>
     <QToggle v-model="actionStore.record[field]" />
   </div>
 </template>

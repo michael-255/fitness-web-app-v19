@@ -10,7 +10,8 @@ import {
   exerciseResultSchema,
   measurementSchema,
   measurementResultSchema,
-  ExercisePreset,
+  ExerciseInput,
+  MeasurementInput,
   Field,
 } from '@/types/core'
 import {
@@ -75,7 +76,8 @@ export default class DataSchema {
         defineAsyncComponent(() => import('@/components/fields/FieldId.vue')),
         defineAsyncComponent(() => import('@/components/fields/FieldName.vue')),
         defineAsyncComponent(() => import('@/components/fields/FieldDesc.vue')),
-        defineAsyncComponent(() => import('@/components/fields/FieldExercisePreset.vue')),
+        defineAsyncComponent(() => import('@/components/fields/FieldExerciseInputs.vue')),
+        defineAsyncComponent(() => import('@/components/fields/FieldMultipleSets.vue')),
         defineAsyncComponent(() => import('@/components/fields/FieldTimestamp.vue')),
         defineAsyncComponent(() => import('@/components/fields/FieldEnabled.vue')),
         defineAsyncComponent(() => import('@/components/fields/FieldFavorited.vue')),
@@ -135,6 +137,7 @@ export default class DataSchema {
         defineAsyncComponent(() => import('@/components/fields/FieldPercent.vue')),
         defineAsyncComponent(() => import('@/components/fields/FieldInches.vue')),
         defineAsyncComponent(() => import('@/components/fields/FieldLbs.vue')),
+        defineAsyncComponent(() => import('@/components/fields/FieldNumber.vue')),
         defineAsyncComponent(() => import('@/components/fields/FieldTimestamp.vue')),
         defineAsyncComponent(() => import('@/components/fields/FieldNote.vue')),
       ],
@@ -155,21 +158,6 @@ export default class DataSchema {
 
   static getLogFields() {
     return this.logFields
-  }
-
-  static getAllOptions(): {
-    value: { type: RecordType; group: RecordGroup }
-    label: string
-    icon: Icon
-  }[] {
-    return this.recordProps.map((p) => ({
-      value: {
-        type: p.type,
-        group: p.group,
-      },
-      label: p.plural,
-      icon: p.icon,
-    }))
   }
 
   static getDashboardOptions(): {
@@ -209,22 +197,38 @@ export default class DataSchema {
     )
   }
 
-  static getFieldsForPreset(preset: ExercisePreset) {
-    switch (preset) {
-      case ExercisePreset.INSTRUCTIONAL:
-        return undefined
-      case ExercisePreset.STRENGTH:
-        return [Field.REPS, Field.WEIGHT]
-      case ExercisePreset.CARDIO:
-        return [
-          Field.DISTANCE,
-          Field.DURATION,
-          Field.WATTS,
-          Field.SPEED,
-          Field.RESISTANCE,
-          Field.INCLINE,
-          Field.CALORIES,
-        ]
+  static getFieldForInput(input: ExerciseInput | MeasurementInput) {
+    switch (input) {
+      case ExerciseInput.REPS:
+        return Field.REPS
+      case ExerciseInput.WEIGHT:
+        return Field.WEIGHT
+      case ExerciseInput.DISTANCE:
+        return Field.DISTANCE
+      case ExerciseInput.DURATION:
+        return Field.DURATION
+      case ExerciseInput.WATTS:
+        return Field.WATTS
+      case ExerciseInput.SPEED:
+        return Field.SPEED
+      case ExerciseInput.CALORIES:
+        return Field.CALORIES
+      case ExerciseInput.RESISTANCE:
+        return Field.RESISTANCE
+      case ExerciseInput.INCLINE:
+        return Field.INCLINE
+      case MeasurementInput.BODY_WEIGHT:
+        return Field.BODY_WEIGHT
+      case MeasurementInput.PERCENT:
+        return Field.PERCENT
+      case MeasurementInput.INCHES:
+        return Field.INCHES
+      case MeasurementInput.LBS:
+        return Field.LBS
+      case MeasurementInput.NUMBER:
+        return Field.NUMBER
+      default:
+        throw new Error(`Invalid input type: ${input}`)
     }
   }
 }

@@ -5,7 +5,6 @@ import { type Ref, ref, onUnmounted } from 'vue'
 import { AppDatabaseVersion, AppName } from '@/constants/global'
 import { useMeta } from 'quasar'
 import { type Setting, type BackupData, SettingKey, heightSchema, RecordGroup } from '@/types/core'
-import DataSchema from '@/services/DataSchema'
 import useLogger from '@/composables/useLogger'
 import useNotifications from '@/composables/useNotifications'
 import useDialogs from '@/composables/useDialogs'
@@ -26,16 +25,13 @@ const {
   onAddDeepBreathingRoutine,
   onAddStandardMeasurements,
 } = useDefaults()
-const { goToRecordsData, goToLogsData } = useRoutables()
+const { goToLogsData } = useRoutables()
 
-const allOptions = DataSchema.getAllOptions()
 const settings: Ref<Setting[]> = ref([])
 const heightInputRef: Ref<any> = ref(null)
 const heightInches: Ref<number | undefined> = ref(undefined)
 const logDurationIndex: Ref<number> = ref(0)
 const importFile: Ref<any> = ref(null)
-const accessOptions = ref(allOptions)
-const accessModel = ref(accessOptions.value[0])
 const logDurationKeys = [
   // Duration[Duration.Now], // Uncomment to test log purges
   Duration[Duration['One Week']],

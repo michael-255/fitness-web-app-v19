@@ -1,5 +1,5 @@
 import Dexie, { liveQuery, type Table } from 'dexie'
-import { Dark, uid } from 'quasar'
+import { Dark } from 'quasar'
 import { Duration } from '@/types/general'
 import { AppDatabaseVersion, AppName } from '@/constants/global'
 import {
@@ -13,8 +13,6 @@ import {
   type AnyCoreRecord,
   type AnySubRecord,
   type LogLevel,
-  type ExerciseRecord,
-  type ExerciseResultRecord,
 } from '@/types/core'
 import DataSchema from '@/services/DataSchema'
 

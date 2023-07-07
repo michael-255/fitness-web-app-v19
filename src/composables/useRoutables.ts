@@ -6,7 +6,7 @@ import {
   recordGroupSchema,
 } from '@/types/core'
 import { useRoute, useRouter } from 'vue-router'
-import { routeNames } from '@/types/general'
+import { RouteName } from '@/types/general'
 import useLogger from '@/composables/useLogger'
 
 export default function useRoutables(): {
@@ -41,7 +41,7 @@ export default function useRoutables(): {
   function goToDashboard() {
     try {
       router.push({
-        name: routeNames.Values.Dashboard,
+        name: RouteName.DASHBOARD,
       })
     } catch (error) {
       log.error('Error accessing dashboard route', error)
@@ -51,7 +51,7 @@ export default function useRoutables(): {
   function goToActiveWorkout() {
     try {
       router.push({
-        name: routeNames.Values.ActiveWorkout,
+        name: RouteName.ACTIVE_WORKOUT,
       })
     } catch (error) {
       log.error('Error accessing active workout route', error)
@@ -61,7 +61,7 @@ export default function useRoutables(): {
   function goToLogsData() {
     try {
       router.push({
-        name: routeNames.Values.DataLogs,
+        name: RouteName.DATA_LOGS,
       })
     } catch (error) {
       log.error('Error accessing logs data route', error)
@@ -71,7 +71,7 @@ export default function useRoutables(): {
   function goToRecordsData(group: RecordGroup, type: RecordType) {
     try {
       router.push({
-        name: routeNames.Values.DataRecords,
+        name: RouteName.DATA_RECORDS,
         params: { group, type },
       })
     } catch (error) {
@@ -82,7 +82,7 @@ export default function useRoutables(): {
   function goToCreate(group: RecordGroup, type: RecordType, coreId?: string) {
     try {
       router.push({
-        name: routeNames.Values.Create,
+        name: RouteName.CREATE,
         params: { group, type, coreId },
       })
     } catch (error) {
@@ -93,7 +93,7 @@ export default function useRoutables(): {
   function goToEdit(group: RecordGroup, type: RecordType, id: string) {
     try {
       router.push({
-        name: routeNames.Values.Edit,
+        name: RouteName.EDIT,
         params: { group, type, id },
       })
     } catch (error) {
@@ -109,7 +109,7 @@ export default function useRoutables(): {
       if (router?.options?.history?.state?.back) {
         router.back()
       } else {
-        router.push({ name: routeNames.Values.Dashboard })
+        router.push({ name: RouteName.DASHBOARD })
       }
     } catch (error) {
       log.error('Error accessing go back route', error)

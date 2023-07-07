@@ -24,9 +24,7 @@ function inspectFormat(val: string) {
 <template>
   <div class="text-weight-bold text-body1">Note</div>
 
-  <div v-if="inspecting">
-    {{ inspectFormat(actionStore.record[field]) }}
-  </div>
+  <div v-if="inspecting">{{ inspectFormat(actionStore.record[field]) }}</div>
 
   <div v-else>
     <p>Text note about the record that can be viewed on the Dashboard.</p>

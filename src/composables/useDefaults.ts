@@ -6,7 +6,7 @@ import {
   MeasurementInput,
   RecordType,
   RecordGroup,
-  ExercisePreset,
+  ExerciseInput,
 } from '@/types/core'
 import useLogger from '@/composables/useLogger'
 import useDialogs from '@/composables/useDialogs'
@@ -36,7 +36,8 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               active: false,
-              exercisePreset: ExercisePreset.STRENGTH,
+              multipleSets: true,
+              exerciseInputs: [ExerciseInput.REPS, ExerciseInput.WEIGHT],
             },
             {
               type: RecordType.EXERCISE,
@@ -47,7 +48,8 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               active: false,
-              exercisePreset: ExercisePreset.STRENGTH,
+              multipleSets: true,
+              exerciseInputs: [ExerciseInput.REPS, ExerciseInput.WEIGHT],
             },
             {
               type: RecordType.EXERCISE,
@@ -58,7 +60,8 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               active: false,
-              exercisePreset: ExercisePreset.STRENGTH,
+              multipleSets: true,
+              exerciseInputs: [ExerciseInput.REPS, ExerciseInput.WEIGHT],
             },
             {
               type: RecordType.EXERCISE,
@@ -69,7 +72,8 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               active: false,
-              exercisePreset: ExercisePreset.STRENGTH,
+              multipleSets: true,
+              exerciseInputs: [ExerciseInput.REPS, ExerciseInput.WEIGHT],
             },
             {
               type: RecordType.EXERCISE,
@@ -80,7 +84,8 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               active: false,
-              exercisePreset: ExercisePreset.STRENGTH,
+              multipleSets: true,
+              exerciseInputs: [ExerciseInput.REPS, ExerciseInput.WEIGHT],
             },
           ]
 
@@ -156,7 +161,8 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               active: false,
-              exercisePreset: ExercisePreset.INSTRUCTIONAL,
+              multipleSets: false,
+              exerciseInputs: [], // Instructional exercise
             },
             {
               type: RecordType.EXERCISE,
@@ -167,7 +173,8 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               active: false,
-              exercisePreset: ExercisePreset.INSTRUCTIONAL,
+              multipleSets: false,
+              exerciseInputs: [], // Instructional exercise
             },
             {
               type: RecordType.EXERCISE,
@@ -178,7 +185,8 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               active: false,
-              exercisePreset: ExercisePreset.INSTRUCTIONAL,
+              multipleSets: false,
+              exerciseInputs: [], // Instructional exercise
             },
             {
               type: RecordType.EXERCISE,
@@ -189,7 +197,8 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               active: false,
-              exercisePreset: ExercisePreset.INSTRUCTIONAL,
+              multipleSets: false,
+              exerciseInputs: [], // Instructional exercise
             },
             {
               type: RecordType.EXERCISE,
@@ -200,7 +209,8 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               active: false,
-              exercisePreset: ExercisePreset.INSTRUCTIONAL,
+              multipleSets: false,
+              exerciseInputs: [], // Instructional exercise
             },
             {
               type: RecordType.EXERCISE,
@@ -211,7 +221,8 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               active: false,
-              exercisePreset: ExercisePreset.INSTRUCTIONAL,
+              multipleSets: false,
+              exerciseInputs: [], // Instructional exercise
             },
             {
               type: RecordType.EXERCISE,
@@ -222,7 +233,8 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               active: false,
-              exercisePreset: ExercisePreset.INSTRUCTIONAL,
+              multipleSets: false,
+              exerciseInputs: [], // Instructional exercise
             },
             {
               type: RecordType.EXERCISE,
@@ -233,7 +245,8 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               active: false,
-              exercisePreset: ExercisePreset.INSTRUCTIONAL,
+              multipleSets: false,
+              exerciseInputs: [], // Instructional exercise
             },
             {
               type: RecordType.EXERCISE,
@@ -244,7 +257,8 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               active: false,
-              exercisePreset: ExercisePreset.INSTRUCTIONAL,
+              multipleSets: false,
+              exerciseInputs: [], // Instructional exercise
             },
           ]
 
@@ -311,7 +325,8 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               active: false,
-              exercisePreset: ExercisePreset.INSTRUCTIONAL,
+              multipleSets: false,
+              exerciseInputs: [], // Instructional exercise
             },
             {
               type: RecordType.EXERCISE,
@@ -322,7 +337,8 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               active: false,
-              exercisePreset: ExercisePreset.INSTRUCTIONAL,
+              multipleSets: false,
+              exerciseInputs: [], // Instructional exercise
             },
             {
               type: RecordType.EXERCISE,
@@ -333,7 +349,8 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               active: false,
-              exercisePreset: ExercisePreset.INSTRUCTIONAL,
+              multipleSets: false,
+              exerciseInputs: [], // Instructional exercise
             },
             {
               type: RecordType.EXERCISE,
@@ -344,7 +361,8 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               active: false,
-              exercisePreset: ExercisePreset.INSTRUCTIONAL,
+              multipleSets: false,
+              exerciseInputs: [], // Instructional exercise
             },
             {
               type: RecordType.EXERCISE,
@@ -355,7 +373,8 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               active: false,
-              exercisePreset: ExercisePreset.INSTRUCTIONAL,
+              multipleSets: false,
+              exerciseInputs: [], // Instructional exercise
             },
             {
               type: RecordType.EXERCISE,
@@ -366,7 +385,8 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               active: false,
-              exercisePreset: ExercisePreset.INSTRUCTIONAL,
+              multipleSets: false,
+              exerciseInputs: [], // Instructional exercise
             },
           ]
 
@@ -430,7 +450,8 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               active: false,
-              exercisePreset: ExercisePreset.INSTRUCTIONAL,
+              multipleSets: false,
+              exerciseInputs: [], // Instructional exercise
             },
             {
               type: RecordType.EXERCISE,
@@ -441,7 +462,8 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               active: false,
-              exercisePreset: ExercisePreset.INSTRUCTIONAL,
+              multipleSets: false,
+              exerciseInputs: [], // Instructional exercise
             },
             {
               type: RecordType.EXERCISE,
@@ -452,7 +474,8 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               active: false,
-              exercisePreset: ExercisePreset.INSTRUCTIONAL,
+              multipleSets: false,
+              exerciseInputs: [], // Instructional exercise
             },
           ]
 
@@ -643,6 +666,16 @@ export default function useDefaults() {
               favorited: false,
               enabled: true,
               measurementInput: MeasurementInput.INCHES,
+            },
+            {
+              type: RecordType.MEASUREMENT,
+              id: '732df75d-9abb-476c-b818-b30b8ff9f164',
+              timestamp: now,
+              name: 'Daily Steps',
+              desc: 'Number of steps taken today.',
+              favorited: false,
+              enabled: true,
+              measurementInput: MeasurementInput.NUMBER,
             },
           ]
 

@@ -1,12 +1,23 @@
 <script setup lang="ts">
 import { Icon } from '@/types/general'
-import { Field, type AnyRecord, RecordGroup, RecordType } from '@/types/core'
+import {
+  type AnyCoreRecord,
+  type AnyRecord,
+  Field,
+  RecordGroup,
+  RecordType,
+  measurementDataFields,
+  exerciseDataFields,
+  MeasurementInput,
+  ExerciseInput,
+} from '@/types/core'
 import { onMounted, onUnmounted, ref } from 'vue'
 import { extend, uid, useMeta } from 'quasar'
 import { AppName } from '@/constants/global'
 import DataSchema from '@/services/DataSchema'
 import ErrorStates from '@/components/ErrorStates.vue'
 import ResponsivePage from '@/components/ResponsivePage.vue'
+import useCoreIdWatcher from '@/composables/useCoreIdWatcher'
 import useRoutables from '@/composables/useRoutables'
 import useActionStore from '@/stores/action'
 import useLogger from '@/composables/useLogger'
@@ -30,25 +41,51 @@ onMounted(async () => {
     actionStore.record[Field.TYPE] = routeType
 
     if (routeCoreId) {
-      // Only including optional coreId if valid
       actionStore.record[Field.CORE_ID] = routeCoreId
     }
 
     if (routeType === RecordType.WORKOUT || routeType === RecordType.EXERCISE) {
       actionStore.record[Field.ACTIVE] = false
     }
-
-    // Exercise results
-    if (routeGroup === RecordGroup.SUB && routeType === RecordType.EXERCISE) {
-      actionStore.record[Field.SETS_DATA] = {}
-    }
-
-    // Measurement results
-    if (routeGroup === RecordGroup.SUB && routeType === RecordType.MEASUREMENT) {
-      actionStore.record[Field.MEASURED_DATA] = {}
-    }
   } catch (error) {
     log.error('Error loading create view', error)
+  }
+})
+
+useCoreIdWatcher((coreRecord: AnyCoreRecord) => {
+  const type = coreRecord?.[Field.TYPE]
+
+  if (type === RecordType.MEASUREMENT) {
+    // Setup measurement result data fields
+    const measurementInput = coreRecord?.[Field.MEASUREMENT_INPUT] as MeasurementInput
+
+    measurementDataFields.forEach((field) => {
+      if (field === DataSchema.getFieldForInput(measurementInput)) {
+        actionStore.record[field] = actionStore.record[field] ?? undefined
+      } else {
+        delete actionStore.record[field]
+      }
+    })
+  } else if (type === RecordType.EXERCISE) {
+    // Setup exercise result data fields
+    const exerciseInputs = (coreRecord?.[Field.EXERCISE_INPUTS] ?? []) as ExerciseInput[]
+    const inputFields = exerciseInputs.map((input) => DataSchema.getFieldForInput(input)) as Field[]
+
+    exerciseDataFields.forEach((field) => {
+      if (inputFields.includes(field)) {
+        actionStore.record[field] =
+          actionStore.record?.[field]?.length > 1
+            ? actionStore.record[field]
+            : [actionStore.record?.[field]?.[0]] ?? [undefined]
+        actionStore.setIndexes = Array(actionStore.record[field].length).fill(null) // Hack
+      } else {
+        delete actionStore.record[field]
+      }
+    })
+
+    if (exerciseInputs.length === 0) {
+      actionStore.setIndexes = [] // Hack
+    }
   }
 })
 
@@ -89,8 +126,11 @@ async function onSubmit() {
         </div>
 
         <!-- Submit -->
-        <div class="row justify-center q-my-sm">
+        <div v-if="!actionStore.record[Field.ACTIVE]" class="row justify-center q-my-sm">
           <QBtn label="Create" type="submit" color="positive" :icon="Icon.SAVE" />
+        </div>
+        <div v-else class="row justify-center q-my-sm">
+          <QBtn disable label="Active" color="warning" :icon="Icon.LOCK" />
         </div>
 
         <!-- Validation Message -->

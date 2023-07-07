@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { routeNames } from '@/types/general'
+import { RouteName } from '@/types/general'
 import { idSchema, recordGroupSchema, recordTypeSchema } from '@/types/core'
 
 const router = createRouter({
@@ -7,25 +7,25 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: routeNames.Values.Dashboard,
+      name: RouteName.DASHBOARD,
       meta: { layout: 'MenuLayout' },
       component: () => import('../views/DashboardView.vue'),
     },
     {
       path: '/active-workout',
-      name: routeNames.Values.ActiveWorkout,
+      name: RouteName.ACTIVE_WORKOUT,
       meta: { layout: 'ActiveWorkoutLayout' },
       component: () => import('../views/ActiveWorkoutView.vue'),
     },
     {
       path: '/logs-data',
-      name: routeNames.Values.DataLogs,
+      name: RouteName.DATA_LOGS,
       meta: { layout: 'MenuLayout' },
       component: () => import('../views/DataLogsView.vue'),
     },
     {
       path: '/records-data/:group/:type',
-      name: routeNames.Values.DataRecords,
+      name: RouteName.DATA_RECORDS,
       meta: { layout: 'MenuLayout' },
       component: () => import('../views/DataRecordsView.vue'),
       beforeEnter: (to, _, next) => {
@@ -35,13 +35,13 @@ const router = createRouter({
         ) {
           next()
         } else {
-          next({ name: routeNames.Values.NotFound })
+          next({ name: RouteName.NOT_FOUND })
         }
       },
     },
     {
       path: '/create/:group/:type/:coreId?',
-      name: routeNames.Values.Create,
+      name: RouteName.CREATE,
       meta: { layout: 'MenuLayout' },
       component: () => import('../views/CreateView.vue'),
       beforeEnter: (to, _, next) => {
@@ -51,13 +51,13 @@ const router = createRouter({
         ) {
           next()
         } else {
-          next({ name: routeNames.Values.NotFound })
+          next({ name: RouteName.NOT_FOUND })
         }
       },
     },
     {
       path: '/edit/:group/:type/:id',
-      name: routeNames.Values.Edit,
+      name: RouteName.EDIT,
       meta: { layout: 'MenuLayout' },
       component: () => import('../views/EditView.vue'),
       beforeEnter: (to, _, next) => {
@@ -68,37 +68,37 @@ const router = createRouter({
         ) {
           next()
         } else {
-          next({ name: routeNames.Values.NotFound })
+          next({ name: RouteName.NOT_FOUND })
         }
       },
     },
     {
       path: '/settings',
-      name: routeNames.Values.Settings,
+      name: RouteName.SETTINGS,
       meta: { layout: 'MenuLayout' },
       component: () => import('../views/SettingsView.vue'),
     },
     {
       path: '/faq',
-      name: routeNames.Values.FAQ,
+      name: RouteName.FAQ,
       meta: { layout: 'MenuLayout' },
       component: () => import('../views/FAQView.vue'),
     },
     {
       path: '/about',
-      name: routeNames.Values.About,
+      name: RouteName.ABOUT,
       meta: { layout: 'MenuLayout' },
       component: () => import('../views/AboutView.vue'),
     },
     {
       path: '/donate',
-      name: routeNames.Values.Donate,
+      name: RouteName.DONATE,
       meta: { layout: 'MenuLayout' },
       component: () => import('../views/DonateView.vue'),
     },
     {
       path: '/:pathMatch(.*)*', // 404 Not Found
-      name: routeNames.Values.NotFound,
+      name: RouteName.NOT_FOUND,
       meta: { layout: 'MenuLayout' },
       component: () => import('../views/NotFoundView.vue'),
     },
