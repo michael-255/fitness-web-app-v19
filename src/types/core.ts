@@ -218,28 +218,31 @@ const subSchema = baseSchema.extend({
   [Field.NOTE]: textAreaSchema,
 })
 
+/**
+ * Previous schema is simplified to allow for more flexible usage.
+ */
 const previousSchema = z
   .object({
-    [Field.CREATED_TIMESTAMP]: timestampSchema.optional(),
-    [Field.NOTE]: textAreaSchema.optional(),
+    [Field.CREATED_TIMESTAMP]: z.number().optional(),
+    [Field.NOTE]: z.string().optional(),
     // Workout
     [Field.WORKOUT_DURATION]: z.string().optional(),
     // Exercise
-    [Field.REPS]: z.string().optional(),
-    [Field.WEIGHT]: z.string().optional(),
-    [Field.DISTANCE]: z.string().optional(),
-    [Field.DURATION]: z.string().optional(),
-    [Field.WATTS]: z.string().optional(),
-    [Field.SPEED]: z.string().optional(),
-    [Field.RESISTANCE]: z.string().optional(),
-    [Field.INCLINE]: z.string().optional(),
-    [Field.CALORIES]: z.string().optional(),
+    [Field.REPS]: z.array(z.number()).optional(),
+    [Field.WEIGHT]: z.array(z.number()).optional(),
+    [Field.DISTANCE]: z.array(z.number()).optional(),
+    [Field.DURATION]: z.array(z.number()).optional(),
+    [Field.WATTS]: z.array(z.number()).optional(),
+    [Field.SPEED]: z.array(z.number()).optional(),
+    [Field.RESISTANCE]: z.array(z.number()).optional(),
+    [Field.INCLINE]: z.array(z.number()).optional(),
+    [Field.CALORIES]: z.array(z.number()).optional(),
     // Measurement
-    [Field.BODY_WEIGHT]: z.string().optional(),
-    [Field.PERCENT]: z.string().optional(),
-    [Field.INCHES]: z.string().optional(),
-    [Field.LBS]: z.string().optional(),
-    [Field.NUMBER]: z.string().optional(),
+    [Field.BODY_WEIGHT]: z.number().optional(),
+    [Field.PERCENT]: z.number().optional(),
+    [Field.INCHES]: z.number().optional(),
+    [Field.LBS]: z.number().optional(),
+    [Field.NUMBER]: z.number().optional(),
   })
   .optional()
 
@@ -401,7 +404,7 @@ export type AnyCoreRecord = z.infer<typeof coreSchema> & AnyDatabaseRecord
 export type BackupData = {
   appName: string
   databaseVersion: number
-  timestamp: number
+  createdTimestamp: number
   logs: Log[]
   settings: Setting[]
   coreRecords: AnyCoreRecord[]

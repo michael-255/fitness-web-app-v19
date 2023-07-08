@@ -295,110 +295,115 @@ async function beginActiveWorkout(record: WorkoutRecord) {
             <QBadge rounded color="secondary" class="q-py-none">
               <QIcon :name="Icon.PREVIOUS" />
               <span class="text-caption q-ml-xs">
-                {{ useTimeAgo(record?.previous?.timestamp || '').value || 'No previous records' }}
+                {{
+                  useTimeAgo(record?.previous?.createdTimestamp || '').value ||
+                  'No previous records'
+                }}
               </span>
             </QBadge>
 
             <!-- Previous Created Date -->
-            <div v-show="record?.previous?.timestamp">
+            <div v-show="record?.previous?.createdTimestamp">
               <QIcon :name="Icon.CALENDAR_CHECK" />
               <span class="text-caption q-ml-xs">
-                {{ getDisplayDate(record?.previous?.timestamp) }}
+                {{ getDisplayDate(record?.previous?.createdTimestamp) }}
               </span>
             </div>
 
             <!-- Previous Workout Data -->
             <div v-show="record?.previous?.workoutDuration">
               <QIcon :name="Icon.STOPWATCH" />
-              <span class="text-caption q-ml-xs">
-                {{ record?.previous?.workoutDuration }}
-              </span>
+              <span class="text-caption q-ml-xs">{{ record?.previous?.workoutDuration }}</span>
             </div>
 
             <!-- Previous Measurement Data -->
             <div v-show="record?.previous?.bodyWeight">
               <QIcon :name="Icon.MEASUREMENTS" />
-              <span class="text-caption q-ml-xs">
-                {{ record?.previous?.bodyWeight }}
-              </span>
+              <span class="text-caption q-ml-xs"> {{ record?.previous?.bodyWeight }} lbs </span>
             </div>
 
             <div v-show="record?.previous?.percent">
               <QIcon :name="Icon.MEASUREMENTS" />
-              <span class="text-caption q-ml-xs">
-                {{ record?.previous?.percent }}
-              </span>
+              <span class="text-caption q-ml-xs"> {{ record?.previous?.percent }}% </span>
             </div>
 
             <div v-show="record?.previous?.inches">
               <QIcon :name="Icon.MEASUREMENTS" />
-              <span class="text-caption q-ml-xs">
-                {{ record?.previous?.inches }}
-              </span>
+              <span class="text-caption q-ml-xs"> {{ record?.previous?.inches }} inches </span>
             </div>
 
             <div v-show="record?.previous?.lbs">
               <QIcon :name="Icon.MEASUREMENTS" />
-              <span class="text-caption q-ml-xs">
-                {{ record?.previous?.lbs }}
-              </span>
+              <span class="text-caption q-ml-xs"> {{ record?.previous?.lbs }} lbs </span>
             </div>
 
             <div v-show="record?.previous?.number">
               <QIcon :name="Icon.MEASUREMENTS" />
-              <span class="text-caption q-ml-xs">
-                {{ record?.previous?.number }}
-              </span>
+              <span class="text-caption q-ml-xs">{{ record?.previous?.number }}</span>
             </div>
 
             <!-- Previous Exercise Data -->
             <div v-show="record?.previous?.reps">
               <QIcon :name="Icon.REPS" />
-              <span class="text-caption q-ml-xs"> {{ record?.previous?.reps }} reps </span>
+              <span class="text-caption q-ml-xs">
+                {{ record?.previous?.reps?.join(', ') }} reps
+              </span>
             </div>
 
             <div v-show="record?.previous?.weightLbs">
               <QIcon :name="Icon.WEIGHT" />
-              <span class="text-caption q-ml-xs"> {{ record?.previous?.weightLbs }} lbs </span>
+              <span class="text-caption q-ml-xs">
+                {{ record?.previous?.weightLbs?.join(', ') }} lbs
+              </span>
             </div>
 
             <div v-show="record?.previous?.distanceMiles">
               <QIcon :name="Icon.DISTANCE" />
-              <span class="text-caption q-ml-xs"> {{ record?.previous?.distanceMiles }} mi </span>
+              <span class="text-caption q-ml-xs">
+                {{ record?.previous?.distanceMiles?.join(', ') }} mi
+              </span>
             </div>
 
             <div v-show="record?.previous?.durationMinutes">
               <QIcon :name="Icon.DURATION" />
               <span class="text-caption q-ml-xs">
-                {{ record?.previous?.durationMinutes }} minutes
+                {{ record?.previous?.durationMinutes?.join(', ') }} minutes
               </span>
             </div>
 
             <div v-show="record?.previous?.watts">
               <QIcon :name="Icon.WATTS" />
-              <span class="text-caption q-ml-xs"> {{ record?.previous?.watts }} watts </span>
+              <span class="text-caption q-ml-xs">
+                {{ record?.previous?.watts?.join(', ') }} watts
+              </span>
             </div>
 
             <div v-show="record?.previous?.speedMph">
               <QIcon :name="Icon.SPEED" />
-              <span class="text-caption q-ml-xs"> {{ record?.previous?.speedMph }} mph </span>
+              <span class="text-caption q-ml-xs">
+                {{ record?.previous?.speedMph?.join(', ') }} mph
+              </span>
             </div>
 
             <div v-show="record?.previous?.resistance">
               <QIcon :name="Icon.RESISTANCE" />
               <span class="text-caption q-ml-xs">
-                {{ record?.previous?.resistance }} resistance
+                {{ record?.previous?.resistance?.join(', ') }} resistance
               </span>
             </div>
 
             <div v-show="record?.previous?.incline">
               <QIcon :name="Icon.INCLINE" />
-              <span class="text-caption q-ml-xs"> {{ record?.previous?.incline }} incline </span>
+              <span class="text-caption q-ml-xs">
+                {{ record?.previous?.incline?.join(', ') }} incline
+              </span>
             </div>
 
             <div v-show="record?.previous?.calories">
               <QIcon :name="Icon.CALORIES" />
-              <span class="text-caption q-ml-xs"> {{ record?.previous?.calories }} calories </span>
+              <span class="text-caption q-ml-xs">
+                {{ record?.previous?.calories?.join(', ') }} calories
+              </span>
             </div>
           </QCardSection>
 

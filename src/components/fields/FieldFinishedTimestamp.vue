@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { date } from 'quasar'
-import { onMounted, type Ref, ref } from 'vue'
+import { onMounted, type Ref, ref, watch } from 'vue'
 import { Icon } from '@/types/general'
 import { getDisplayDate } from '@/utils/common'
 import useActionStore from '@/stores/action'
@@ -16,13 +16,12 @@ const datePicker: Ref<string> = ref('')
 const timePicker: Ref<string> = ref('')
 
 onMounted(() => {
-  const existingTime = actionStore.record.finishedTimestamp
-  datePicker.value = date.formatDate(existingTime, 'ddd MMM DD YYYY')
-  timePicker.value = date.formatDate(existingTime, 'HH:mm:00')
-  updateDisplayDate(existingTime)
+  datePicker.value = date.formatDate(actionStore.record.finishedTimestamp, 'ddd MMM DD YYYY')
+  timePicker.value = date.formatDate(actionStore.record.finishedTimestamp, 'HH:mm:00')
+  updateDisplayDate(actionStore.record.finishedTimestamp)
 })
 
-function updateDisplayDate(timestamp: number) {
+function updateDisplayDate(timestamp: number | undefined) {
   actionStore.record.finishedTimestamp = timestamp
   displayDate.value = date.formatDate(timestamp, 'ddd, YYYY MMM Do, h:mm A')
 }
@@ -46,6 +45,15 @@ function clearDates(): void {
 function inspectFormat(val: number) {
   return getDisplayDate(val) || '-'
 }
+
+watch(
+  () => actionStore.record.finishedTimestamp,
+  (newValue, oldValue) => {
+    if (newValue !== oldValue) {
+      updateDisplayDate(newValue)
+    }
+  }
+)
 </script>
 
 <template>

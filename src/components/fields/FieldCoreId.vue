@@ -2,6 +2,7 @@
 import { onMounted, ref, type Ref } from 'vue'
 import { truncateString } from '@/utils/common'
 import { type AnyCoreRecord, type RecordType, idSchema, RecordGroup } from '@/types/core'
+import { RouteName } from '@/types/general'
 import useLogger from '@/composables/useLogger'
 import useActionStore from '@/stores/action'
 import useRoutables from '@/composables/useRoutables'
@@ -11,7 +12,7 @@ defineProps<{
   inspecting: boolean
 }>()
 
-const { routeType } = useRoutables()
+const { route, routeType } = useRoutables()
 const { log } = useLogger()
 const actionStore = useActionStore()
 
@@ -50,9 +51,13 @@ function inspectFormat(val: string) {
   <div v-if="inspecting">{{ inspectFormat(actionStore.record.coreId) }}</div>
 
   <div v-else>
-    <p>The core record that this sub record is associated with.</p>
+    <p>
+      The core record that this sub record is associated with. This cannot be updated once set
+      during record creation.
+    </p>
 
     <QSelect
+      :disable="route.name === RouteName.EDIT"
       v-model="actionStore.record.coreId"
       :rules="[(val: string) => idSchema.safeParse(val).success || 'Required']"
       :options="options"

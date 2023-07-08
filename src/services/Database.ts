@@ -22,7 +22,7 @@ import {
   type PreviousData,
 } from '@/types/core'
 import DataSchema from '@/services/DataSchema'
-import { getDurationFromMilliseconds } from '@/utils/common'
+import { getDisplayDate, getDurationFromMilliseconds } from '@/utils/common'
 
 class Database extends Dexie {
   // Required for easier TypeScript usage
@@ -556,40 +556,20 @@ class Database extends Dexie {
         : undefined
       // Exercise
       previous.reps = previousRecords[0].reps
-        ? previousRecords[0].reps?.join(', ') || undefined
-        : undefined
       previous.weightLbs = previousRecords[0].weightLbs
-        ? previousRecords[0].weightLbs?.join(', ') || undefined
-        : undefined
       previous.distanceMiles = previousRecords[0].distanceMiles
-        ? previousRecords[0].distanceMiles?.join(', ') || undefined
-        : undefined
       previous.durationMinutes = previousRecords[0].durationMinutes
-        ? previousRecords[0].durationMinutes?.join(', ') || undefined
-        : undefined
       previous.watts = previousRecords[0].watts
-        ? previousRecords[0].watts?.join(', ') || undefined
-        : undefined
       previous.speedMph = previousRecords[0].speedMph
-        ? previousRecords[0].speedMph?.join(', ') || undefined
-        : undefined
       previous.resistance = previousRecords[0].resistance
-        ? previousRecords[0].resistance?.join(', ') || undefined
-        : undefined
       previous.incline = previousRecords[0].incline
-        ? previousRecords[0].incline?.join(', ') || undefined
-        : undefined
       previous.calories = previousRecords[0].calories
-        ? previousRecords[0].calories?.join(', ') || undefined
-        : undefined
       // Measurement
       previous.bodyWeight = previousRecords[0].bodyWeight
-        ? `${previousRecords[0].bodyWeight} lbs`
-        : undefined
-      previous.percent = previousRecords[0].percent ? `${previousRecords[0].percent}%` : undefined
-      previous.inches = previousRecords[0].inches ? `${previousRecords[0].inches} in` : undefined
-      previous.lbs = previousRecords[0].lbs ? `${previousRecords[0].lbs} lbs` : undefined
-      previous.number = previousRecords[0].number ? `${previousRecords[0].number}` : undefined
+      previous.percent = previousRecords[0].percent
+      previous.inches = previousRecords[0].inches
+      previous.lbs = previousRecords[0].lbs
+      previous.number = previousRecords[0].number
     }
 
     return await this.CoreRecords.update(coreId, { previous })

@@ -5,11 +5,13 @@ import {
   type RecordType,
   recordGroupSchema,
 } from '@/types/core'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute, useRouter, type Router, type RouteLocationNormalizedLoaded } from 'vue-router'
 import { RouteName } from '@/types/general'
 import useLogger from '@/composables/useLogger'
 
 export default function useRoutables(): {
+  route: RouteLocationNormalizedLoaded
+  router: Router
   routeId?: string
   routeCoreId?: string
   routeType?: RecordType
@@ -117,6 +119,8 @@ export default function useRoutables(): {
   }
 
   return {
+    route,
+    router,
     routeId,
     routeCoreId,
     routeType,

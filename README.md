@@ -6,12 +6,11 @@ Fitness Tracker is for tracking workouts, exercises, and measurements as well as
 
 **ACTIVE WORKOUT**
 
-- [ ] Fix hints for all `Edit` and `Create`
 - [ ] Replace unneeded `v-ifs` with `v-show` (might have to change `v-for` at `193`)
 
 **MISC**
 
-- Inspect fields with lists should use `<li>`
+- Inspect fields with lists should use `<li>` (mostly for long id arrays)
 - Validate that checking for value change on chart time watcher didn't break it
 - Exporting while you have active workout should:
   - Warn the user, but they can continue and...

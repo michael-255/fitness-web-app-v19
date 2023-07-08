@@ -1,23 +1,12 @@
 <script setup lang="ts">
 import { Icon } from '@/types/general'
-import {
-  type AnyCoreRecord,
-  type AnyRecord,
-  Field,
-  RecordGroup,
-  RecordType,
-  measurementDataFields,
-  exerciseDataFields,
-  MeasurementInput,
-  ExerciseInput,
-} from '@/types/core'
+import { type AnyRecord, RecordGroup, RecordType } from '@/types/core'
 import { onMounted, onUnmounted, ref } from 'vue'
 import { extend, uid, useMeta } from 'quasar'
 import { AppName } from '@/constants/global'
 import DataSchema from '@/services/DataSchema'
 import ErrorStates from '@/components/ErrorStates.vue'
 import ResponsivePage from '@/components/ResponsivePage.vue'
-import useCoreIdWatcher from '@/composables/useCoreIdWatcher'
 import useRoutables from '@/composables/useRoutables'
 import useActionStore from '@/stores/action'
 import useLogger from '@/composables/useLogger'
@@ -37,6 +26,7 @@ const isFormValid = ref(true)
 
 onMounted(async () => {
   try {
+    // Defaulted fields during creation
     actionStore.record.id = uid()
     actionStore.record.type = routeType
 
@@ -49,43 +39,6 @@ onMounted(async () => {
     }
   } catch (error) {
     log.error('Error loading create view', error)
-  }
-})
-
-useCoreIdWatcher((coreRecord: AnyCoreRecord) => {
-  const type = coreRecord?.type
-
-  if (type === RecordType.MEASUREMENT) {
-    // Setup measurement result data fields
-    const measurementInput = coreRecord?.measurementInput as MeasurementInput
-
-    measurementDataFields.forEach((field) => {
-      if (field === DataSchema.getFieldForInput(measurementInput)) {
-        actionStore.record[field] = actionStore.record[field] ?? undefined
-      } else {
-        delete actionStore.record[field]
-      }
-    })
-  } else if (type === RecordType.EXERCISE) {
-    // Setup exercise result data fields
-    const exerciseInputs = (coreRecord?.exerciseInputs ?? []) as ExerciseInput[]
-    const inputFields = exerciseInputs.map((input) => DataSchema.getFieldForInput(input)) as Field[]
-
-    exerciseDataFields.forEach((field) => {
-      if (inputFields.includes(field)) {
-        actionStore.record[field] =
-          actionStore.record?.[field]?.length > 1
-            ? actionStore.record[field]
-            : [actionStore.record?.[field]?.[0]] ?? [undefined]
-        actionStore.setIndexes = Array(actionStore.record[field].length).fill(null) // Hack
-      } else {
-        delete actionStore.record[field]
-      }
-    })
-
-    if (exerciseInputs.length === 0) {
-      actionStore.setIndexes = [] // Hack
-    }
   }
 })
 

@@ -42,9 +42,9 @@ function inspectFormat(val: string) {
     >
       <template v-slot:append>
         <QIcon
-          v-if="actionStore.record.desc !== ''"
+          v-if="actionStore.record.note !== ''"
           :name="Icon.CANCEL"
-          @click="actionStore.record.desc = ''"
+          @click="actionStore.record.note = ''"
           class="cursor-pointer"
         />
       </template>

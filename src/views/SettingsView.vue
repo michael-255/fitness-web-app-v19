@@ -135,7 +135,7 @@ function onExportRecords() {
         const backupData: BackupData = {
           appName: AppName,
           databaseVersion: AppDatabaseVersion,
-          timestamp: Date.now(),
+          createdTimestamp: Date.now(),
           logs: await DB.getLogs(),
           settings: await DB.getSettings(),
           coreRecords: (await DB.getAllCoreRecords()).map((cr) => {
