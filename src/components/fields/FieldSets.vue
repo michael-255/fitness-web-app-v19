@@ -19,10 +19,12 @@ const actionStore = useActionStore()
 
 const exerciseInputsRef: Ref<ExerciseInput[]> = ref([])
 const multipleSetsRef: Ref<boolean> = ref(false)
+const previous = ref({} as any)
 
 useCoreIdWatcher((coreRecord: AnyCoreRecord) => {
   exerciseInputsRef.value = (coreRecord?.[Field.EXERCISE_INPUTS] ?? []) as ExerciseInput[]
   multipleSetsRef.value = Boolean(coreRecord?.[Field.MULTIPLE_SETS])
+  previous.value = coreRecord?.previous
 })
 
 function addSet() {
@@ -57,6 +59,11 @@ function removeSet() {
       }
     }
   )
+}
+
+function previousValue(field: Field) {
+  const previousValue = previous.value[field]
+  return previousValue ? previousValue : ''
 }
 
 function inspectFormat(val: number[]) {
@@ -129,7 +136,7 @@ function validationRule() {
               filled
               square
               dense
-              hint="TODO - Hint with last value"
+              :hint="previousValue(DataSchema.getFieldForInput(input))"
               v-model.number="actionStore.record[DataSchema.getFieldForInput(input)][index]"
               :rules="[validationRule()]"
               :label="input"

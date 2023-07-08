@@ -2,7 +2,7 @@
 import { useTimeAgo } from '@vueuse/core'
 import { getDisplayDate } from '@/utils/common'
 import { Icon } from '@/types/general'
-import { uid, useMeta } from 'quasar'
+import { useMeta } from 'quasar'
 import { ref, type Ref, onUnmounted } from 'vue'
 import { AppName } from '@/constants/global'
 import { getRecordsCountDisplay } from '@/utils/common'
@@ -11,7 +11,6 @@ import {
   RecordType,
   RecordGroup,
   type AnyCoreRecord,
-  type WorkoutResultRecord,
   type WorkoutRecord,
 } from '@/types/core'
 import DataSchema from '@/services/DataSchema'
@@ -64,8 +63,8 @@ onUnmounted(() => {
   dashboardSubscription.unsubscribe()
 })
 
-async function viewLastNote(note: string) {
-  dismissDialog('Last Note', note, Icon.NOTE)
+async function viewPreviousNote(note: string) {
+  dismissDialog('Previous Note', note, Icon.NOTE)
 }
 
 async function onFavorite(id: string, name: string) {
@@ -136,7 +135,6 @@ async function onDiscardActiveWorkout(name: string) {
 }
 
 async function onBeginWorkout(record: WorkoutRecord) {
-  // Need to see if an active workout already exists
   const activeCount = (await DB.getActiveRecords()).count
 
   if (activeCount > 0) {
@@ -161,34 +159,8 @@ async function onBeginWorkout(record: WorkoutRecord) {
 }
 
 async function beginActiveWorkout(record: WorkoutRecord) {
-  // const activeExerciseResultIds = await Promise.all(
-  //   record.exerciseIds.map(async (exerciseId) => {
-  //     return await DB.createActiveExerciseResultRecord(exerciseId)
-  //   })
-  // )
-  // const newWorkoutResult: WorkoutResultRecord = {
-  //   active: true,
-  //   id: uid(),
-  //   type: RecordType.WORKOUT,
-  //   timestamp: Date.now(),
-  //   coreId: record.id,
-  //   note: '',
-  //   exerciseResultIds: activeExerciseResultIds,
-  // }
-  // // Setting core workout to active
-  // record.active = true
-  // await DB.updateRecord(RecordGroup.CORE, RecordType.WORKOUT, record.id, record)
-  // // Setting core exercises to active
-  // await Promise.all(
-  //   record.exerciseIds.map(async (id) => {
-  //     const exercise = (await DB.getRecord(RecordGroup.CORE, id)) as AnyCoreRecord
-  //     exercise.active = true
-  //     return await DB.updateRecord(RecordGroup.CORE, RecordType.EXERCISE, exercise.id, exercise)
-  //   })
-  // )
-  // // Add new active result records to database
-  // await DB.addRecord(RecordGroup.SUB, RecordType.WORKOUT, newWorkoutResult)
-  // goToActiveWorkout()
+  await DB.beginWorkout(record)
+  goToActiveWorkout()
 }
 </script>
 
@@ -225,7 +197,7 @@ async function beginActiveWorkout(record: WorkoutRecord) {
         <QCard class="column full-height">
           <QCardSection class="col">
             <p class="text-h6">{{ record.name }}</p>
-            <p v-if="showDescription">{{ record.desc }}</p>
+            <p v-show="showDescription">{{ record.desc }}</p>
 
             <!-- Is Active -->
             <QBadge
@@ -243,17 +215,17 @@ async function beginActiveWorkout(record: WorkoutRecord) {
             <div class="absolute-top-right q-ma-xs">
               <!-- Note -->
               <QIcon
-                v-show="record?.lastSub?.note"
+                v-show="record?.previous?.note"
                 :name="Icon.NOTE"
                 color="primary"
                 size="md"
                 class="cursor-pointer q-mr-xs"
-                @click="viewLastNote(record?.lastSub?.note || '')"
+                @click="viewPreviousNote(record?.previous?.note || '')"
               />
 
               <!-- Discard Active Workout-->
               <QBtn
-                v-if="record?.type === RecordType.WORKOUT && record?.active"
+                v-if="record?.active && record?.type === RecordType.WORKOUT"
                 round
                 flat
                 color="negative"
@@ -264,8 +236,7 @@ async function beginActiveWorkout(record: WorkoutRecord) {
               <!-- Favorite Star -->
               <span v-else>
                 <QIcon
-                  v-if="!record.active"
-                  v-show="record.favorited"
+                  v-if="!record.active && record.favorited"
                   :name="Icon.FAVORITE_ON"
                   color="warning"
                   size="md"
@@ -273,8 +244,7 @@ async function beginActiveWorkout(record: WorkoutRecord) {
                   @click="onUnfavorite(record.id, record.name)"
                 />
                 <QIcon
-                  v-if="!record.active"
-                  v-show="!record.favorited"
+                  v-if="!record.active && !record.favorited"
                   :name="Icon.FAVORITE_OFF"
                   color="grey"
                   size="md"
@@ -321,28 +291,121 @@ async function beginActiveWorkout(record: WorkoutRecord) {
               </QBtn>
             </div>
 
-            <div class="q-mb-md">
-              <!-- Time Ago Display -->
-              <QBadge rounded color="secondary" class="q-py-none">
-                <QIcon :name="Icon.PREVIOUS" />
-                <span class="text-caption q-ml-xs">
-                  {{ useTimeAgo(record?.lastSub?.timestamp || '').value || 'No previous records' }}
-                </span>
-              </QBadge>
+            <!-- Time Ago Display -->
+            <QBadge rounded color="secondary" class="q-py-none">
+              <QIcon :name="Icon.PREVIOUS" />
+              <span class="text-caption q-ml-xs">
+                {{ useTimeAgo(record?.previous?.timestamp || '').value || 'No previous records' }}
+              </span>
+            </QBadge>
 
-              <!-- Previous Record Created Date -->
-              <div v-if="record?.lastSub?.timestamp">
-                <QIcon :name="Icon.CALENDAR_CHECK" />
-                <span class="text-caption q-ml-xs">
-                  {{ getDisplayDate(record?.lastSub?.timestamp) }}
-                </span>
-              </div>
+            <!-- Previous Created Date -->
+            <div v-show="record?.previous?.timestamp">
+              <QIcon :name="Icon.CALENDAR_CHECK" />
+              <span class="text-caption q-ml-xs">
+                {{ getDisplayDate(record?.previous?.timestamp) }}
+              </span>
+            </div>
+
+            <!-- Previous Workout Data -->
+            <div v-show="record?.previous?.workoutDuration">
+              <QIcon :name="Icon.STOPWATCH" />
+              <span class="text-caption q-ml-xs">
+                {{ record?.previous?.workoutDuration }}
+              </span>
+            </div>
+
+            <!-- Previous Measurement Data -->
+            <div v-show="record?.previous?.bodyWeight">
+              <QIcon :name="Icon.MEASUREMENTS" />
+              <span class="text-caption q-ml-xs">
+                {{ record?.previous?.bodyWeight }}
+              </span>
+            </div>
+
+            <div v-show="record?.previous?.percent">
+              <QIcon :name="Icon.MEASUREMENTS" />
+              <span class="text-caption q-ml-xs">
+                {{ record?.previous?.percent }}
+              </span>
+            </div>
+
+            <div v-show="record?.previous?.inches">
+              <QIcon :name="Icon.MEASUREMENTS" />
+              <span class="text-caption q-ml-xs">
+                {{ record?.previous?.inches }}
+              </span>
+            </div>
+
+            <div v-show="record?.previous?.lbs">
+              <QIcon :name="Icon.MEASUREMENTS" />
+              <span class="text-caption q-ml-xs">
+                {{ record?.previous?.lbs }}
+              </span>
+            </div>
+
+            <div v-show="record?.previous?.number">
+              <QIcon :name="Icon.MEASUREMENTS" />
+              <span class="text-caption q-ml-xs">
+                {{ record?.previous?.number }}
+              </span>
+            </div>
+
+            <!-- Previous Exercise Data -->
+            <div v-show="record?.previous?.reps">
+              <QIcon :name="Icon.REPS" />
+              <span class="text-caption q-ml-xs"> {{ record?.previous?.reps }} reps </span>
+            </div>
+
+            <div v-show="record?.previous?.weightLbs">
+              <QIcon :name="Icon.WEIGHT" />
+              <span class="text-caption q-ml-xs"> {{ record?.previous?.weightLbs }} lbs </span>
+            </div>
+
+            <div v-show="record?.previous?.distanceMiles">
+              <QIcon :name="Icon.DISTANCE" />
+              <span class="text-caption q-ml-xs"> {{ record?.previous?.distanceMiles }} mi </span>
+            </div>
+
+            <div v-show="record?.previous?.durationMinutes">
+              <QIcon :name="Icon.DURATION" />
+              <span class="text-caption q-ml-xs">
+                {{ record?.previous?.durationMinutes }} minutes
+              </span>
+            </div>
+
+            <div v-show="record?.previous?.watts">
+              <QIcon :name="Icon.WATTS" />
+              <span class="text-caption q-ml-xs"> {{ record?.previous?.watts }} watts </span>
+            </div>
+
+            <div v-show="record?.previous?.speedMph">
+              <QIcon :name="Icon.SPEED" />
+              <span class="text-caption q-ml-xs"> {{ record?.previous?.speedMph }} mph </span>
+            </div>
+
+            <div v-show="record?.previous?.resistance">
+              <QIcon :name="Icon.RESISTANCE" />
+              <span class="text-caption q-ml-xs">
+                {{ record?.previous?.resistance }} resistance
+              </span>
+            </div>
+
+            <div v-show="record?.previous?.incline">
+              <QIcon :name="Icon.INCLINE" />
+              <span class="text-caption q-ml-xs"> {{ record?.previous?.incline }} incline </span>
+            </div>
+
+            <div v-show="record?.previous?.calories">
+              <QIcon :name="Icon.CALORIES" />
+              <span class="text-caption q-ml-xs"> {{ record?.previous?.calories }} calories </span>
             </div>
           </QCardSection>
 
           <QCardActions clas="col-auto">
+            <!-- Workout Only Card Buttons -->
             <QBtn
-              v-if="record?.type === RecordType.WORKOUT && record?.active"
+              v-if="record?.active && record?.type === RecordType.WORKOUT"
               label="Resume Workout"
               color="positive"
               class="full-width"
@@ -351,7 +414,7 @@ async function beginActiveWorkout(record: WorkoutRecord) {
             />
 
             <QBtn
-              v-else-if="record?.type === RecordType.WORKOUT && !record?.active"
+              v-else-if="!record?.active && record?.type === RecordType.WORKOUT"
               label="Begin Workout"
               color="primary"
               :icon="Icon.WORKOUT_BEGIN"
@@ -363,6 +426,7 @@ async function beginActiveWorkout(record: WorkoutRecord) {
               Access limited while active
             </div>
 
+            <!-- Measurements Only Card Button-->
             <QBtn
               v-else-if="record?.type === RecordType.MEASUREMENT"
               label="Take Measurement"
@@ -372,6 +436,7 @@ async function beginActiveWorkout(record: WorkoutRecord) {
               @click="goToCreate(RecordGroup.SUB, RecordType.MEASUREMENT, record?.id)"
             />
 
+            <!-- Exercises Only Card Button-->
             <QBtn
               v-else
               label="Add Exercise Entry"

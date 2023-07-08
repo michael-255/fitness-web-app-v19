@@ -98,4 +98,14 @@ export enum Icon {
   TOP_OF_PAGE = 'keyboard_arrow_up',
   FAVORITE_ON = 'star',
   FAVORITE_OFF = 'star_border',
+  // Exercise Data
+  REPS = 'tag',
+  WEIGHT = 'fitness_center',
+  DISTANCE = 'pin_drop',
+  DURATION = 'schedule',
+  WATTS = 'bolt',
+  SPEED = 'speed',
+  RESISTANCE = 'width_normal',
+  INCLINE = 'show_chart',
+  CALORIES = 'local_fire_department',
 }

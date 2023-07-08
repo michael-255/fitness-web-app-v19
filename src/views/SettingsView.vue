@@ -4,7 +4,14 @@ import { Duration, Icon, Limit } from '@/types/general'
 import { type Ref, ref, onUnmounted } from 'vue'
 import { AppDatabaseVersion, AppName } from '@/constants/global'
 import { useMeta } from 'quasar'
-import { type Setting, type BackupData, SettingKey, heightSchema, RecordGroup } from '@/types/core'
+import {
+  type Setting,
+  type BackupData,
+  SettingKey,
+  heightSchema,
+  RecordGroup,
+  Field,
+} from '@/types/core'
 import useLogger from '@/composables/useLogger'
 import useNotifications from '@/composables/useNotifications'
 import useDialogs from '@/composables/useDialogs'
@@ -131,9 +138,9 @@ function onExportRecords() {
           timestamp: Date.now(),
           logs: await DB.getLogs(),
           settings: await DB.getSettings(),
-          coreRecords: (await DB.getAllCoreRecords()).map((p) => {
-            delete p.lastSub
-            return p
+          coreRecords: (await DB.getAllCoreRecords()).map((cr) => {
+            delete cr[Field.PREVIOUS]
+            return cr
           }),
           subRecords: await DB.getAllSubRecords(),
         }

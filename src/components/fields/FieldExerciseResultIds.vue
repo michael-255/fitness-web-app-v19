@@ -33,7 +33,7 @@ onMounted(async () => {
 
     options.value = records.map((r: ExerciseResultRecord) => ({
       value: r.id,
-      label: `${truncateString(r.id, 8, '*')})`,
+      label: `${truncateString(r.id, 8, '*')}`,
     }))
   } catch (error) {
     log.error('Error with exercise result ids field', error)

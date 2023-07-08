@@ -62,10 +62,9 @@ export enum ExerciseInput {
   DURATION = 'Duration (minutes)',
   WATTS = 'Watts',
   SPEED = 'Speed (mph)',
-  CALORIES = 'Calories Burned',
   RESISTANCE = 'Resistance',
   INCLINE = 'Incline',
-  STEPS = 'Steps',
+  CALORIES = 'Calories Burned',
 }
 export const exerciseInputSchema = z.nativeEnum(ExerciseInput)
 export const exerciseInputsSchema = z.array(exerciseInputSchema)
@@ -82,6 +81,9 @@ export enum Field {
   DETAILS = 'details',
   ERROR_MESSAGE = 'errorMessage',
   STACK_TRACE = 'stackTrace',
+
+  // Previous
+  WORKOUT_DURATION = 'workoutDuration',
 
   // Shared
   TIMESTAMP = 'timestamp',
@@ -101,6 +103,7 @@ export enum Field {
   ENABLED = 'enabled',
   FAVORITED = 'favorited',
   LAST_SUB = 'lastSub',
+  PREVIOUS = 'previous',
 
   // Workout Result
   FINISHED_TIMESTAMP = 'finishedTimestamp',
@@ -116,9 +119,9 @@ export enum Field {
   DURATION = 'durationMinutes',
   WATTS = 'watts',
   SPEED = 'speedMph',
-  CALORIES = 'calories',
   RESISTANCE = 'resistance',
   INCLINE = 'incline',
+  CALORIES = 'calories',
 
   // Exercise
   EXERCISE_INPUTS = 'exerciseInputs',
@@ -142,9 +145,9 @@ export const exerciseDataFields = [
   Field.DURATION,
   Field.WATTS,
   Field.SPEED,
-  Field.CALORIES,
   Field.RESISTANCE,
   Field.INCLINE,
+  Field.CALORIES,
 ]
 
 export const measurementDataFields = [
@@ -204,7 +207,30 @@ const coreSchema = baseSchema.extend({
   [Field.DESC]: textAreaSchema,
   [Field.ENABLED]: booleanSchema,
   [Field.FAVORITED]: booleanSchema,
-  [Field.LAST_SUB]: subSchema.optional(),
+  [Field.PREVIOUS]: z
+    .object({
+      [Field.TIMESTAMP]: timestampSchema.optional(),
+      [Field.NOTE]: textAreaSchema.optional(),
+      // Workout
+      [Field.WORKOUT_DURATION]: z.string().optional(),
+      // Exercise
+      [Field.REPS]: z.string().optional(),
+      [Field.WEIGHT]: z.string().optional(),
+      [Field.DISTANCE]: z.string().optional(),
+      [Field.DURATION]: z.string().optional(),
+      [Field.WATTS]: z.string().optional(),
+      [Field.SPEED]: z.string().optional(),
+      [Field.RESISTANCE]: z.string().optional(),
+      [Field.INCLINE]: z.string().optional(),
+      [Field.CALORIES]: z.string().optional(),
+      // Measurement
+      [Field.BODY_WEIGHT]: z.string().optional(),
+      [Field.PERCENT]: z.string().optional(),
+      [Field.INCHES]: z.string().optional(),
+      [Field.LBS]: z.string().optional(),
+      [Field.NUMBER]: z.string().optional(),
+    })
+    .optional(),
 })
 
 // Workout Result
@@ -218,7 +244,6 @@ export const workoutResultSchema = subSchema.extend({
 // Workout
 export const workoutSchema = coreSchema.extend({
   [Field.TYPE]: z.literal(RecordType.WORKOUT),
-  [Field.LAST_SUB]: workoutResultSchema.optional(),
   [Field.EXERCISE_IDS]: exerciseIdsSchema,
   [Field.ACTIVE]: booleanSchema,
 })
@@ -255,7 +280,6 @@ export const exerciseResultSchema = subSchema
 // Exercise
 export const exerciseSchema = coreSchema.extend({
   [Field.TYPE]: z.literal(RecordType.EXERCISE),
-  [Field.LAST_SUB]: exerciseResultSchema.optional(),
   [Field.EXERCISE_INPUTS]: exerciseInputsSchema,
   [Field.MULTIPLE_SETS]: booleanSchema,
   [Field.ACTIVE]: booleanSchema,
@@ -287,8 +311,44 @@ export const measurementResultSchema = subSchema
 // Measurement
 export const measurementSchema = coreSchema.extend({
   [Field.TYPE]: z.literal(RecordType.MEASUREMENT),
-  [Field.LAST_SUB]: measurementResultSchema.optional(),
   [Field.MEASUREMENT_INPUT]: measurementInputSchema,
+})
+
+// Active Workout
+export const activeWorkoutSchema = z.object({
+  [Field.NAME]: nameSchema,
+  [Field.DESC]: textAreaSchema,
+  [Field.CORE_ID]: idSchema,
+  [Field.TIMESTAMP]: timestampSchema,
+  [Field.NOTE]: textAreaSchema,
+  previousNote: textAreaSchema,
+  exercises: z.array(
+    z.object({
+      [Field.NAME]: nameSchema,
+      [Field.DESC]: textAreaSchema,
+      [Field.CORE_ID]: idSchema,
+      [Field.NOTE]: textAreaSchema,
+      previousNote: textAreaSchema,
+      [Field.REPS]: setsSchema.optional(),
+      repsHint: z.string().optional(),
+      [Field.WEIGHT]: setsSchema.optional(),
+      weightHint: z.string().optional(),
+      [Field.DISTANCE]: setsSchema.optional(),
+      distanceHint: z.string().optional(),
+      [Field.DURATION]: setsSchema.optional(),
+      durationHint: z.string().optional(),
+      [Field.WATTS]: setsSchema.optional(),
+      wattsHint: z.string().optional(),
+      [Field.SPEED]: setsSchema.optional(),
+      speedHint: z.string().optional(),
+      [Field.RESISTANCE]: setsSchema.optional(),
+      resistanceHint: z.string().optional(),
+      [Field.INCLINE]: setsSchema.optional(),
+      inclineHint: z.string().optional(),
+      [Field.CALORIES]: setsSchema.optional(),
+      caloriesHint: z.string().optional(),
+    })
+  ),
 })
 
 //
@@ -311,6 +371,8 @@ export type ExerciseResultRecord = z.infer<typeof exerciseResultSchema>
 
 export type MeasurementRecord = z.infer<typeof measurementSchema>
 export type MeasurementResultRecord = z.infer<typeof measurementResultSchema>
+
+export type ActiveWorkoutRecord = z.infer<typeof activeWorkoutSchema>
 
 //
 // MISCELLANEOUS TYPES

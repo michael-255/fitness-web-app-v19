@@ -33,9 +33,14 @@ const testNumber = ref(0)
 
 onMounted(async () => {
   activeRecords.value = await DB.getActiveRecords()
-  const activeWorkout = activeRecords.value.core.find((r) => r.type === RecordType.WORKOUT)
-  console.log('activeRecords', activeRecords.value)
-  console.log('activeWorkout', activeWorkout)
+
+  const activeCoreWorkout = activeRecords.value.core.find((r) => r.type === RecordType.WORKOUT)
+
+  const orderedExerciseIds = activeCoreWorkout?.exerciseIds.map((id: string) => {
+    return activeRecords.value.sub.find((r) => r.coreId === id)
+  })
+
+  console.log('orderedExerciseIds', orderedExerciseIds)
 })
 
 async function onSubmit() {

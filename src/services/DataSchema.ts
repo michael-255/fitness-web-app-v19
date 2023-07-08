@@ -211,12 +211,12 @@ export default class DataSchema {
         return Field.WATTS
       case ExerciseInput.SPEED:
         return Field.SPEED
-      case ExerciseInput.CALORIES:
-        return Field.CALORIES
       case ExerciseInput.RESISTANCE:
         return Field.RESISTANCE
       case ExerciseInput.INCLINE:
         return Field.INCLINE
+      case ExerciseInput.CALORIES:
+        return Field.CALORIES
       case MeasurementInput.BODY_WEIGHT:
         return Field.BODY_WEIGHT
       case MeasurementInput.PERCENT:

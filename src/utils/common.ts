@@ -91,9 +91,9 @@ export function getDisplayDate(dateTime: Date | string | number | undefined) {
  * @param milliseconds
  * @returns Example: 1d 14h 6m 33s
  */
-export function getDurationFromMilliseconds(milliseconds?: number): string {
+export function getDurationFromMilliseconds(milliseconds?: number): string | undefined {
   if (!milliseconds || milliseconds < 1000) {
-    return ''
+    return undefined
   }
 
   const seconds = Math.floor((milliseconds / Duration['One Second']) % 60)

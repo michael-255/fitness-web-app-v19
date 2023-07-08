@@ -95,12 +95,7 @@ async function onSubmit() {
   confirmDialog('Update', `Update ${label} record?`, Icon.EDIT, 'positive', async () => {
     try {
       const deepRecordCopy = extend(true, {}, actionStore.record) as AnyRecord
-      await DB.updateRecord(
-        routeGroup as RecordGroup,
-        routeType as RecordType,
-        routeId as string,
-        deepRecordCopy
-      )
+      await DB.putRecord(routeGroup as RecordGroup, routeType as RecordType, deepRecordCopy)
 
       log.info('Successfully updated record', {
         id: deepRecordCopy[Field.ID],
