@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Field } from '@/types/core'
 import useActionStore from '@/stores/action'
 
 defineProps<{
@@ -17,6 +16,6 @@ function inspectFormat(val: string) {
   <!-- Inspection only -->
   <div v-if="inspecting">
     <div class="text-weight-bold text-body1">Stack Trace</div>
-    <div>{{ inspectFormat(actionStore.record[Field.STACK_TRACE]) }}</div>
+    <div>{{ inspectFormat(actionStore.record.stackTrace) }}</div>
   </div>
 </template>

@@ -37,15 +37,15 @@ const isFormValid = ref(true)
 
 onMounted(async () => {
   try {
-    actionStore.record[Field.ID] = uid()
-    actionStore.record[Field.TYPE] = routeType
+    actionStore.record.id = uid()
+    actionStore.record.type = routeType
 
     if (routeCoreId) {
-      actionStore.record[Field.CORE_ID] = routeCoreId
+      actionStore.record.coreId = routeCoreId
     }
 
     if (routeType === RecordType.WORKOUT || routeType === RecordType.EXERCISE) {
-      actionStore.record[Field.ACTIVE] = false
+      actionStore.record.active = false
     }
   } catch (error) {
     log.error('Error loading create view', error)
@@ -53,11 +53,11 @@ onMounted(async () => {
 })
 
 useCoreIdWatcher((coreRecord: AnyCoreRecord) => {
-  const type = coreRecord?.[Field.TYPE]
+  const type = coreRecord?.type
 
   if (type === RecordType.MEASUREMENT) {
     // Setup measurement result data fields
-    const measurementInput = coreRecord?.[Field.MEASUREMENT_INPUT] as MeasurementInput
+    const measurementInput = coreRecord?.measurementInput as MeasurementInput
 
     measurementDataFields.forEach((field) => {
       if (field === DataSchema.getFieldForInput(measurementInput)) {
@@ -68,7 +68,7 @@ useCoreIdWatcher((coreRecord: AnyCoreRecord) => {
     })
   } else if (type === RecordType.EXERCISE) {
     // Setup exercise result data fields
-    const exerciseInputs = (coreRecord?.[Field.EXERCISE_INPUTS] ?? []) as ExerciseInput[]
+    const exerciseInputs = (coreRecord?.exerciseInputs ?? []) as ExerciseInput[]
     const inputFields = exerciseInputs.map((input) => DataSchema.getFieldForInput(input)) as Field[]
 
     exerciseDataFields.forEach((field) => {
@@ -100,7 +100,7 @@ async function onSubmit() {
       await DB.addRecord(routeGroup as RecordGroup, routeType as RecordType, deepRecordCopy)
 
       log.info('Successfully created record', {
-        id: deepRecordCopy[Field.ID],
+        id: deepRecordCopy.id,
         type: routeType,
       })
 
@@ -126,7 +126,7 @@ async function onSubmit() {
         </div>
 
         <!-- Submit -->
-        <div v-if="!actionStore.record[Field.ACTIVE]" class="row justify-center q-my-sm">
+        <div v-if="!actionStore.record.active" class="row justify-center q-my-sm">
           <QBtn label="Create" type="submit" color="positive" :icon="Icon.SAVE" />
         </div>
         <div v-else class="row justify-center q-my-sm">

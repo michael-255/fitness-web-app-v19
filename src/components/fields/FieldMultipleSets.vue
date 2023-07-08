@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Field } from '@/types/core'
 import { onMounted } from 'vue'
 import useActionStore from '@/stores/action'
 
@@ -9,10 +8,8 @@ defineProps<{
 
 const actionStore = useActionStore()
 
-const field = Field.MULTIPLE_SETS
-
 onMounted(() => {
-  actionStore.record[field] = actionStore.record[field] ?? true
+  actionStore.record.multipleSets = actionStore.record.multipleSets ?? true
 })
 
 function inspectFormat(val: boolean) {
@@ -23,13 +20,13 @@ function inspectFormat(val: boolean) {
 <template>
   <div class="text-weight-bold text-body1">Multiple Sets</div>
 
-  <div v-if="inspecting">{{ inspectFormat(actionStore.record[field]) }}</div>
+  <div v-if="inspecting">{{ inspectFormat(actionStore.record.multipleSets) }}</div>
 
   <div v-else>
     <p>
       Whether the record allows recording multiple sets or only a single set. This is irrelevant for
       instructional records with no inputs.
     </p>
-    <QToggle v-model="actionStore.record[field]" />
+    <QToggle v-model="actionStore.record.multipleSets" />
   </div>
 </template>

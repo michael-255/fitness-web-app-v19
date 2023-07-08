@@ -53,10 +53,10 @@ onMounted(async () => {
 })
 
 useCoreIdWatcher((coreRecord: AnyCoreRecord) => {
-  const type = coreRecord?.[Field.TYPE]
+  const type = coreRecord?.type
 
   if (type === RecordType.MEASUREMENT) {
-    const measurementInput = coreRecord?.[Field.MEASUREMENT_INPUT] as MeasurementInput
+    const measurementInput = coreRecord?.measurementInput as MeasurementInput
 
     measurementDataFields.forEach((field) => {
       if (field === DataSchema.getFieldForInput(measurementInput)) {
@@ -66,7 +66,7 @@ useCoreIdWatcher((coreRecord: AnyCoreRecord) => {
       }
     })
   } else if (type === RecordType.EXERCISE) {
-    const exerciseInputs = (coreRecord?.[Field.EXERCISE_INPUTS] ?? []) as ExerciseInput[]
+    const exerciseInputs = (coreRecord?.exerciseInputs ?? []) as ExerciseInput[]
     const inputFields = exerciseInputs.map((input) => DataSchema.getFieldForInput(input)) as Field[]
 
     exerciseDataFields.forEach((field) => {
@@ -98,7 +98,7 @@ async function onSubmit() {
       await DB.putRecord(routeGroup as RecordGroup, routeType as RecordType, deepRecordCopy)
 
       log.info('Successfully updated record', {
-        id: deepRecordCopy[Field.ID],
+        id: deepRecordCopy.id,
         type: routeType,
       })
 
@@ -124,7 +124,7 @@ async function onSubmit() {
         </div>
 
         <!-- Submit -->
-        <div v-if="!actionStore.record[Field.ACTIVE]" class="row justify-center q-my-sm">
+        <div v-if="!actionStore.record.active" class="row justify-center q-my-sm">
           <QBtn label="Update" type="submit" color="positive" :icon="Icon.SAVE" />
         </div>
         <div v-else class="row justify-center q-my-sm">

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, type Ref } from 'vue'
 import { truncateString } from '@/utils/common'
-import { type AnyCoreRecord, type RecordType, idSchema, RecordGroup, Field } from '@/types/core'
+import { type AnyCoreRecord, type RecordType, idSchema, RecordGroup } from '@/types/core'
 import useLogger from '@/composables/useLogger'
 import useActionStore from '@/stores/action'
 import useRoutables from '@/composables/useRoutables'
@@ -15,7 +15,6 @@ const { routeType } = useRoutables()
 const { log } = useLogger()
 const actionStore = useActionStore()
 
-const field = Field.CORE_ID
 const options: Ref<{ value: string; label: string }[]> = ref([])
 
 onMounted(async () => {
@@ -30,10 +29,10 @@ onMounted(async () => {
       label: `${r.name} (${truncateString(r.id, 8, '*')})`,
     }))
 
-    const coreIdFound = options.value.some((o) => o.value === actionStore.record[field])
+    const coreIdFound = options.value.some((o) => o.value === actionStore.record.coreId)
 
     if (!coreIdFound) {
-      actionStore.record[field] = options.value[0].value ?? undefined // If no options
+      actionStore.record.coreId = options.value[0].value ?? undefined // If no options
     }
   } catch (error) {
     log.error('Error with core id field', error)
@@ -48,13 +47,13 @@ function inspectFormat(val: string) {
 <template>
   <div class="text-weight-bold text-body1">Core Record</div>
 
-  <div v-if="inspecting">{{ inspectFormat(actionStore.record[field]) }}</div>
+  <div v-if="inspecting">{{ inspectFormat(actionStore.record.coreId) }}</div>
 
   <div v-else>
     <p>The core record that this sub record is associated with.</p>
 
     <QSelect
-      v-model="actionStore.record[field]"
+      v-model="actionStore.record.coreId"
       :rules="[(val: string) => idSchema.safeParse(val).success || 'Required']"
       :options="options"
       emit-value

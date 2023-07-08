@@ -18,12 +18,12 @@ onMounted(async () => {
 
   workoutName.value = activeRecords.core.find((r) => r.type === RecordType.WORKOUT)?.name ?? ''
   workoutResultTimestamp.value =
-    activeRecords.sub.find((r) => r.type === RecordType.WORKOUT)?.timestamp ?? Date.now()
+    activeRecords.sub.find((r) => r.type === RecordType.WORKOUT)?.createdTimestamp ?? Date.now()
 })
 
-// watch(counter, () => {
-//   workoutDuration.value = getDurationFromMilliseconds(Date.now() - workoutResultTimestamp.value)
-// })
+watch(counter, () => {
+  workoutDuration.value = getDurationFromMilliseconds(Date.now() - workoutResultTimestamp.value)
+})
 </script>
 
 <template>

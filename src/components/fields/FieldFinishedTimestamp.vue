@@ -3,7 +3,6 @@ import { date } from 'quasar'
 import { onMounted, type Ref, ref } from 'vue'
 import { Icon } from '@/types/general'
 import { getDisplayDate } from '@/utils/common'
-import { Field } from '@/types/core'
 import useActionStore from '@/stores/action'
 
 defineProps<{
@@ -12,20 +11,19 @@ defineProps<{
 
 const actionStore = useActionStore()
 
-const field = Field.FINISHED_TIMESTAMP
 const displayDate: Ref<string | undefined> = ref('')
 const datePicker: Ref<string> = ref('')
 const timePicker: Ref<string> = ref('')
 
 onMounted(() => {
-  const existingTime = actionStore.record[field]
+  const existingTime = actionStore.record.finishedTimestamp
   datePicker.value = date.formatDate(existingTime, 'ddd MMM DD YYYY')
   timePicker.value = date.formatDate(existingTime, 'HH:mm:00')
   updateDisplayDate(existingTime)
 })
 
 function updateDisplayDate(timestamp: number) {
-  actionStore.record[field] = timestamp
+  actionStore.record.finishedTimestamp = timestamp
   displayDate.value = date.formatDate(timestamp, 'ddd, YYYY MMM Do, h:mm A')
 }
 
@@ -41,7 +39,7 @@ function onPickerUpdate() {
 }
 
 function clearDates(): void {
-  actionStore.record[field] = undefined
+  actionStore.record.finishedTimestamp = undefined
   displayDate.value = undefined
 }
 
@@ -53,7 +51,7 @@ function inspectFormat(val: number) {
 <template>
   <div class="text-weight-bold text-body1">Finished Date</div>
 
-  <div v-if="inspecting">{{ inspectFormat(actionStore.record[field]) }}</div>
+  <div v-if="inspecting">{{ inspectFormat(actionStore.record.finishedTimestamp) }}</div>
 
   <QInput v-else v-model="displayDate" dense outlined disable color="primary" hint="Auto formatted">
     <template v-slot:after>

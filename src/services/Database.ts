@@ -19,6 +19,7 @@ import {
   type ExerciseResultRecord,
   ExerciseInput,
   exerciseDataFields,
+  type PreviousData,
 } from '@/types/core'
 import DataSchema from '@/services/DataSchema'
 import { getDurationFromMilliseconds } from '@/utils/common'
@@ -42,9 +43,11 @@ class Database extends Dexie {
     })
   }
 
-  //
-  // LOGS
-  //
+  /////////////////////////////////////////////////////////////////////////////
+  //                                                                         //
+  //     Logs                                                                //
+  //                                                                         //
+  /////////////////////////////////////////////////////////////////////////////
 
   async getLogs() {
     return await this.Logs.toArray()
@@ -57,7 +60,7 @@ class Database extends Dexie {
   async addLog(logLevel: LogLevel, logLabel: string, details?: any) {
     const log: Log = {
       // Auto Id handled by Dexie
-      timestamp: Date.now(),
+      createdTimestamp: Date.now(),
       logLevel,
       logLabel,
     }
@@ -91,7 +94,7 @@ class Database extends Dexie {
     // Find Logs that are older than the retention time and map them to their keys
     const removableLogs = logs
       .filter((log: Log) => {
-        const logTimestamp = log.timestamp ?? 0
+        const logTimestamp = log.createdTimestamp ?? 0
         const logAge = Date.now() - logTimestamp
         return logAge > logDuration
       })
@@ -102,9 +105,11 @@ class Database extends Dexie {
     return removableLogs.length // Number of logs deleted
   }
 
-  //
-  // SETTINGS
-  //
+  /////////////////////////////////////////////////////////////////////////////
+  //                                                                         //
+  //     Settings                                                            //
+  //                                                                         //
+  /////////////////////////////////////////////////////////////////////////////
 
   async getSettings() {
     return await this.Settings.toArray()
@@ -160,9 +165,11 @@ class Database extends Dexie {
     }
   }
 
-  //
-  // ACTIVE WORKOUT
-  //
+  /////////////////////////////////////////////////////////////////////////////
+  //                                                                         //
+  //     Active Workout                                                      //
+  //                                                                         //
+  /////////////////////////////////////////////////////////////////////////////
 
   async beginWorkout(workoutCoreRecord: WorkoutRecord) {
     const activeExerciseResultIds = await Promise.all(
@@ -175,7 +182,7 @@ class Database extends Dexie {
       active: true,
       id: uid(),
       type: RecordType.WORKOUT,
-      timestamp: Date.now(),
+      createdTimestamp: Date.now(),
       coreId: workoutCoreRecord.id,
       note: '',
       exerciseResultIds: activeExerciseResultIds,
@@ -184,18 +191,18 @@ class Database extends Dexie {
 
     // Setting core workout to active
     workoutCoreRecord.active = true
-    await DB.putRecord(RecordGroup.CORE, RecordType.WORKOUT, workoutCoreRecord)
+    await this.putRecord(RecordGroup.CORE, RecordType.WORKOUT, workoutCoreRecord)
 
     // Setting core exercises to active
     await Promise.all(
       workoutCoreRecord.exerciseIds.map(async (id) => {
-        const exercise = (await DB.getRecord(RecordGroup.CORE, id)) as AnyCoreRecord
+        const exercise = (await this.getRecord(RecordGroup.CORE, id)) as AnyCoreRecord
         exercise.active = true
-        return await DB.putRecord(RecordGroup.CORE, RecordType.EXERCISE, exercise)
+        return await this.putRecord(RecordGroup.CORE, RecordType.EXERCISE, exercise)
       })
     )
 
-    await DB.addRecord(RecordGroup.SUB, RecordType.WORKOUT, newWorkoutResult)
+    await this.addRecord(RecordGroup.SUB, RecordType.WORKOUT, newWorkoutResult)
   }
 
   async createActiveExerciseResult(id: string) {
@@ -287,9 +294,11 @@ class Database extends Dexie {
     )
   }
 
-  //
-  // LIVE QUERIES
-  //
+  /////////////////////////////////////////////////////////////////////////////
+  //                                                                         //
+  //     Live Queries                                                        //
+  //                                                                         //
+  /////////////////////////////////////////////////////////////////////////////
 
   liveLogs() {
     return liveQuery(() => this.Logs.orderBy(Field.AUTO_ID).reverse().toArray())
@@ -314,7 +323,7 @@ class Database extends Dexie {
         await this.SubRecords.where(Field.TYPE)
           .equals(type)
           .and((r) => r.active !== true)
-          .sortBy(Field.TIMESTAMP)
+          .sortBy(Field.CREATED_TIMESTAMP)
       ).reverse()
     )
   }
@@ -349,9 +358,11 @@ class Database extends Dexie {
     })
   }
 
-  //
-  // GETS
-  //
+  /////////////////////////////////////////////////////////////////////////////
+  //                                                                         //
+  //     Gets                                                                //
+  //                                                                         //
+  /////////////////////////////////////////////////////////////////////////////
 
   async getAllCoreRecords() {
     return await this.CoreRecords.toArray()
@@ -366,7 +377,7 @@ class Database extends Dexie {
       return await this.CoreRecords.where(Field.TYPE).equals(type).sortBy(Field.NAME)
     } else {
       return (
-        await this.SubRecords.where(Field.TYPE).equals(type).sortBy(Field.TIMESTAMP)
+        await this.SubRecords.where(Field.TYPE).equals(type).sortBy(Field.CREATED_TIMESTAMP)
       ).reverse()
     }
   }
@@ -380,19 +391,19 @@ class Database extends Dexie {
   }
 
   async getCoreSubRecords(coreId: string) {
-    return await this.SubRecords.where(Field.CORE_ID).equals(coreId).sortBy(Field.TIMESTAMP)
+    return await this.SubRecords.where(Field.CORE_ID).equals(coreId).sortBy(Field.CREATED_TIMESTAMP)
   }
 
   async getLastSubRecord(coreId: string) {
     return (
-      await this.SubRecords.where(Field.CORE_ID).equals(coreId).sortBy(Field.TIMESTAMP)
+      await this.SubRecords.where(Field.CORE_ID).equals(coreId).sortBy(Field.CREATED_TIMESTAMP)
     ).reverse()[0]
   }
 
   // TODO
   async getPreviousRecordData(coreId: string) {
     const previousOrderedRecords = (
-      await this.SubRecords.where(Field.CORE_ID).equals(coreId).sortBy(Field.TIMESTAMP)
+      await this.SubRecords.where(Field.CORE_ID).equals(coreId).sortBy(Field.CREATED_TIMESTAMP)
     ).reverse()
 
     const previousData = {
@@ -450,9 +461,11 @@ class Database extends Dexie {
   //   return incrementStr ? `${firstStr}${incrementStr}` : firstStr
   // }
 
-  //
-  // CREATES
-  //
+  /////////////////////////////////////////////////////////////////////////////
+  //                                                                         //
+  //     Creates                                                             //
+  //                                                                         //
+  /////////////////////////////////////////////////////////////////////////////
 
   async addRecord(group: RecordGroup, type: RecordType, record: AnyRecord) {
     const schema = DataSchema.getSchema(group, type)
@@ -504,9 +517,11 @@ class Database extends Dexie {
     }
   }
 
-  //
-  // UPDATES
-  //
+  /////////////////////////////////////////////////////////////////////////////
+  //                                                                         //
+  //     Updates                                                             //
+  //                                                                         //
+  /////////////////////////////////////////////////////////////////////////////
 
   async putRecord(group: RecordGroup, type: RecordType, record: AnyRecord) {
     const schema = DataSchema.getSchema(group, type)
@@ -524,65 +539,57 @@ class Database extends Dexie {
 
   async updatePreviousData(coreId: string) {
     const previousRecords = (
-      await this.SubRecords.where(Field.CORE_ID).equals(coreId).sortBy(Field.TIMESTAMP)
+      await this.SubRecords.where(Field.CORE_ID).equals(coreId).sortBy(Field.CREATED_TIMESTAMP)
     ).reverse()
 
-    const previous = {} as any
+    const previous: PreviousData = {}
 
     if (previousRecords.length > 0) {
       // Shared
-      previous[Field.TIMESTAMP] = previousRecords[0][Field.TIMESTAMP]
-      previous[Field.NOTE] = previousRecords[0][Field.NOTE]
+      previous.createdTimestamp = previousRecords[0].createdTimestamp
+      previous.note = previousRecords[0].note
       // Workout
-      previous[Field.WORKOUT_DURATION] = previousRecords[0][Field.FINISHED_TIMESTAMP]
+      previous.workoutDuration = previousRecords[0].finishedTimestamp
         ? getDurationFromMilliseconds(
-            previousRecords[0][Field.FINISHED_TIMESTAMP] - previousRecords[0][Field.TIMESTAMP]
+            previousRecords[0].finishedTimestamp - previousRecords[0].createdTimestamp
           )
         : undefined
-      // Exercise val?.join(', ') || '-'
-      previous[Field.REPS] = previousRecords[0][Field.REPS]
-        ? previousRecords[0][Field.REPS]?.join(', ') || undefined
+      // Exercise
+      previous.reps = previousRecords[0].reps
+        ? previousRecords[0].reps?.join(', ') || undefined
         : undefined
-      previous[Field.WEIGHT] = previousRecords[0][Field.WEIGHT]
-        ? previousRecords[0][Field.WEIGHT]?.join(', ') || undefined
+      previous.weightLbs = previousRecords[0].weightLbs
+        ? previousRecords[0].weightLbs?.join(', ') || undefined
         : undefined
-      previous[Field.DISTANCE] = previousRecords[0][Field.DISTANCE]
-        ? previousRecords[0][Field.DISTANCE]?.join(', ') || undefined
+      previous.distanceMiles = previousRecords[0].distanceMiles
+        ? previousRecords[0].distanceMiles?.join(', ') || undefined
         : undefined
-      previous[Field.DURATION] = previousRecords[0][Field.DURATION]
-        ? previousRecords[0][Field.DURATION]?.join(', ') || undefined
+      previous.durationMinutes = previousRecords[0].durationMinutes
+        ? previousRecords[0].durationMinutes?.join(', ') || undefined
         : undefined
-      previous[Field.WATTS] = previousRecords[0][Field.WATTS]
-        ? previousRecords[0][Field.WATTS]?.join(', ') || undefined
+      previous.watts = previousRecords[0].watts
+        ? previousRecords[0].watts?.join(', ') || undefined
         : undefined
-      previous[Field.SPEED] = previousRecords[0][Field.SPEED]
-        ? previousRecords[0][Field.SPEED]?.join(', ') || undefined
+      previous.speedMph = previousRecords[0].speedMph
+        ? previousRecords[0].speedMph?.join(', ') || undefined
         : undefined
-      previous[Field.RESISTANCE] = previousRecords[0][Field.RESISTANCE]
-        ? previousRecords[0][Field.RESISTANCE]?.join(', ') || undefined
+      previous.resistance = previousRecords[0].resistance
+        ? previousRecords[0].resistance?.join(', ') || undefined
         : undefined
-      previous[Field.INCLINE] = previousRecords[0][Field.INCLINE]
-        ? previousRecords[0][Field.INCLINE]?.join(', ') || undefined
+      previous.incline = previousRecords[0].incline
+        ? previousRecords[0].incline?.join(', ') || undefined
         : undefined
-      previous[Field.CALORIES] = previousRecords[0][Field.CALORIES]
-        ? previousRecords[0][Field.CALORIES]?.join(', ') || undefined
+      previous.calories = previousRecords[0].calories
+        ? previousRecords[0].calories?.join(', ') || undefined
         : undefined
       // Measurement
-      previous[Field.BODY_WEIGHT] = previousRecords[0][Field.BODY_WEIGHT]
-        ? `${previousRecords[0][Field.BODY_WEIGHT]} lbs`
+      previous.bodyWeight = previousRecords[0].bodyWeight
+        ? `${previousRecords[0].bodyWeight} lbs`
         : undefined
-      previous[Field.PERCENT] = previousRecords[0][Field.PERCENT]
-        ? `${previousRecords[0][Field.PERCENT]}%`
-        : undefined
-      previous[Field.INCHES] = previousRecords[0][Field.INCHES]
-        ? `${previousRecords[0][Field.INCHES]} in`
-        : undefined
-      previous[Field.LBS] = previousRecords[0][Field.LBS]
-        ? `${previousRecords[0][Field.LBS]} lbs`
-        : undefined
-      previous[Field.NUMBER] = previousRecords[0][Field.NUMBER]
-        ? `${previousRecords[0][Field.NUMBER]}`
-        : undefined
+      previous.percent = previousRecords[0].percent ? `${previousRecords[0].percent}%` : undefined
+      previous.inches = previousRecords[0].inches ? `${previousRecords[0].inches} in` : undefined
+      previous.lbs = previousRecords[0].lbs ? `${previousRecords[0].lbs} lbs` : undefined
+      previous.number = previousRecords[0].number ? `${previousRecords[0].number}` : undefined
     }
 
     return await this.CoreRecords.update(coreId, { previous })
@@ -593,9 +600,11 @@ class Database extends Dexie {
     return await Promise.all(coreRecords.map((cr) => this.updatePreviousData(cr.id)))
   }
 
-  //
-  // DELETES
-  //
+  /////////////////////////////////////////////////////////////////////////////
+  //                                                                         //
+  //     Deletes                                                             //
+  //                                                                         //
+  /////////////////////////////////////////////////////////////////////////////
 
   async deleteRecord(group: RecordGroup, id: string) {
     const recordToDelete = (await this.getRecord(group, id)) as AnyRecord | undefined

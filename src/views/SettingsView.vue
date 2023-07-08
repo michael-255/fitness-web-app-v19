@@ -139,7 +139,7 @@ function onExportRecords() {
           logs: await DB.getLogs(),
           settings: await DB.getSettings(),
           coreRecords: (await DB.getAllCoreRecords()).map((cr) => {
-            delete cr[Field.PREVIOUS]
+            delete cr.previous
             return cr
           }),
           subRecords: await DB.getAllSubRecords(),

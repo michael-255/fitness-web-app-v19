@@ -2,7 +2,6 @@
 import { onMounted, ref, type Ref } from 'vue'
 import {
   type ExerciseResultRecord,
-  Field,
   exerciseResultIdsSchema,
   RecordType,
   RecordGroup,
@@ -19,12 +18,11 @@ defineProps<{
 const { log } = useLogger()
 const actionStore = useActionStore()
 
-const field = Field.EXERCISE_RESULT_IDS
 const options: Ref<{ value: string; label: string }[]> = ref([])
 
 onMounted(async () => {
   try {
-    actionStore.record[field] = actionStore.record[field] ?? []
+    actionStore.record.exerciseResultIds = actionStore.record.exerciseResultIds ?? []
 
     const records = (await DB.getRecords(
       RecordGroup.SUB,
@@ -48,13 +46,13 @@ function inspectFormat(val: ExerciseResultRecord[]) {
 <template>
   <div class="text-weight-bold text-body1">Exercise Result Ids</div>
 
-  <div v-if="inspecting">{{ inspectFormat(actionStore.record[field]) }}</div>
+  <div v-if="inspecting">{{ inspectFormat(actionStore.record.exerciseResultIds) }}</div>
 
   <div v-else>
     <p>Ids of all completed exercises associated with this workout.</p>
 
     <QSelect
-      v-model="actionStore.record[field]"
+      v-model="actionStore.record.exerciseResultIds"
       :rules="[(val: ExerciseResultRecord[]) => exerciseResultIdsSchema.safeParse(val).success || 'Invalid']"
       :options="options"
       lazy-rules

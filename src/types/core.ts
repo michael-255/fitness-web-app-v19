@@ -82,11 +82,8 @@ export enum Field {
   ERROR_MESSAGE = 'errorMessage',
   STACK_TRACE = 'stackTrace',
 
-  // Previous
-  WORKOUT_DURATION = 'workoutDuration',
-
   // Shared
-  TIMESTAMP = 'timestamp',
+  CREATED_TIMESTAMP = 'createdTimestamp',
   ACTIVE = 'active',
 
   // Base
@@ -136,6 +133,22 @@ export enum Field {
 
   // Measurement
   MEASUREMENT_INPUT = 'measurementInput',
+
+  // Previous
+  WORKOUT_DURATION = 'workoutDuration',
+
+  // Active Workout
+  PREVIOUS_NOTE = 'previousNote',
+  EXERCISES = 'exercises',
+  PREVIOUS_REPS = 'previousReps',
+  PREVIOUS_WEIGHT = 'previousWeight',
+  PREVIOUS_DISTANCE = 'previousDistance',
+  PREVIOUS_DURATION = 'previousDuration',
+  PREVIOUS_WATTS = 'previousWatts',
+  PREVIOUS_SPEED = 'previousSpeed',
+  PREVIOUS_RESISTANCE = 'previousResistance',
+  PREVIOUS_INCLINE = 'previousIncline',
+  PREVIOUS_CALORIES = 'previousCalories',
 }
 
 export const exerciseDataFields = [
@@ -175,15 +188,16 @@ export const bodyWeightSchema = z.number().min(1).max(1000)
 export const percentSchema = z.number().min(0).max(100)
 export const setsSchema = z.array(numberSchema)
 
-// Non-exported schemas
 const settingSchema = z.object({
   [Field.KEY]: z.nativeEnum(SettingKey),
   [Field.VALUE]: z.boolean().or(z.string()).or(z.number()).optional(),
 })
 
+export type Log = z.infer<typeof logSchema>
+
 const logSchema = z.object({
   [Field.AUTO_ID]: z.number().int().positive().optional(), // Handled by Dexie
-  [Field.TIMESTAMP]: z.number().int(),
+  [Field.CREATED_TIMESTAMP]: z.number().int(),
   [Field.LOG_LEVEL]: z.nativeEnum(LogLevel),
   [Field.LOG_LABEL]: z.string().trim(),
   [Field.DETAILS]: detailsSchema,
@@ -191,10 +205,12 @@ const logSchema = z.object({
   [Field.STACK_TRACE]: z.string().trim().optional(),
 })
 
+export type Setting = z.infer<typeof settingSchema>
+
 const baseSchema = z.object({
   [Field.TYPE]: recordTypeSchema,
   [Field.ID]: idSchema,
-  [Field.TIMESTAMP]: timestampSchema,
+  [Field.CREATED_TIMESTAMP]: timestampSchema,
 })
 
 const subSchema = baseSchema.extend({
@@ -202,35 +218,39 @@ const subSchema = baseSchema.extend({
   [Field.NOTE]: textAreaSchema,
 })
 
+const previousSchema = z
+  .object({
+    [Field.CREATED_TIMESTAMP]: timestampSchema.optional(),
+    [Field.NOTE]: textAreaSchema.optional(),
+    // Workout
+    [Field.WORKOUT_DURATION]: z.string().optional(),
+    // Exercise
+    [Field.REPS]: z.string().optional(),
+    [Field.WEIGHT]: z.string().optional(),
+    [Field.DISTANCE]: z.string().optional(),
+    [Field.DURATION]: z.string().optional(),
+    [Field.WATTS]: z.string().optional(),
+    [Field.SPEED]: z.string().optional(),
+    [Field.RESISTANCE]: z.string().optional(),
+    [Field.INCLINE]: z.string().optional(),
+    [Field.CALORIES]: z.string().optional(),
+    // Measurement
+    [Field.BODY_WEIGHT]: z.string().optional(),
+    [Field.PERCENT]: z.string().optional(),
+    [Field.INCHES]: z.string().optional(),
+    [Field.LBS]: z.string().optional(),
+    [Field.NUMBER]: z.string().optional(),
+  })
+  .optional()
+
+export type PreviousData = z.infer<typeof previousSchema>
+
 const coreSchema = baseSchema.extend({
   [Field.NAME]: nameSchema,
   [Field.DESC]: textAreaSchema,
   [Field.ENABLED]: booleanSchema,
   [Field.FAVORITED]: booleanSchema,
-  [Field.PREVIOUS]: z
-    .object({
-      [Field.TIMESTAMP]: timestampSchema.optional(),
-      [Field.NOTE]: textAreaSchema.optional(),
-      // Workout
-      [Field.WORKOUT_DURATION]: z.string().optional(),
-      // Exercise
-      [Field.REPS]: z.string().optional(),
-      [Field.WEIGHT]: z.string().optional(),
-      [Field.DISTANCE]: z.string().optional(),
-      [Field.DURATION]: z.string().optional(),
-      [Field.WATTS]: z.string().optional(),
-      [Field.SPEED]: z.string().optional(),
-      [Field.RESISTANCE]: z.string().optional(),
-      [Field.INCLINE]: z.string().optional(),
-      [Field.CALORIES]: z.string().optional(),
-      // Measurement
-      [Field.BODY_WEIGHT]: z.string().optional(),
-      [Field.PERCENT]: z.string().optional(),
-      [Field.INCHES]: z.string().optional(),
-      [Field.LBS]: z.string().optional(),
-      [Field.NUMBER]: z.string().optional(),
-    })
-    .optional(),
+  [Field.PREVIOUS]: previousSchema,
 })
 
 // Workout Result
@@ -241,12 +261,16 @@ export const workoutResultSchema = subSchema.extend({
   [Field.ACTIVE]: booleanSchema,
 })
 
+export type WorkoutResultRecord = z.infer<typeof workoutResultSchema>
+
 // Workout
 export const workoutSchema = coreSchema.extend({
   [Field.TYPE]: z.literal(RecordType.WORKOUT),
   [Field.EXERCISE_IDS]: exerciseIdsSchema,
   [Field.ACTIVE]: booleanSchema,
 })
+
+export type WorkoutRecord = z.infer<typeof workoutSchema>
 
 // Exercise Result
 export const exerciseResultSchema = subSchema
@@ -277,6 +301,8 @@ export const exerciseResultSchema = subSchema
     }
   )
 
+export type ExerciseResultRecord = z.infer<typeof exerciseResultSchema>
+
 // Exercise
 export const exerciseSchema = coreSchema.extend({
   [Field.TYPE]: z.literal(RecordType.EXERCISE),
@@ -284,6 +310,8 @@ export const exerciseSchema = coreSchema.extend({
   [Field.MULTIPLE_SETS]: booleanSchema,
   [Field.ACTIVE]: booleanSchema,
 })
+
+export type ExerciseRecord = z.infer<typeof exerciseSchema>
 
 // Measurement Result
 export const measurementResultSchema = subSchema
@@ -308,71 +336,63 @@ export const measurementResultSchema = subSchema
     }
   )
 
+export type MeasurementResultRecord = z.infer<typeof measurementResultSchema>
+
 // Measurement
 export const measurementSchema = coreSchema.extend({
   [Field.TYPE]: z.literal(RecordType.MEASUREMENT),
   [Field.MEASUREMENT_INPUT]: measurementInputSchema,
 })
 
+export type MeasurementRecord = z.infer<typeof measurementSchema>
+
 // Active Workout
 export const activeWorkoutSchema = z.object({
   [Field.NAME]: nameSchema,
   [Field.DESC]: textAreaSchema,
   [Field.CORE_ID]: idSchema,
-  [Field.TIMESTAMP]: timestampSchema,
+  [Field.CREATED_TIMESTAMP]: timestampSchema,
   [Field.NOTE]: textAreaSchema,
-  previousNote: textAreaSchema,
-  exercises: z.array(
+  [Field.PREVIOUS_NOTE]: textAreaSchema,
+  [Field.EXERCISES]: z.array(
     z.object({
       [Field.NAME]: nameSchema,
       [Field.DESC]: textAreaSchema,
       [Field.CORE_ID]: idSchema,
       [Field.NOTE]: textAreaSchema,
-      previousNote: textAreaSchema,
+      [Field.PREVIOUS_NOTE]: textAreaSchema,
       [Field.REPS]: setsSchema.optional(),
-      repsHint: z.string().optional(),
+      [Field.PREVIOUS_REPS]: z.string().optional(),
       [Field.WEIGHT]: setsSchema.optional(),
-      weightHint: z.string().optional(),
+      [Field.PREVIOUS_WEIGHT]: z.string().optional(),
       [Field.DISTANCE]: setsSchema.optional(),
-      distanceHint: z.string().optional(),
+      [Field.PREVIOUS_DISTANCE]: z.string().optional(),
       [Field.DURATION]: setsSchema.optional(),
-      durationHint: z.string().optional(),
+      [Field.PREVIOUS_DURATION]: z.string().optional(),
       [Field.WATTS]: setsSchema.optional(),
-      wattsHint: z.string().optional(),
+      [Field.PREVIOUS_WATTS]: z.string().optional(),
       [Field.SPEED]: setsSchema.optional(),
-      speedHint: z.string().optional(),
+      [Field.PREVIOUS_SPEED]: z.string().optional(),
       [Field.RESISTANCE]: setsSchema.optional(),
-      resistanceHint: z.string().optional(),
+      [Field.PREVIOUS_RESISTANCE]: z.string().optional(),
       [Field.INCLINE]: setsSchema.optional(),
-      inclineHint: z.string().optional(),
+      [Field.PREVIOUS_INCLINE]: z.string().optional(),
       [Field.CALORIES]: setsSchema.optional(),
-      caloriesHint: z.string().optional(),
+      [Field.PREVIOUS_CALORIES]: z.string().optional(),
     })
   ),
 })
 
+export type ActiveWorkoutRecord = z.infer<typeof activeWorkoutSchema>
+
 //
-// MODELS
+// ANY RECORD TYPES
 //
 
-export type Log = z.infer<typeof logSchema>
-export type Setting = z.infer<typeof settingSchema>
-
-export type AnyDatabaseRecord = { [key: string]: any }
+export type AnyDatabaseRecord = { [key in Field]?: any }
 export type AnyRecord = z.infer<typeof baseSchema> & AnyDatabaseRecord
 export type AnySubRecord = z.infer<typeof subSchema> & AnyDatabaseRecord
 export type AnyCoreRecord = z.infer<typeof coreSchema> & AnyDatabaseRecord
-
-export type WorkoutRecord = z.infer<typeof workoutSchema>
-export type WorkoutResultRecord = z.infer<typeof workoutResultSchema>
-
-export type ExerciseRecord = z.infer<typeof exerciseSchema>
-export type ExerciseResultRecord = z.infer<typeof exerciseResultSchema>
-
-export type MeasurementRecord = z.infer<typeof measurementSchema>
-export type MeasurementResultRecord = z.infer<typeof measurementResultSchema>
-
-export type ActiveWorkoutRecord = z.infer<typeof activeWorkoutSchema>
 
 //
 // MISCELLANEOUS TYPES

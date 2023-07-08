@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref, type Ref } from 'vue'
-import { ExerciseInput, Field, exerciseInputsSchema } from '@/types/core'
+import { ExerciseInput, exerciseInputsSchema } from '@/types/core'
 import useLogger from '@/composables/useLogger'
 import useActionStore from '@/stores/action'
 
@@ -11,12 +11,11 @@ defineProps<{
 const { log } = useLogger()
 const actionStore = useActionStore()
 
-const field = Field.EXERCISE_INPUTS
 const options: Ref<{ value: ExerciseInput; label: ExerciseInput }[]> = ref([])
 
 onMounted(async () => {
   try {
-    actionStore.record[field] = actionStore.record[field] ?? []
+    actionStore.record.exerciseInputs = actionStore.record.exerciseInputs ?? []
 
     options.value = Object.values(ExerciseInput).map((o: ExerciseInput) => ({
       value: o,
@@ -35,7 +34,7 @@ function inspectFormat(val: ExerciseInput[]) {
 <template>
   <div class="text-weight-bold text-body1">Exercise Inputs</div>
 
-  <div v-if="inspecting">{{ inspectFormat(actionStore.record[field]) }}</div>
+  <div v-if="inspecting">{{ inspectFormat(actionStore.record.exerciseInputs) }}</div>
 
   <div v-else>
     <p>
@@ -44,7 +43,7 @@ function inspectFormat(val: ExerciseInput[]) {
     </p>
 
     <QSelect
-      v-model="actionStore.record[field]"
+      v-model="actionStore.record.exerciseInputs"
       :rules="[(val: ExerciseInput[]) => exerciseInputsSchema.safeParse(val).success || 'Required']"
       :options="options"
       lazy-rules

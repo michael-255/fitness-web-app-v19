@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref, type Ref } from 'vue'
-import { Field, measurementInputSchema, MeasurementInput } from '@/types/core'
+import { measurementInputSchema, MeasurementInput } from '@/types/core'
 import useLogger from '@/composables/useLogger'
 import useActionStore from '@/stores/action'
 
@@ -11,12 +11,11 @@ defineProps<{
 const { log } = useLogger()
 const actionStore = useActionStore()
 
-const field = Field.MEASUREMENT_INPUT
 const options: Ref<{ value: MeasurementInput; label: MeasurementInput }[]> = ref([])
 
 onMounted(async () => {
   try {
-    actionStore.record[field] = actionStore.record[field] ?? undefined
+    actionStore.record.measurementInput = actionStore.record.measurementInput ?? undefined
 
     options.value = Object.values(MeasurementInput).map((o: MeasurementInput) => ({
       value: o,
@@ -35,7 +34,7 @@ function inspectFormat(val: MeasurementInput) {
 <template>
   <div class="text-weight-bold text-body1">Measurement Input</div>
 
-  <div v-if="inspecting">{{ inspectFormat(actionStore.record[field]) }}</div>
+  <div v-if="inspecting">{{ inspectFormat(actionStore.record.measurementInput) }}</div>
 
   <div v-else>
     <p>
@@ -44,7 +43,7 @@ function inspectFormat(val: MeasurementInput) {
     </p>
 
     <QSelect
-      v-model="actionStore.record[field]"
+      v-model="actionStore.record.measurementInput"
       :rules="[(val: MeasurementInput) => measurementInputSchema.safeParse(val).success || 'Required']"
       :options="options"
       lazy-rules

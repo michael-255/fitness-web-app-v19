@@ -13,7 +13,7 @@ import {
   LineElement,
 } from 'chart.js'
 import { onMounted, ref, type Ref } from 'vue'
-import { idSchema, Field, recordTypeSchema, type RecordType } from '@/types/core'
+import { idSchema, recordTypeSchema, type RecordType } from '@/types/core'
 import { Duration } from '@/types/general'
 import ErrorStates from '../ErrorStates.vue'
 import useLogger from '@/composables/useLogger'
@@ -109,7 +109,7 @@ async function recalculateChart() {
       if (chartingRecords.length > 0) {
         // Filter records to only include those within the chart time
         const timeRestrictedRecords = chartingRecords.filter((record: any) => {
-          const timeDifference = new Date().getTime() - record[Field.TIMESTAMP]
+          const timeDifference = new Date().getTime() - record.createdTimestamp
           return timeDifference <= Duration[uiStore.chartTime]
         })
 
@@ -117,11 +117,11 @@ async function recalculateChart() {
 
         // Create chart label dates from the created timestamps
         const chartLabels = timeRestrictedRecords.map((record: any) =>
-          date.formatDate(record[Field.TIMESTAMP], 'YYYY MMM D')
+          date.formatDate(record.createdTimestamp, 'YYYY MMM D')
         )
 
         // Create chart data from the number fields
-        const chartDataItems = timeRestrictedRecords.map((record: any) => record[Field.PERCENT])
+        const chartDataItems = timeRestrictedRecords.map((record: any) => record.percent)
 
         // Set chart data with the labels and data
         chartData.value = {

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Field } from '@/types/core'
 import type { Details } from '@/types/core'
 import useActionStore from '@/stores/action'
 
@@ -24,6 +23,6 @@ function inspectFormat(val: Details) {
   <!-- Inspection only -->
   <div v-if="inspecting">
     <div class="text-weight-bold text-body1">Details</div>
-    <div>{{ inspectFormat(actionStore.record[Field.DETAILS]) }}</div>
+    <div>{{ inspectFormat(actionStore.record.details) }}</div>
   </div>
 </template>

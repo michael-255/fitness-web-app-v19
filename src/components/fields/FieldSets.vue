@@ -22,8 +22,8 @@ const multipleSetsRef: Ref<boolean> = ref(false)
 const previous = ref({} as any)
 
 useCoreIdWatcher((coreRecord: AnyCoreRecord) => {
-  exerciseInputsRef.value = (coreRecord?.[Field.EXERCISE_INPUTS] ?? []) as ExerciseInput[]
-  multipleSetsRef.value = Boolean(coreRecord?.[Field.MULTIPLE_SETS])
+  exerciseInputsRef.value = (coreRecord?.exerciseInputs ?? []) as ExerciseInput[]
+  multipleSetsRef.value = Boolean(coreRecord?.multipleSets)
   previous.value = coreRecord?.previous
 })
 

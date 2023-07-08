@@ -87,7 +87,7 @@ const idColumn: QTableColumn = {
 }
 
 const timestampColumn: QTableColumn = {
-  ...makeStandardColumn(Field.TIMESTAMP),
+  ...makeStandardColumn(Field.CREATED_TIMESTAMP),
   label: 'Created Date',
   format: (val: number) => getDisplayDate(val),
 }
