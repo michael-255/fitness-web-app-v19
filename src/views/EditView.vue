@@ -3,6 +3,7 @@ import { Icon } from '@/types/general'
 import { onMounted, onUnmounted, ref } from 'vue'
 import { extend, useMeta } from 'quasar'
 import { AppName } from '@/constants/global'
+import type { AnyRecord, RecordGroup, RecordType } from '@/types/core'
 import DataSchema from '@/services/DataSchema'
 import ErrorStates from '@/components/ErrorStates.vue'
 import ResponsivePage from '@/components/ResponsivePage.vue'
@@ -11,7 +12,6 @@ import useActionStore from '@/stores/action'
 import useLogger from '@/composables/useLogger'
 import useDialogs from '@/composables/useDialogs'
 import DB from '@/services/Database'
-import type { AnyRecord, RecordGroup, RecordType } from '@/types/core'
 
 useMeta({ title: `${AppName} - Edit Record` })
 
@@ -48,11 +48,14 @@ onUnmounted(() => {
 async function onSubmit() {
   confirmDialog('Update', `Update ${label} record?`, Icon.EDIT, 'positive', async () => {
     try {
-      const deepRecordCopy = extend(true, {}, actionStore.record) as AnyRecord
-      await DB.putRecord(routeGroup as RecordGroup, routeType as RecordType, deepRecordCopy)
+      await DB.putRecord(
+        routeGroup as RecordGroup,
+        routeType as RecordType,
+        extend(true, {}, actionStore.record) as AnyRecord
+      )
 
       log.info('Successfully updated record', {
-        id: deepRecordCopy.id,
+        id: actionStore.record.id,
         type: routeType,
       })
 

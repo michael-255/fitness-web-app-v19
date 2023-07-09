@@ -26,16 +26,9 @@ const isFormValid = ref(true)
 
 onMounted(async () => {
   try {
-    // Defaulted fields during creation
-    actionStore.record.id = uid()
-    actionStore.record.type = routeType
-
+    // When directly adding this record to a specific core record
     if (routeCoreId) {
-      actionStore.record.coreId = routeCoreId
-    }
-
-    if (routeType === RecordType.WORKOUT || routeType === RecordType.EXERCISE) {
-      actionStore.record.active = false
+      actionStore.record.coreId = routeCoreId // Selects this core record if able
     }
   } catch (error) {
     log.error('Error loading create view', error)
@@ -49,12 +42,23 @@ onUnmounted(() => {
 async function onSubmit() {
   confirmDialog('Create', `Create ${label} record?`, Icon.CREATE, 'positive', async () => {
     try {
-      const deepRecordCopy = extend(true, {}, actionStore.record) as AnyRecord
-      await DB.addRecord(routeGroup as RecordGroup, routeType as RecordType, deepRecordCopy)
+      // Setup other fields before saving
+      actionStore.record.id = uid()
+      actionStore.record.type = routeType
+
+      if (routeType === RecordType.WORKOUT || routeType === RecordType.EXERCISE) {
+        actionStore.record.active = false
+      }
+
+      await DB.addRecord(
+        routeGroup as RecordGroup,
+        routeType as RecordType,
+        extend(true, {}, actionStore.record) as AnyRecord
+      )
 
       log.info('Successfully created record', {
-        id: deepRecordCopy.id,
-        type: routeType,
+        id: actionStore.record.id,
+        type: actionStore.record.type,
       })
 
       goBack()

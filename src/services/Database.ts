@@ -1,5 +1,5 @@
 import Dexie, { liveQuery, type Table } from 'dexie'
-import { Dark, uid } from 'quasar'
+import { Dark, extend, uid } from 'quasar'
 import { Duration } from '@/types/general'
 import { AppDatabaseVersion, AppName } from '@/constants/global'
 import {
@@ -78,7 +78,7 @@ class Database extends Dexie {
       }
     }
 
-    return await this.Logs.add(log)
+    return await this.Logs.add(extend(true, {}, log))
   }
 
   async deleteExpiredLogs() {
@@ -538,38 +538,30 @@ class Database extends Dexie {
   }
 
   async updatePreviousData(coreId: string) {
-    const previousRecords = (
+    const previousRecord = (
       await this.SubRecords.where(Field.CORE_ID).equals(coreId).sortBy(Field.CREATED_TIMESTAMP)
-    ).reverse()
+    ).reverse()[0]
 
     const previous: PreviousData = {}
 
-    if (previousRecords.length > 0) {
+    if (previousRecord) {
       // Shared
-      previous.createdTimestamp = previousRecords[0].createdTimestamp
-      previous.note = previousRecords[0].note
+      previous.createdTimestamp = previousRecord.createdTimestamp
+      previous.note = previousRecord.note
       // Workout
-      previous.workoutDuration = previousRecords[0].finishedTimestamp
+      previous.workoutDuration = previousRecord.finishedTimestamp
         ? getDurationFromMilliseconds(
-            previousRecords[0].finishedTimestamp - previousRecords[0].createdTimestamp
+            previousRecord.finishedTimestamp - previousRecord.createdTimestamp
           )
         : undefined
       // Exercise
-      previous.reps = previousRecords[0].reps
-      previous.weightLbs = previousRecords[0].weightLbs
-      previous.distanceMiles = previousRecords[0].distanceMiles
-      previous.durationMinutes = previousRecords[0].durationMinutes
-      previous.watts = previousRecords[0].watts
-      previous.speedMph = previousRecords[0].speedMph
-      previous.resistance = previousRecords[0].resistance
-      previous.incline = previousRecords[0].incline
-      previous.calories = previousRecords[0].calories
+      previous.exerciseSets = previousRecord.exerciseSets
       // Measurement
-      previous.bodyWeight = previousRecords[0].bodyWeight
-      previous.percent = previousRecords[0].percent
-      previous.inches = previousRecords[0].inches
-      previous.lbs = previousRecords[0].lbs
-      previous.number = previousRecords[0].number
+      previous.bodyWeight = previousRecord.bodyWeight
+      previous.percent = previousRecord.percent
+      previous.inches = previousRecord.inches
+      previous.lbs = previousRecord.lbs
+      previous.number = previousRecord.number
     }
 
     return await this.CoreRecords.update(coreId, { previous })

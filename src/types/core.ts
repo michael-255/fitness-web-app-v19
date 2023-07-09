@@ -110,6 +110,7 @@ export enum Field {
   EXERCISE_IDS = 'exerciseIds',
 
   // Exercise Result
+  EXERCISE_SETS = 'exerciseSets',
   REPS = 'reps',
   WEIGHT = 'weightLbs',
   DISTANCE = 'distanceMiles',
@@ -223,20 +224,30 @@ const subSchema = baseSchema.extend({
  */
 const previousSchema = z
   .object({
+    // All
     [Field.CREATED_TIMESTAMP]: z.number().optional(),
     [Field.NOTE]: z.string().optional(),
+
     // Workout
     [Field.WORKOUT_DURATION]: z.string().optional(),
+
     // Exercise
-    [Field.REPS]: z.array(z.number()).optional(),
-    [Field.WEIGHT]: z.array(z.number()).optional(),
-    [Field.DISTANCE]: z.array(z.number()).optional(),
-    [Field.DURATION]: z.array(z.number()).optional(),
-    [Field.WATTS]: z.array(z.number()).optional(),
-    [Field.SPEED]: z.array(z.number()).optional(),
-    [Field.RESISTANCE]: z.array(z.number()).optional(),
-    [Field.INCLINE]: z.array(z.number()).optional(),
-    [Field.CALORIES]: z.array(z.number()).optional(),
+    [Field.EXERCISE_SETS]: z
+      .array(
+        z.object({
+          [Field.REPS]: numberSchema.optional(),
+          [Field.WEIGHT]: numberSchema.optional(),
+          [Field.DISTANCE]: numberSchema.optional(),
+          [Field.DURATION]: numberSchema.optional(),
+          [Field.WATTS]: numberSchema.optional(),
+          [Field.SPEED]: numberSchema.optional(),
+          [Field.RESISTANCE]: numberSchema.optional(),
+          [Field.INCLINE]: numberSchema.optional(),
+          [Field.CALORIES]: numberSchema.optional(),
+        })
+      )
+      .optional(),
+
     // Measurement
     [Field.BODY_WEIGHT]: z.number().optional(),
     [Field.PERCENT]: z.number().optional(),
@@ -276,33 +287,36 @@ export const workoutSchema = coreSchema.extend({
 export type WorkoutRecord = z.infer<typeof workoutSchema>
 
 // Exercise Result
-export const exerciseResultSchema = subSchema
-  .extend({
-    [Field.TYPE]: z.literal(RecordType.EXERCISE),
-    [Field.ACTIVE]: booleanSchema,
-    [Field.REPS]: setsSchema.optional(),
-    [Field.WEIGHT]: setsSchema.optional(),
-    [Field.DISTANCE]: setsSchema.optional(),
-    [Field.DURATION]: setsSchema.optional(),
-    [Field.WATTS]: setsSchema.optional(),
-    [Field.SPEED]: setsSchema.optional(),
-    [Field.RESISTANCE]: setsSchema.optional(),
-    [Field.INCLINE]: setsSchema.optional(),
-    [Field.CALORIES]: setsSchema.optional(),
-  })
-  .refine(
-    (obj) => {
-      const fieldArray = Object.keys(obj).filter((f) => exerciseDataFields.includes(f as Field))
-      const noUndefined = fieldArray.every((val) => val !== undefined)
-      const noEmptySets = fieldArray.every((val) => val?.length !== 0)
-      const noMissingData = fieldArray.length > 0
-      return noUndefined && noEmptySets && noMissingData
-    },
-    {
-      message: 'Must have valid entries in exercise result data fields',
-      path: exerciseDataFields,
-    }
-  )
+export const exerciseResultSchema = subSchema.extend({
+  [Field.TYPE]: z.literal(RecordType.EXERCISE),
+  [Field.ACTIVE]: booleanSchema,
+  [Field.EXERCISE_SETS]: z.array(
+    z
+      .object({
+        [Field.REPS]: numberSchema.optional(),
+        [Field.WEIGHT]: numberSchema.optional(),
+        [Field.DISTANCE]: numberSchema.optional(),
+        [Field.DURATION]: numberSchema.optional(),
+        [Field.WATTS]: numberSchema.optional(),
+        [Field.SPEED]: numberSchema.optional(),
+        [Field.RESISTANCE]: numberSchema.optional(),
+        [Field.INCLINE]: numberSchema.optional(),
+        [Field.CALORIES]: numberSchema.optional(),
+      })
+      .refine(
+        (obj) => {
+          const fieldKeys = Object.keys(obj).filter((f) => exerciseDataFields.includes(f as Field))
+          const noUndefined = fieldKeys.every((val) => val !== undefined)
+          const noMissingData = fieldKeys.length > 0
+          return noUndefined && noMissingData
+        },
+        {
+          message: 'Must have valid entries in exercise result data fields',
+          path: exerciseDataFields,
+        }
+      )
+  ),
+})
 
 export type ExerciseResultRecord = z.infer<typeof exerciseResultSchema>
 

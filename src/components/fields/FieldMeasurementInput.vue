@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { onMounted, ref, type Ref } from 'vue'
 import { measurementInputSchema, MeasurementInput } from '@/types/core'
+import { Icon, RouteName } from '@/types/general'
 import useLogger from '@/composables/useLogger'
 import useActionStore from '@/stores/action'
+import useRoutables from '@/composables/useRoutables'
 
 defineProps<{
   inspecting: boolean
 }>()
 
 const { log } = useLogger()
+const { route } = useRoutables()
 const actionStore = useActionStore()
 
 const options: Ref<{ value: MeasurementInput; label: MeasurementInput }[]> = ref([])
@@ -39,10 +42,11 @@ function inspectFormat(val: MeasurementInput) {
   <div v-else>
     <p>
       Select a measurement input that represents the type of data you want to record on this
-      measurement.
+      measurement. This cannot be updated once set during record creation.
     </p>
 
     <QSelect
+      :disable="route.name === RouteName.EDIT"
       v-model="actionStore.record.measurementInput"
       :rules="[(val: MeasurementInput) => measurementInputSchema.safeParse(val).success || 'Required']"
       :options="options"
@@ -53,6 +57,10 @@ function inspectFormat(val: MeasurementInput) {
       dense
       outlined
       color="primary"
-    />
+    >
+      <template v-if="route.name === RouteName.EDIT" v-slot:prepend>
+        <QIcon color="warning" :name="Icon.LOCK" />
+      </template>
+    </QSelect>
   </div>
 </template>

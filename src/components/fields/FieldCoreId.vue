@@ -2,7 +2,7 @@
 import { onMounted, ref, type Ref } from 'vue'
 import { truncateString } from '@/utils/common'
 import { type AnyCoreRecord, type RecordType, idSchema, RecordGroup } from '@/types/core'
-import { RouteName } from '@/types/general'
+import { Icon, RouteName } from '@/types/general'
 import useLogger from '@/composables/useLogger'
 import useActionStore from '@/stores/action'
 import useRoutables from '@/composables/useRoutables'
@@ -33,7 +33,7 @@ onMounted(async () => {
     const coreIdFound = options.value.some((o) => o.value === actionStore.record.coreId)
 
     if (!coreIdFound) {
-      actionStore.record.coreId = options.value[0].value ?? undefined // If no options
+      actionStore.record.coreId = undefined // If no options, or id is invalid
     }
   } catch (error) {
     log.error('Error with core id field', error)
@@ -67,6 +67,10 @@ function inspectFormat(val: string) {
       dense
       outlined
       color="primary"
-    />
+    >
+      <template v-if="route.name === RouteName.EDIT" v-slot:prepend>
+        <QIcon color="warning" :name="Icon.LOCK" />
+      </template>
+    </QSelect>
   </div>
 </template>

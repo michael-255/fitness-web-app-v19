@@ -31,16 +31,15 @@ const uiStore = useUIStore()
 
         <!-- Dashboard Table Links -->
         <div v-else>
-          <QSeparator vertical dark />
           <QBtn
-            flat
-            round
+            class="q-px-sm q-mr-sm"
+            color="info"
             :icon="Icon.TABLE"
             @click="goToRecordsData(RecordGroup.CORE, uiStore.dashboardSelection)"
           />
           <QBtn
-            flat
-            round
+            class="q-px-sm"
+            color="info"
             :icon="Icon.RESULTS"
             @click="goToRecordsData(RecordGroup.SUB, uiStore.dashboardSelection)"
           />

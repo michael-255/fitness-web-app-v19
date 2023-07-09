@@ -37,16 +37,16 @@ onMounted(async () => {
     log.error('Error with exercise result ids field', error)
   }
 })
-
-function inspectFormat(val: ExerciseResultRecord[]) {
-  return val?.join(', ') || '-'
-}
 </script>
 
 <template>
   <div class="text-weight-bold text-body1">Exercise Result Ids</div>
 
-  <div v-if="inspecting">{{ inspectFormat(actionStore.record.exerciseResultIds) }}</div>
+  <div v-if="inspecting">
+    <li v-for="(input, i) in actionStore.record.exerciseResultIds" :key="i" class="q-ml-sm">
+      {{ input }}
+    </li>
+  </div>
 
   <div v-else>
     <p>Ids of all completed exercises associated with this workout.</p>

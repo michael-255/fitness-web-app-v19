@@ -197,6 +197,41 @@ export default class DataSchema {
     )
   }
 
+  static getInputForField(field: Field) {
+    switch (field) {
+      case Field.REPS:
+        return ExerciseInput.REPS
+      case Field.WEIGHT:
+        return ExerciseInput.WEIGHT
+      case Field.DISTANCE:
+        return ExerciseInput.DISTANCE
+      case Field.DURATION:
+        return ExerciseInput.DURATION
+      case Field.WATTS:
+        return ExerciseInput.WATTS
+      case Field.SPEED:
+        return ExerciseInput.SPEED
+      case Field.RESISTANCE:
+        return ExerciseInput.RESISTANCE
+      case Field.INCLINE:
+        return ExerciseInput.INCLINE
+      case Field.CALORIES:
+        return ExerciseInput.CALORIES
+      case Field.BODY_WEIGHT:
+        return MeasurementInput.BODY_WEIGHT
+      case Field.PERCENT:
+        return MeasurementInput.PERCENT
+      case Field.INCHES:
+        return MeasurementInput.INCHES
+      case Field.LBS:
+        return MeasurementInput.LBS
+      case Field.NUMBER:
+        return MeasurementInput.NUMBER
+      default:
+        throw new Error(`No input mapped for field: ${field}`)
+    }
+  }
+
   static getFieldForInput(input: ExerciseInput | MeasurementInput) {
     switch (input) {
       case ExerciseInput.REPS:
@@ -228,7 +263,7 @@ export default class DataSchema {
       case MeasurementInput.NUMBER:
         return Field.NUMBER
       default:
-        throw new Error(`Invalid input type: ${input}`)
+        throw new Error(`No field mapped for input: ${input}`)
     }
   }
 }

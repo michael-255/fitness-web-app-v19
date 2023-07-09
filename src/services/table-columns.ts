@@ -1,6 +1,12 @@
 import type { QTableColumn } from 'quasar'
 import { truncateString, getDisplayDate } from '@/utils/common'
-import { Field, MeasurementInput, type LogLevel, ExerciseInput } from '@/types/core'
+import {
+  Field,
+  MeasurementInput,
+  type LogLevel,
+  ExerciseInput,
+  type PreviousData,
+} from '@/types/core'
 
 function makeStandardColumn(field: Field, required: boolean = false) {
   return {
@@ -175,57 +181,111 @@ const multipleSetsColumn: QTableColumn = {
 }
 
 const repsColumn: QTableColumn = {
-  ...makeStandardColumn(Field.REPS),
+  ...makeStandardColumn(Field.EXERCISE_SETS),
   label: ExerciseInput.REPS,
-  format: (val: number[] | undefined) => truncateString(val ? val?.join(', ') : '', 30, '...'),
+  format: (val: { [key in Field]: number | undefined }[]) => {
+    if (val?.length > 0 && val[0][Field.REPS]) {
+      return val.map((set) => set[Field.REPS])?.join(', ')
+    } else {
+      return ''
+    }
+  },
 }
 
 const weightLbsColumn: QTableColumn = {
-  ...makeStandardColumn(Field.WEIGHT),
+  ...makeStandardColumn(Field.EXERCISE_SETS),
   label: ExerciseInput.WEIGHT,
-  format: (val: number[] | undefined) => truncateString(val ? val?.join(', ') : '', 30, '...'),
+  format: (val: { [key in Field]: number | undefined }[]) => {
+    if (val?.length > 0 && val[0][Field.WEIGHT]) {
+      return val.map((set) => set[Field.WEIGHT])?.join(', ')
+    } else {
+      return ''
+    }
+  },
 }
 
 const distanceMilesColumn: QTableColumn = {
-  ...makeStandardColumn(Field.DISTANCE),
+  ...makeStandardColumn(Field.EXERCISE_SETS),
   label: ExerciseInput.DISTANCE,
-  format: (val: number[] | undefined) => truncateString(val ? val?.join(', ') : '', 30, '...'),
+  format: (val: { [key in Field]: number | undefined }[]) => {
+    if (val?.length > 0 && val[0][Field.DISTANCE]) {
+      return val.map((set) => set[Field.DISTANCE])?.join(', ')
+    } else {
+      return ''
+    }
+  },
 }
 
 const durationMinutesColumn: QTableColumn = {
-  ...makeStandardColumn(Field.DURATION),
+  ...makeStandardColumn(Field.EXERCISE_SETS),
   label: ExerciseInput.DURATION,
-  format: (val: number[] | undefined) => truncateString(val ? val?.join(', ') : '', 30, '...'),
+  format: (val: { [key in Field]: number | undefined }[]) => {
+    if (val?.length > 0 && val[0][Field.DURATION]) {
+      return val.map((set) => set[Field.DURATION])?.join(', ')
+    } else {
+      return ''
+    }
+  },
 }
 
 const wattsColumn: QTableColumn = {
-  ...makeStandardColumn(Field.WATTS),
+  ...makeStandardColumn(Field.EXERCISE_SETS),
   label: ExerciseInput.WATTS,
-  format: (val: number[] | undefined) => truncateString(val ? val?.join(', ') : '', 30, '...'),
+  format: (val: { [key in Field]: number | undefined }[]) => {
+    if (val?.length > 0 && val[0][Field.WATTS]) {
+      return val.map((set) => set[Field.WATTS])?.join(', ')
+    } else {
+      return ''
+    }
+  },
 }
 
 const speedMphColumn: QTableColumn = {
-  ...makeStandardColumn(Field.SPEED),
+  ...makeStandardColumn(Field.EXERCISE_SETS),
   label: ExerciseInput.SPEED,
-  format: (val: number[] | undefined) => truncateString(val ? val?.join(', ') : '', 30, '...'),
+  format: (val: { [key in Field]: number | undefined }[]) => {
+    if (val?.length > 0 && val[0][Field.SPEED]) {
+      return val.map((set) => set[Field.SPEED])?.join(', ')
+    } else {
+      return ''
+    }
+  },
 }
 
 const caloriesColumn: QTableColumn = {
-  ...makeStandardColumn(Field.CALORIES),
+  ...makeStandardColumn(Field.EXERCISE_SETS),
   label: ExerciseInput.CALORIES,
-  format: (val: number[] | undefined) => truncateString(val ? val?.join(', ') : '', 30, '...'),
+  format: (val: { [key in Field]: number | undefined }[]) => {
+    if (val?.length > 0 && val[0][Field.CALORIES]) {
+      return val.map((set) => set[Field.CALORIES])?.join(', ')
+    } else {
+      return ''
+    }
+  },
 }
 
 const resistanceColumn: QTableColumn = {
-  ...makeStandardColumn(Field.RESISTANCE),
+  ...makeStandardColumn(Field.EXERCISE_SETS),
   label: ExerciseInput.RESISTANCE,
-  format: (val: number[] | undefined) => truncateString(val ? val?.join(', ') : '', 30, '...'),
+  format: (val: { [key in Field]: number | undefined }[]) => {
+    if (val?.length > 0 && val[0][Field.RESISTANCE]) {
+      return val.map((set) => set[Field.RESISTANCE])?.join(', ')
+    } else {
+      return ''
+    }
+  },
 }
 
 const inclineColumn: QTableColumn = {
-  ...makeStandardColumn(Field.INCLINE),
+  ...makeStandardColumn(Field.EXERCISE_SETS),
   label: ExerciseInput.INCLINE,
-  format: (val: number[] | undefined) => truncateString(val ? val?.join(', ') : '', 30, '...'),
+  format: (val: { [key in Field]: number | undefined }[]) => {
+    if (val?.length > 0 && val[0][Field.INCLINE]) {
+      return val.map((set) => set[Field.INCLINE])?.join(', ')
+    } else {
+      return ''
+    }
+  },
 }
 
 //
