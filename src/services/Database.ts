@@ -14,15 +14,12 @@ import {
   type AnySubRecord,
   type LogLevel,
   type WorkoutRecord,
-  type WorkoutResultRecord,
   type ExerciseRecord,
-  type ExerciseResultRecord,
-  ExerciseInput,
-  exerciseDataFields,
   type PreviousData,
+  type ActiveWorkoutRecord,
 } from '@/types/core'
 import DataSchema from '@/services/DataSchema'
-import { getDisplayDate, getDurationFromMilliseconds } from '@/utils/common'
+import { getDurationFromMilliseconds } from '@/utils/common'
 
 class Database extends Dexie {
   // Required for easier TypeScript usage
@@ -30,6 +27,7 @@ class Database extends Dexie {
   Settings!: Table<Setting>
   CoreRecords!: Table<AnyCoreRecord>
   SubRecords!: Table<AnySubRecord>
+  ActiveWorkout!: Table<ActiveWorkoutRecord>
 
   constructor(name: string) {
     super(name)
@@ -171,127 +169,74 @@ class Database extends Dexie {
   //                                                                         //
   /////////////////////////////////////////////////////////////////////////////
 
-  async beginWorkout(workoutCoreRecord: WorkoutRecord) {
-    const activeExerciseResultIds = await Promise.all(
-      workoutCoreRecord.exerciseIds.map(async (exerciseId) => {
-        return await this.createActiveExerciseResult(exerciseId)
-      })
-    )
-
-    const newWorkoutResult: WorkoutResultRecord = {
-      active: true,
-      id: uid(),
-      type: RecordType.WORKOUT,
-      createdTimestamp: Date.now(),
-      coreId: workoutCoreRecord.id,
-      note: '',
-      exerciseResultIds: activeExerciseResultIds,
-      finishedTimestamp: undefined,
-    }
-
-    // Setting core workout to active
-    workoutCoreRecord.active = true
-    await this.putRecord(RecordGroup.CORE, RecordType.WORKOUT, workoutCoreRecord)
-
-    // Setting core exercises to active
-    await Promise.all(
-      workoutCoreRecord.exerciseIds.map(async (id) => {
-        const exercise = (await this.getRecord(RecordGroup.CORE, id)) as AnyCoreRecord
-        exercise.active = true
-        return await this.putRecord(RecordGroup.CORE, RecordType.EXERCISE, exercise)
-      })
-    )
-
-    await this.addRecord(RecordGroup.SUB, RecordType.WORKOUT, newWorkoutResult)
-  }
-
-  async createActiveExerciseResult(id: string) {
-    const coreExercise = (await this.CoreRecords.get(id)) as ExerciseRecord
-
-    const activeExerciseResult = {
-      active: true,
-      id: uid(),
-      type: RecordType.EXERCISE,
-      timestamp: Date.now(),
-      coreId: id,
-      note: '',
-      // Data omitted
-    } as any
-
-    const inputFields = coreExercise.exerciseInputs.map((input) =>
-      DataSchema.getFieldForInput(input)
-    ) as Field[]
-
-    // Only include data fields if there are inputs
-    if (inputFields.length > 0) {
-      exerciseDataFields.forEach((field) => {
-        if (inputFields.includes(field)) {
-          activeExerciseResult[field] = [] // Need to set with one undefined in active workout
-        }
-      })
-    }
-
-    await this.addRecord(RecordGroup.SUB, RecordType.EXERCISE, activeExerciseResult)
-
-    return activeExerciseResult.id
-  }
-
-  async getExerciseInputDefaults(coreId: string) {
-    // return (await this.CoreRecords.where(Field.ID).equals(coreId).toArray()).map((r) => {
-    //   return {
-    //     reps: r.exerciseInputs.includes(ExerciseInput.REPS) ? [0] : null,
-    //     weightLbs: r.exerciseInputs.includes(ExerciseInput.WEIGHT) ? [0] : null,
-    //     distanceMiles: r.exerciseInputs.includes(ExerciseInput.DISTANCE) ? [0] : null,
-    //     durationMinutes: r.exerciseInputs.includes(ExerciseInput.DURATION) ? [0] : null,
-    //     watts: r.exerciseInputs.includes(ExerciseInput.WATTS) ? [0] : null,
-    //     speedMph: r.exerciseInputs.includes(ExerciseInput.SPEED) ? [0] : null,
-    //     calories: r.exerciseInputs.includes(ExerciseInput.CALORIES) ? [0] : null,
-    //     resistance: r.exerciseInputs.includes(ExerciseInput.RESISTANCE) ? [0] : null,
-    //   }
-    // })
-  }
-
   async getActiveRecords() {
-    const activeCoreRecords = await this.CoreRecords.filter((p) => p.active === true).toArray()
-    const activeSubRecords = await this.SubRecords.filter((p) => p.active === true).toArray()
-    return {
-      core: activeCoreRecords,
-      sub: activeSubRecords,
-      count: activeCoreRecords.length + activeSubRecords.length,
-    }
+    return await this.CoreRecords.filter((p) => p.active === true).toArray()
   }
 
-  async discardActiveRecords() {
-    const activeRecords = await this.getActiveRecords()
-    activeRecords.core.forEach((cr) => (cr.active = false))
+  async getActiveWorkout() {
+    return (await this.ActiveWorkout.toArray())[0]
+  }
 
-    // Sub records are deleted if the active workout is abandoned
+  async beginWorkout(workoutCoreRecord: WorkoutRecord) {
+    const activeWorkout: ActiveWorkoutRecord = {
+      name: workoutCoreRecord.name,
+      coreId: workoutCoreRecord.id,
+      createdTimestamp: Date.now(),
+      exercises: await Promise.all(
+        workoutCoreRecord.exerciseIds.map(async (id) => {
+          const exercise = (await this.getRecord(RecordGroup.CORE, id)) as ExerciseRecord
+
+          return {
+            name: exercise.name,
+            desc: exercise.desc,
+            coreId: exercise.id,
+            exerciseInputs: exercise.exerciseInputs,
+            exerciseSets: [
+              exercise.exerciseInputs.reduce((acc, input) => {
+                acc[DataSchema.getFieldForInput(input)] = undefined
+                return acc
+              }, {} as { [key in Field]: number | undefined }),
+            ],
+          }
+        })
+      ),
+    }
+
+    // Set core records being used to active
+    await this.CoreRecords.update(workoutCoreRecord.id, { active: true })
     await Promise.all(
-      activeRecords.sub.map(async (sr) => await this.deleteRecord(RecordGroup.SUB, sr.id))
+      activeWorkout.exercises.map(async (e) => {
+        await this.CoreRecords.update(e.coreId, { active: true })
+      })
     )
+
+    await this.ActiveWorkout.add(activeWorkout)
+  }
+
+  async discardActiveWorkout() {
+    const activeRecords = await this.getActiveRecords()
+    activeRecords.forEach((r) => (r.active = false))
 
     // Core records are retained with active set back to false
     await Promise.all(
-      activeRecords.core.map(async (cr) => await this.putRecord(RecordGroup.CORE, cr.type, cr))
+      activeRecords.map(async (r) => await this.putRecord(RecordGroup.CORE, r.type, r))
     )
+
+    await this.ActiveWorkout.clear()
   }
 
-  async keepActiveRecords() {
+  async finishActiveWorkout() {
     const activeRecords = await this.getActiveRecords()
-    activeRecords.core.forEach((cr) => (cr.active = false))
-    activeRecords.sub.forEach((sr) => (sr.active = false))
+    activeRecords.forEach((r) => (r.active = false))
 
-    // Add the finished timestamp to the workout record
-    const workoutResultIndex = activeRecords.sub.findIndex((cr) => cr.type === RecordType.WORKOUT)
-    activeRecords.sub[workoutResultIndex].finishedTimestamp = Date.now()
+    // Core records are retained with active set back to false
+    await Promise.all(
+      activeRecords.map(async (r) => await this.putRecord(RecordGroup.CORE, r.type, r))
+    )
 
-    // Core records updated last so there last sub value is accurate
-    await Promise.all(
-      activeRecords.sub.map(async (sr) => await this.putRecord(RecordGroup.SUB, sr.type, sr))
-    )
-    await Promise.all(
-      activeRecords.core.map(async (cr) => await this.putRecord(RecordGroup.CORE, cr.type, cr))
-    )
+    // TODO - Make result records based on ActiveWorkoutRecord
+
+    await this.ActiveWorkout.clear()
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -399,67 +344,6 @@ class Database extends Dexie {
       await this.SubRecords.where(Field.CORE_ID).equals(coreId).sortBy(Field.CREATED_TIMESTAMP)
     ).reverse()[0]
   }
-
-  // TODO
-  async getPreviousRecordData(coreId: string) {
-    const previousOrderedRecords = (
-      await this.SubRecords.where(Field.CORE_ID).equals(coreId).sortBy(Field.CREATED_TIMESTAMP)
-    ).reverse()
-
-    const previousData = {
-      // last sub timestamp
-      // last sub note
-      // last workout duration (finished timestamp - timestamp)
-      // measurement data hint short
-      // measurement data hint long
-      // exercise data hint short
-      // exercise data hint long
-    }
-
-    if (previousOrderedRecords.length > 0) {
-      if (previousOrderedRecords[0].type === RecordType.WORKOUT) {
-        return previousOrderedRecords[0].note
-      }
-    } else {
-      return 'No previous records'
-    }
-  }
-
-  // getPreviousHint(records: AnySubRecord[], field: Field) {
-  //   const values: number[] = []
-
-  //   // Loop through the previousRecords array to extract the weights for the first set
-  //   for (let i = 0; i < 6; i++) {
-  //     const previousSet1Weight = records[i]?.weight?.[0]
-  //     // Check if a weight exists for the current record
-  //     if (previousSet1Weight) {
-  //       // Add the weight to the weights array
-  //       weights.push(previousSet1Weight)
-  //     }
-  //   }
-
-  //   // Initialize the firstStr and incrementStr variables
-  //   let firstStr = '-'
-  //   let incrementStr = ''
-
-  //   // Loop through the weights array to calculate the increments
-  //   for (let i = 0; i < weights.length; i++) {
-  //     const currentWeight = weights[i]
-  //     const previousWeight = weights[i + 1]
-
-  //     // Check if it's the first weight, set it as the firstStr
-  //     if (i === 0) {
-  //       firstStr = `${currentWeight}`
-  //     } else {
-  //       // Append the difference between the current weight and the previous weight to the incrementStr
-  //       incrementStr += `, ${currentWeight - previousWeight}`
-  //     }
-  //   }
-
-  //   // If there are increments, return the firstStr concatenated with the incrementStr,
-  //   // otherwise, return just the firstStr
-  //   return incrementStr ? `${firstStr}${incrementStr}` : firstStr
-  // }
 
   /////////////////////////////////////////////////////////////////////////////
   //                                                                         //
@@ -596,19 +480,6 @@ class Database extends Dexie {
     return recordToDelete
   }
 
-  async clearRecordsByType(group: RecordGroup, type: RecordType) {
-    if (group === RecordGroup.CORE) {
-      await this.CoreRecords.where(Field.TYPE).equals(type).delete()
-      return await this.SubRecords.where(Field.TYPE).equals(type).delete()
-    } else {
-      await this.SubRecords.where(Field.TYPE).equals(type).delete()
-      const parentsToUpdate = await this.CoreRecords.where(Field.TYPE).equals(type).toArray()
-      return await Promise.all(
-        parentsToUpdate.map((r) => this.CoreRecords.update(r.id, { lastChild: undefined }))
-      )
-    }
-  }
-
   async clearLogs() {
     return await this.Logs.clear()
   }
@@ -623,6 +494,7 @@ class Database extends Dexie {
     await this.Settings.clear()
     await this.CoreRecords.clear()
     await this.SubRecords.clear()
+    await this.ActiveWorkout.clear()
     return await this.initSettings()
   }
 

@@ -187,7 +187,6 @@ export const heightSchema = z.number().positive().min(1).max(120).optional()
 export const numberSchema = z.number().min(Number.MIN_SAFE_INTEGER).max(Number.MAX_SAFE_INTEGER)
 export const bodyWeightSchema = z.number().min(1).max(1000)
 export const percentSchema = z.number().min(0).max(100)
-export const setsSchema = z.array(numberSchema)
 
 const settingSchema = z.object({
   [Field.KEY]: z.nativeEnum(SettingKey),
@@ -366,36 +365,18 @@ export type MeasurementRecord = z.infer<typeof measurementSchema>
 // Active Workout
 export const activeWorkoutSchema = z.object({
   [Field.NAME]: nameSchema,
-  [Field.DESC]: textAreaSchema,
   [Field.CORE_ID]: idSchema,
   [Field.CREATED_TIMESTAMP]: timestampSchema,
-  [Field.NOTE]: textAreaSchema,
-  [Field.PREVIOUS_NOTE]: textAreaSchema,
+  // [Field.NOTE]: textAreaSchema, // New note
   [Field.EXERCISES]: z.array(
     z.object({
       [Field.NAME]: nameSchema,
       [Field.DESC]: textAreaSchema,
       [Field.CORE_ID]: idSchema,
-      [Field.NOTE]: textAreaSchema,
-      [Field.PREVIOUS_NOTE]: textAreaSchema,
-      [Field.REPS]: setsSchema.optional(),
-      [Field.PREVIOUS_REPS]: z.string().optional(),
-      [Field.WEIGHT]: setsSchema.optional(),
-      [Field.PREVIOUS_WEIGHT]: z.string().optional(),
-      [Field.DISTANCE]: setsSchema.optional(),
-      [Field.PREVIOUS_DISTANCE]: z.string().optional(),
-      [Field.DURATION]: setsSchema.optional(),
-      [Field.PREVIOUS_DURATION]: z.string().optional(),
-      [Field.WATTS]: setsSchema.optional(),
-      [Field.PREVIOUS_WATTS]: z.string().optional(),
-      [Field.SPEED]: setsSchema.optional(),
-      [Field.PREVIOUS_SPEED]: z.string().optional(),
-      [Field.RESISTANCE]: setsSchema.optional(),
-      [Field.PREVIOUS_RESISTANCE]: z.string().optional(),
-      [Field.INCLINE]: setsSchema.optional(),
-      [Field.PREVIOUS_INCLINE]: z.string().optional(),
-      [Field.CALORIES]: setsSchema.optional(),
-      [Field.PREVIOUS_CALORIES]: z.string().optional(),
+      // [Field.NOTE]: textAreaSchema,
+      // [Field.PREVIOUS_NOTE]: textAreaSchema,
+      [Field.EXERCISE_INPUTS]: exerciseInputsSchema,
+      [Field.EXERCISE_SETS]: z.array(z.any()),
     })
   ),
 })

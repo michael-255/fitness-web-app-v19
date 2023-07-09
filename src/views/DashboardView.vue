@@ -126,7 +126,7 @@ async function onDiscardActiveWorkout(name: string) {
     'negative',
     async () => {
       try {
-        await DB.discardActiveRecords()
+        await DB.discardActiveWorkout()
         log.info('Active workout discarded', { name })
       } catch (error) {
         log.error('Failed to discard active workout', error)
@@ -136,9 +136,9 @@ async function onDiscardActiveWorkout(name: string) {
 }
 
 async function onBeginWorkout(record: WorkoutRecord) {
-  const activeCount = (await DB.getActiveRecords()).count
+  const activeWorkout = await DB.getActiveWorkout()
 
-  if (activeCount > 0) {
+  if (activeWorkout) {
     confirmDialog(
       'Replace Active Workout',
       `You already have an active workout. Do you want to replace it with ${record.name}?`,
@@ -146,7 +146,7 @@ async function onBeginWorkout(record: WorkoutRecord) {
       'warning',
       async () => {
         try {
-          await DB.discardActiveRecords()
+          await DB.discardActiveWorkout()
           await beginActiveWorkout(record)
           log.info('Replaced active workout', { replacedBy: record.name })
         } catch (error) {
@@ -189,12 +189,11 @@ async function beginActiveWorkout(record: WorkoutRecord) {
     </section>
 
     <!-- Dashboard Cards -->
-    <!-- TODO - Figure out how to fix design using these nested v-fors with v-show -->
     <section v-for="(records, i) in Object.values(dashboardRecords)" :key="i">
       <div v-for="record in records" :key="record.id">
-        <div class="row justify-center">
+        <div v-show="record.type === uiStore.dashboardSelection" class="row justify-center">
           <div class="col-xs-12 col-sm-12 col-md-12 col-lg-5 q-mb-md">
-            <QCard v-show="record.type === uiStore.dashboardSelection" class="column full-height">
+            <QCard class="column full-height">
               <QCardSection class="col">
                 <p class="text-h6">{{ record.name }}</p>
                 <p v-show="showDescription">{{ record.desc }}</p>
@@ -501,7 +500,7 @@ async function beginActiveWorkout(record: WorkoutRecord) {
     </section>
 
     <!-- Record Count & Create -->
-    <div class="row justify-center q-mt-md">
+    <div class="row justify-center">
       <p class="col-12 text-grey text-center text-body1">
         {{ getRecordsCountDisplay(dashboardRecords[uiStore.dashboardSelection]) }}
       </p>

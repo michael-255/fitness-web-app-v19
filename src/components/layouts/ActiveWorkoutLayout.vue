@@ -3,26 +3,24 @@ import { onMounted, ref, watch, type Ref } from 'vue'
 import { RouterView } from 'vue-router'
 import { AppHeaderColor } from '@/constants/global'
 import { Icon, RouteName } from '@/types/general'
-import { RecordType } from '@/types/core'
 import { getDurationFromMilliseconds } from '@/utils/common'
 import { useInterval } from '@vueuse/core'
 import DB from '@/services/Database'
 
 const counter = useInterval(1000)
-const workoutDuration: Ref<string> = ref('')
 const workoutName: Ref<string> = ref('')
-const workoutResultTimestamp: Ref<number> = ref(Date.now())
+const workoutCreatedTimestamp: Ref<number> = ref(Date.now())
+const workoutDuration: Ref<string> = ref('')
 
 onMounted(async () => {
-  const activeRecords = await DB.getActiveRecords()
+  const activeWorkout = await DB.getActiveWorkout()
 
-  workoutName.value = activeRecords.core.find((r) => r.type === RecordType.WORKOUT)?.name ?? ''
-  workoutResultTimestamp.value =
-    activeRecords.sub.find((r) => r.type === RecordType.WORKOUT)?.createdTimestamp ?? Date.now()
+  workoutName.value = activeWorkout.name ?? ''
+  workoutCreatedTimestamp.value = activeWorkout.createdTimestamp ?? Date.now()
 })
 
 watch(counter, () => {
-  workoutDuration.value = getDurationFromMilliseconds(Date.now() - workoutResultTimestamp.value)
+  workoutDuration.value = getDurationFromMilliseconds(Date.now() - workoutCreatedTimestamp.value)
 })
 </script>
 

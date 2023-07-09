@@ -4,9 +4,11 @@ Fitness Tracker is for tracking workouts, exercises, and measurements as well as
 
 ## TODO
 
+Might need to rethink how I'm doing some of this. Going to experiment with Web App Template again.
+
 **ACTIVE WORKOUT**
 
-- [ ] Replace unneeded `v-ifs` with `v-show` (might have to change `v-for` at `193`)
+- WIP
 
 **MISC**
 
