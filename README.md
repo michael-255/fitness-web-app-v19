@@ -1,5 +1,7 @@
 # Fitness Tracker
 
+_Project Archived_
+
 Fitness Tracker is for tracking workouts, exercises, and measurements as well as charting results.
 
 ## TODO
